@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>SchemeUserState</key>
+	<dict>
+		<key>Vibrato-2 - AU.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>1</integer>
+		</dict>
+		<key>Vibrato-2 - All.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>0</integer>
+		</dict>
+		<key>Vibrato-2 - Shared Code.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>3</integer>
+		</dict>
+		<key>Vibrato-2 - Standalone Plugin.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>2</integer>
+		</dict>
+	</dict>
+	<key>SuppressBuildableAutocreation</key>
+	<dict>
+		<key>15BC6FB7BADD9F1E58EB2FB6</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>542CBB218CD2A42F6C9A43C8</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>557A324F6F697952AABA8397</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>88C5F358F4C795E53EEE6ED4</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+	</dict>
+</dict>
+</plist>
