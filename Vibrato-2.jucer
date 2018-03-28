@@ -9,8 +9,6 @@
       <FILE id="rps4y6" name="PluginProcessor.h" compile="0" resource="0"
             file="Source/PluginProcessor.h"/>
       <FILE id="A3NXut" name="Proc.h" compile="0" resource="0" file="Source/Proc.h"/>
-      <FILE id="jJUH74" name="FractionalDelay.h" compile="0" resource="0"
-            file="Source/FractionalDelay.h"/>
       <FILE id="SuzrIt" name="Wavetable.cpp" compile="1" resource="0" file="Source/Wavetable.cpp"/>
       <FILE id="QThQ9J" name="Wavetable.h" compile="0" resource="0" file="Source/Wavetable.h"/>
       <FILE id="MkFQMv" name="Filter.cpp" compile="1" resource="0" file="Source/Filter.cpp"/>

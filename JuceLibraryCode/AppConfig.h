@@ -310,7 +310,7 @@
  #define JucePlugin_Name                   "Vibrato-2"
 #endif
 #ifndef  JucePlugin_Desc
- #define JucePlugin_Desc                   "JUCE Project"
+ #define JucePlugin_Desc                   "Vibrato-2"
 #endif
 #ifndef  JucePlugin_Manufacturer
  #define JucePlugin_Manufacturer           "yourcompany"
@@ -325,7 +325,7 @@
  #define JucePlugin_ManufacturerCode       0x4d616e75 // 'Manu'
 #endif
 #ifndef  JucePlugin_PluginCode
- #define JucePlugin_PluginCode             0x55687965 // 'Uhye'
+ #define JucePlugin_PluginCode             0x5462766c // 'Tbvl'
 #endif
 #ifndef  JucePlugin_IsSynth
  #define JucePlugin_IsSynth                0
@@ -364,10 +364,10 @@
  #define JucePlugin_AUSubType              JucePlugin_PluginCode
 #endif
 #ifndef  JucePlugin_AUExportPrefix
- #define JucePlugin_AUExportPrefix         JUCEProjectAU
+ #define JucePlugin_AUExportPrefix         Vibrato2AU
 #endif
 #ifndef  JucePlugin_AUExportPrefixQuoted
- #define JucePlugin_AUExportPrefixQuoted   "JUCEProjectAU"
+ #define JucePlugin_AUExportPrefixQuoted   "Vibrato2AU"
 #endif
 #ifndef  JucePlugin_AUManufacturerCode
  #define JucePlugin_AUManufacturerCode     JucePlugin_ManufacturerCode
