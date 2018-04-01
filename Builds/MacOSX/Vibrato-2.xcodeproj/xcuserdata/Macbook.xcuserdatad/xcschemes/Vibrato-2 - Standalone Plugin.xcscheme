@@ -14,7 +14,7 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "15BC6FB7BADD9F1E58EB2FB6"
+               BlueprintIdentifier = "02EEFCA25665ECF510588A05"
                BuildableName = "Vibrato-2.app"
                BlueprintName = "Vibrato-2 - Standalone Plugin"
                ReferencedContainer = "container:Vibrato-2.xcodeproj">
@@ -32,7 +32,7 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "15BC6FB7BADD9F1E58EB2FB6"
+            BlueprintIdentifier = "02EEFCA25665ECF510588A05"
             BuildableName = "Vibrato-2.app"
             BlueprintName = "Vibrato-2 - Standalone Plugin"
             ReferencedContainer = "container:Vibrato-2.xcodeproj">
@@ -55,7 +55,7 @@
          runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "15BC6FB7BADD9F1E58EB2FB6"
+            BlueprintIdentifier = "02EEFCA25665ECF510588A05"
             BuildableName = "Vibrato-2.app"
             BlueprintName = "Vibrato-2 - Standalone Plugin"
             ReferencedContainer = "container:Vibrato-2.xcodeproj">
@@ -74,7 +74,7 @@
          runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "15BC6FB7BADD9F1E58EB2FB6"
+            BlueprintIdentifier = "02EEFCA25665ECF510588A05"
             BuildableName = "Vibrato-2.app"
             BlueprintName = "Vibrato-2 - Standalone Plugin"
             ReferencedContainer = "container:Vibrato-2.xcodeproj">

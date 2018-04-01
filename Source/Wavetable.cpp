@@ -9,13 +9,12 @@
 */
 
 #include "Wavetable.h"
-#include "Utility.h"
 
 
 //===============================================================================
 //===============================================================================
 Wavetable::Wavetable ()
-        : currentSample(INFINITY), sampleRate(44100), wtSize(0), valueChanged(false)
+        : wavetable (new AudioBuffer<double>(0, 0)), currentSample(INFINITY), sampleRate(44100), wtSize(0), valueChanged(false)
 
 {
 }
@@ -64,39 +63,6 @@ void Wavetable::valueHasChanged()
 //===============================================================================
 //===============================================================================
 
-//Sine::Sine()  : Wavetable(0), frequency(0), interval(0)
-//{
-//}
-//
-//void Sine::countWavetable (int numChannels)
-//{
-//    wavetable.setSize (numChannels, numSamples);
-//    
-//    for (int channel = 0; channel < numChannels; channel++)
-//    {
-//        double* data = wavetable.getWritePointer (channel);
-//        double phase = 0.0;
-//        
-//        for (int sample = 0; sample < numSamples; sample++)
-//        {
-//            data[sample] = sin (phase);
-//            phase += interval;
-//        }
-//    }
-//}
-//
-//void Sine::setFrequency (double newFrequency)
-//{
-//    frequency = newFrequency;
-//    numSamples = sampleRate / frequency;
-//    interval = 2 * double_Pi / numSamples;
-//}
-
-
-//===============================================================================
-//===============================================================================
-
-
 //====================================================================================
 
 //constructors
@@ -115,7 +81,7 @@ Envelope::~Envelope()
 
 double Envelope::applyWavetable (float input)
 {
-    const double* wtData = wavetable.getReadPointer(0);
+    const double* wtData = wavetable->getReadPointer(0);
     
     if (input >= threshold && currentSample >= Utility::max (wtSize, 250))
         resetWavetable();
@@ -129,32 +95,13 @@ double Envelope::applyWavetable (float input)
     return value;
 }
 
-//void Envelope::countWavetable()
-//{
-//    wtSize = 900;
-//    wavetable.setSize (1, wtSize);
-//    double* wt = wavetable.getWritePointer(0);
-//    double c = 0.001;
-//    for (int sample = 0; sample < wtSize / 2; sample++)
-//    {
-//        wt[sample] = c;
-//        c += 0.001;
-//    }
-//    for (int sample = wtSize / 2; sample < wtSize; sample++)
-//    {
-//        c -= 0.001;
-//        wt[sample] = c;
-//    }
-//}
-
 void Envelope::countWavetable()
 {
     //count and set wavetable size
     wtSize = attackSamples + releaseSamples;
-    wavetable.setSize (1, wtSize);
     
     //get write pointer to wavetable
-    double* wtW = wavetable.getWritePointer (0);
+    double* wtW = wavetable->getWritePointer (0);
    
     //add attack curve
     if (attackStartLevel < attackEndLevel)
@@ -317,7 +264,7 @@ void Envelope::setSampleRateRelatedValues (double newSampleRate)
 //======================================================================================
 //======================================================================================
 
-Oscilator::Oscilator()  : frequency(1), amplitude(1), offset(0)
+Oscilator::Oscilator (float minFrequency)  : minFreq(minFrequency), frequency(1), amplitude(1), offset(0)
 {
 }
 
@@ -329,11 +276,11 @@ Oscilator::~Oscilator()
 
 double Oscilator::applyWavetable (float input)
 {
-    if (currentSample == wtSize)
+    if (currentSample >= wtSize)
         resetWavetable();
     
     //get read pointer to wt
-    const double* wtR = wavetable.getReadPointer (0);
+    const double* wtR = wavetable->getReadPointer (0);
     double currentValue = range.convertFrom0to1 (wtR[currentSample]);
     
     currentSample++;
@@ -344,11 +291,11 @@ double Oscilator::applyWavetable (float input)
 void Oscilator::countWavetable()
 {
     //set wavetable size
-    wavetable.setSize (1, wtSize);
-    wavetable.clear();
+    //wavetable->setSize (1, wtSize);
+    wavetable->clear();
     
     //get write pointer to wavetable buffer
-    double* wtW = wavetable.getWritePointer (0);
+    double* wtW = wavetable->getWritePointer (0);
     
     //write
     for (int sample = 0; sample < wtSize; ++sample)
@@ -362,6 +309,7 @@ void Oscilator::countWavetable()
 void Oscilator::setSampleRateRelatedValues (double newSampleRate)
 {
     wtSize = newSampleRate / frequency;
+    wavetable->setSize (1, newSampleRate / minFreq);
 }
 
 //setters

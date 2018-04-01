@@ -9,7 +9,7 @@
 */
 
 #pragma once
-#include "../JuceLibraryCode/JuceHeader.h"
+#include "Utility.h"
 
 class Wavetable
 {
@@ -26,7 +26,7 @@ public:
     void resetWavetable();
     void valueHasChanged();
     
-    AudioBuffer<double> wavetable;
+    std::shared_ptr<AudioBuffer<double>> wavetable;
     
 protected:
     NormalisableRange<float> range;
@@ -117,7 +117,7 @@ public:
         square
     };
     
-    Oscilator();
+    Oscilator (float minFrequency);
     ~Oscilator();
     
     void countWavetable() override;
@@ -130,6 +130,7 @@ public:
     void setOffset (double newOffset);
     
 private:
+    float minFreq;
     double frequency;
     double amplitude;
     double offset;

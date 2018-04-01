@@ -10,7 +10,6 @@
 
 #pragma once
 
-#include "Utility.h"
 #include "Wavetable.h"
 #include "Ramp.h"
 #include "Filter.h"
@@ -18,14 +17,17 @@
 class Proc
 {
 public:
-    Proc()  : xFactor(4), sampleRate (44100), minDelayInMs (0), maxDelayInMs (37), delayBuffer (0, 0),
+    Proc()  : frequency (0.1), xFactor(1), sampleRate (44100), lfoSample(0), minDelayInMs (0), maxDelayInMs (37), delayBuffer (0, 0),
               delayCounter(0), delayInSamples(0), prevProcessedLeft(0), prevProcessedRight(0)
     {
+        //initialise smart pointers with objects
+        wavetable = new Oscilator (0.1);
+        
         //set initial values
         lpFilter.frequency = 18000;
         
         //set wt parameters
-        wavetable.setAllParameters (3.0f / (float) xFactor, 1, 0);
+        wavetable->setAllParameters (0.1f, 1, 0);
     }
     
     virtual ~Proc()
@@ -44,8 +46,8 @@ public:
         
         //prepare filters
         //count coefficients
-        lpFilter.frequency = sampleRate / 2.4;
-        lpFilter.countCoefficients (sampleRate * xFactor);
+        lpFilter.frequency = 15000;
+        lpFilter.countCoefficients (sampleRate);
         lpFilter1.frequency = sampleRate / 2.4;
         lpFilter1.countCoefficients (sampleRate);
         
@@ -55,9 +57,9 @@ public:
         
         //prepare wavetables
         //set sample rate, range & count wtt
-        wavetable.setSampleRate (sampleRate);
-        wavetable.setRange (delayRange);
-        wavetable.countWavetable();
+        wavetable->setSampleRate (sampleRate);
+        wavetable->setRange (delayRange);
+        wavetable->countWavetable();
         
         //prepare copy buffers
         //set size according to buffer size & clear the buffers
@@ -66,11 +68,14 @@ public:
         delayCounter = 0;
     }
     
-    Oscilator wavetable;
+    ScopedPointer<Oscilator> wavetable;
+    float frequency;
     int xFactor;
     
 protected:
     double sampleRate;
+    
+    int lfoSample;
     
     AntiAliasingFilter lpFilter;
     AntiAliasingFilter lpFilter1;
@@ -130,21 +135,22 @@ public:
         bool transportIsAvailable = playHead->getCurrentPosition(currentPositionInfo);
         
         //process only if the transport state = is playing or not available
-        if (currentPositionInfo.isPlaying || !(transportIsAvailable))
-        //if (true)
+        //if (currentPositionInfo.isPlaying || !(transportIsAvailable))
+        if (true)
         {
             //constants
             const int numSamples = buffer.getNumSamples();
             const int circularBufferSize = delayBuffer.getNumSamples();
+            const int lfoSize = sampleRate / frequency;
             const int xBufferSize = numSamples * xFactor;
             
             //apply oversampling
-            AudioSampleBuffer xBuffer;
-            Utility::oversample (buffer, xBuffer, xFactor);
+//            AudioSampleBuffer xBuffer;
+//            Utility::oversample (buffer, xBuffer, xFactor);
             
             //get pointers to buffer
-            const float* leftBufferR = xBuffer.getReadPointer(0);
-            const float* rightBufferR = xBuffer.getReadPointer(1);
+            const float* leftBufferR = buffer.getReadPointer(0);
+            const float* rightBufferR = buffer.getReadPointer(1);
             float* leftBufferW = buffer.getWritePointer (0);
             float* rightBufferW = buffer.getWritePointer (1);
             
@@ -154,7 +160,7 @@ public:
             float* leftDelayW = delayBuffer.getWritePointer (0);
             float* rightDelayW = delayBuffer.getWritePointer (1);
             
-            for (int sample = 0; sample < xBufferSize; ++sample)
+            for (int sample = 0; sample < numSamples; ++sample)
             {
                 //get input signal
                 const float inputLeft = leftBufferR[sample];
@@ -163,7 +169,8 @@ public:
                                                    Utility::magnitude (inputRight)) / 2;
                 
                 //get current delay time
-                delayInSamples = wavetable.applyWavetable (averegeChannelLevel);
+                delayInSamples = wavetable->applyWavetable (averegeChannelLevel);
+                
                 int delayInSamplesInt = (int) ceilf (delayInSamples);
                 float fraction = delayInSamples - floorf (delayInSamples);
                 
@@ -218,11 +225,8 @@ public:
                 float processedRight = lpFilter.filterSignal (interpolatedRight, 1);
                 
                 //output signal
-                if (sample % xFactor == 0)
-                {
-                    leftBufferW [sample / xFactor] = lpFilter1.filterSignal (processedLeft, 0);
-                    rightBufferW [sample / xFactor] = lpFilter1.filterSignal (processedRight, 1);
-                }
+                leftBufferW [sample] = lpFilter1.filterSignal (processedLeft, 0);
+                rightBufferW [sample] = lpFilter1.filterSignal (processedRight, 1);
                     
                 //store input signal in the delay buffer
                 leftDelayW [delayCounter] = inputLeft + 0.9 * processedLeft;
@@ -232,7 +236,7 @@ public:
                 prevProcessedLeft = processedLeft;
                 prevProcessedRight = processedRight;
                 
-                //increase counter
+                //increase counters
                 delayCounter++;
             }
         }

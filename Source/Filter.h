@@ -290,9 +290,9 @@ public:
         float output = input;
         
         output = filter1.filterSignal (input, channel);
-        output = filter2.filterSignal (input, channel);
-        output = filter3.filterSignal (input, channel);
-        output = filter4.filterSignal (input, channel);
+        output = filter2.filterSignal (output, channel);
+        output = filter3.filterSignal (output, channel);
+        output = filter4.filterSignal (output, channel);
         
         return output;
     }

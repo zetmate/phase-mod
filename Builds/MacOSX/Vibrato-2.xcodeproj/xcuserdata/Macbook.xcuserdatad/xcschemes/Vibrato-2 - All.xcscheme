@@ -14,7 +14,7 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "88C5F358F4C795E53EEE6ED4"
+               BlueprintIdentifier = "5F501E281B9236AD7D20B5EE"
                BuildableName = "Vibrato-2 - All"
                BlueprintName = "Vibrato-2 - All"
                ReferencedContainer = "container:Vibrato-2.xcodeproj">
@@ -29,6 +29,15 @@
       shouldUseLaunchSchemeArgsEnv = "YES">
       <Testables>
       </Testables>
+      <MacroExpansion>
+         <BuildableReference
+            BuildableIdentifier = "primary"
+            BlueprintIdentifier = "02EEFCA25665ECF510588A05"
+            BuildableName = "Vibrato-2.app"
+            BlueprintName = "Vibrato-2 - Standalone Plugin"
+            ReferencedContainer = "container:Vibrato-2.xcodeproj">
+         </BuildableReference>
+      </MacroExpansion>
       <AdditionalOptions>
       </AdditionalOptions>
    </TestAction>
@@ -42,21 +51,22 @@
       debugDocumentVersioning = "YES"
       debugServiceExtension = "internal"
       allowLocationSimulation = "YES">
-      <PathRunnable
-         runnableDebuggingMode = "0"
-         BundleIdentifier = "com.roli.pluginhost"
-         FilePath = "/Applications/Plugin Host.app">
-      </PathRunnable>
-      <MacroExpansion>
+      <BuildableProductRunnable
+         runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "88C5F358F4C795E53EEE6ED4"
-            BuildableName = "Vibrato-2 - All"
-            BlueprintName = "Vibrato-2 - All"
+            BlueprintIdentifier = "02EEFCA25665ECF510588A05"
+            BuildableName = "Vibrato-2.app"
+            BlueprintName = "Vibrato-2 - Standalone Plugin"
             ReferencedContainer = "container:Vibrato-2.xcodeproj">
          </BuildableReference>
-      </MacroExpansion>
+      </BuildableProductRunnable>
       <AdditionalOptions>
+         <AdditionalOption
+            key = "NSZombieEnabled"
+            value = "YES"
+            isEnabled = "YES">
+         </AdditionalOption>
       </AdditionalOptions>
    </LaunchAction>
    <ProfileAction
@@ -68,7 +78,7 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "88C5F358F4C795E53EEE6ED4"
+            BlueprintIdentifier = "5F501E281B9236AD7D20B5EE"
             BuildableName = "Vibrato-2 - All"
             BlueprintName = "Vibrato-2 - All"
             ReferencedContainer = "container:Vibrato-2.xcodeproj">

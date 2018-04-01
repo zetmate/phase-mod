@@ -18,7 +18,7 @@ Vibrato2AudioProcessorEditor::Vibrato2AudioProcessorEditor (Vibrato2AudioProcess
 {
     setSize (600, 400);
     
-    Utility::addSlider (&frequencySlider, &frequencyLabel, "Frequency", 0.1, 800, 0.1, 20,
+    Utility::addSlider (&frequencySlider, &frequencyLabel, "Frequency", 0.1, 20, 0.1, 5,
                         "Hz", Slider::SliderStyle::RotaryVerticalDrag,
                         Slider::TextEntryBoxPosition::TextBoxBelow, 0.1, this, this, true);
     
@@ -46,11 +46,12 @@ Vibrato2AudioProcessorEditor::~Vibrato2AudioProcessorEditor()
 //==============================================================================
 void Vibrato2AudioProcessorEditor::sliderValueChanged (Slider* slider)
 {
-//    if (slider == &frequencySlider)
-//    {
-//        processor.proc->wavetable.setFrequency (slider->getValue() / processor.proc->xFactor);
-//        processor.proc->wavetable.valueHasChanged();
-//    }
+    if (slider == &frequencySlider)
+    {
+        processor.proc->wavetable->setFrequency ((float) slider->getValue());
+        processor.proc->wavetable->valueHasChanged();
+        //processor.proc->frequency = slider->getValue();
+    }
 }
 
 //==============================================================================
@@ -61,7 +62,7 @@ void Vibrato2AudioProcessorEditor::paint (Graphics& g)
 
 void Vibrato2AudioProcessorEditor::resized()
 {
-    frequencySlider.setBounds (100, 50, 150, 150);
-    delaySlider.setBounds (350, 50, 150, 150);
+    frequencySlider.setBounds (100, 50, 100, 100);
+    delaySlider.setBounds (350, 50, 100, 100);
     
 }
