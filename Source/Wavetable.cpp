@@ -13,7 +13,7 @@
 
 //===============================================================================
 //===============================================================================
-Wavetable::Wavetable ()
+Wavetable::Wavetable()
         : wavetable (new AudioBuffer<double>(0, 0)), currentSample(INFINITY), sampleRate(44100), wtSize(0), valueChanged(false)
 
 {
@@ -63,10 +63,8 @@ void Wavetable::valueHasChanged()
 //===============================================================================
 //===============================================================================
 
-//====================================================================================
-
 //constructors
-Envelope::Envelope ()
+Envelope::Envelope()
         : attackSamples(0), releaseSamples(0),
          attackStartLevel(0), attackEndLevel(0), releaseLevel(0),
          threshold(1), attackQuality(2), releaseQuality(2),
@@ -79,9 +77,9 @@ Envelope::~Envelope()
 {
 }
 
-double Envelope::applyWavetable (float input)
+double Envelope::applyWavetable (float input, int channel)
 {
-    const double* wtData = wavetable->getReadPointer(0);
+    const double* wtData = wavetable->getReadPointer(channel);
     
     if (input >= threshold && currentSample >= Utility::max (wtSize, 250))
         resetWavetable();
@@ -264,7 +262,8 @@ void Envelope::setSampleRateRelatedValues (double newSampleRate)
 //======================================================================================
 //======================================================================================
 
-Oscilator::Oscilator (float minFrequency)  : minFreq(minFrequency), frequency(1), amplitude(1), offset(0)
+Oscilator::Oscilator()  : frequency(1), amplitude(1), phaseOffsetLeft(0), phaseOffsetRight(0.5),
+                          stereo(false)
 {
 }
 
@@ -274,16 +273,20 @@ Oscilator::~Oscilator()
 
 //overides
 
-double Oscilator::applyWavetable (float input)
+double Oscilator::applyWavetable (float input, int channel)
 {
     if (currentSample >= wtSize)
         resetWavetable();
     
+    else if (valueChanged && currentSample >= 1000)
+        resetWavetable();
+    
     //get read pointer to wt
-    const double* wtR = wavetable->getReadPointer (0);
+    const double* wtR = wavetable->getReadPointer (channel);
     double currentValue = range.convertFrom0to1 (wtR[currentSample]);
     
-    currentSample++;
+    if (!(stereo) || channel == 1)
+        currentSample++;
     
     return currentValue;
 }
@@ -291,7 +294,13 @@ double Oscilator::applyWavetable (float input)
 void Oscilator::countWavetable()
 {
     //set wavetable size
-    //wavetable->setSize (1, wtSize);
+    wtSize = sampleRate / frequency;
+    
+    if (stereo)
+        wavetable->setSize (2, wtSize);
+    else
+        wavetable->setSize (1, wtSize);
+    
     wavetable->clear();
     
     //get write pointer to wavetable buffer
@@ -301,30 +310,70 @@ void Oscilator::countWavetable()
     for (int sample = 0; sample < wtSize; ++sample)
     {
         wtW[sample] = Utility::sinFrom0to1 (sample, wtSize, amplitude,
-                                            offset, sampleRate);
+                                            ampOffsetLeft, phaseOffsetLeft,
+                                            sampleRate);
     }
+    
+    if (stereo)
+    {
+        wtW = wavetable->getWritePointer (1);
+        
+        //write
+        for (int sample = 0; sample < wtSize; ++sample)
+        {
+            wtW[sample] = Utility::sinFrom0to1 (sample, wtSize, amplitude,
+                                                ampOffsetRight, phaseOffsetRight,
+                                                sampleRate);
+        }
+    }
+    
     currentSample = 0;
 }
 
 void Oscilator::setSampleRateRelatedValues (double newSampleRate)
 {
-    wtSize = newSampleRate / frequency;
-    wavetable->setSize (1, newSampleRate / minFreq);
 }
 
 //setters
+
+void Oscilator::setStereoOrMono (bool isStereo, int channelOffsetDegr)
+{
+    stereo = isStereo;
+    
+    if (stereo)
+        setChannelPhaseOffset (channelOffsetDegr);
+    
+}
+
+void Oscilator::setChannelPhaseOffset (int channelOffsetDegr)
+{
+    if (channelOffsetDegr == 0)
+    {
+        phaseOffsetRight = phaseOffsetLeft;
+    }
+    else
+    {
+        float channelOffset = (float)channelOffsetDegr / (float)360;
+        
+        double sum = phaseOffsetLeft + channelOffset;
+        
+        if (sum <= 1)
+            phaseOffsetRight = sum;
+        else
+            phaseOffsetRight = sum - 1;
+    }
+}
 
 void Oscilator::setAllParameters (double newFrequency, double newAmplitude, double newOffset)
 {
     setFrequency (newFrequency);
     setAmplitude (newAmplitude);
-    setOffset (newOffset);
+    setAmpOffset (newOffset);
 }
 
 void Oscilator::setFrequency (double newFrequency)
 {
     frequency = newFrequency;
-    wtSize = sampleRate / frequency;
 }
 
 void Oscilator::setAmplitude (double newAmplitude)
@@ -332,13 +381,22 @@ void Oscilator::setAmplitude (double newAmplitude)
     amplitude = newAmplitude;
 }
 
-void Oscilator::setOffset (double newOffset)
+void Oscilator::setAmpOffset (double newOffset)
 {
     if (newOffset < 0)
-        offset = 0;
+    {
+        ampOffsetLeft = 0;
+        ampOffsetRight = 0;
+    }
     else if (newOffset > 1)
-        offset = 1;
+    {
+        ampOffsetLeft = 1;
+        ampOffsetRight = 1;
+    }
     else
-        offset = newOffset;
+    {
+        ampOffsetLeft = newOffset;
+        ampOffsetRight = newOffset;
+    }
 }
 

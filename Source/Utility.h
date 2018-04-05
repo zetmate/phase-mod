@@ -98,14 +98,15 @@ public:
     //==================================================================================
     //wavetable oscilators
     static double sinFrom0to1 (double currentSample, double numSamples, double amplitude,
-                               double offset, double sampleRate)
+                               double ampOffset, double phaseOffsetFrom0to1, double sampleRate)
     {
-        double x = currentSample / (numSamples + 1);
+        double phaseOffsetInSamples = numSamples * phaseOffsetFrom0to1;
+        double x = currentSample / (numSamples + 1) + phaseOffsetInSamples;
         double period = 2 * double_Pi;
         
-        double fixedAmplitude = min (1 - offset, amplitude);
+        double fixedAmplitude = min (1 - ampOffset, amplitude);
         
-        return sin (x * period) / (2 / fixedAmplitude) + (fixedAmplitude / 2) + offset;
+        return sin (x * period) / (2 / fixedAmplitude) + (fixedAmplitude / 2) + ampOffset;
     }
     
     //==================================================================================
@@ -167,7 +168,7 @@ public:
         }
     }
     //==================================================================================
-    //INTERPOLATION
+    //INTERPOLATION & FRACTIONAL DELAYS
     
     static float linearInterpolation (float fract, float sampleN, float sampleN1)
     {
@@ -183,6 +184,53 @@ public:
         float c0 = sampleN;
         
         return c3 * powf (fract, 3) + c2 * powf (fract, 2) + c1 * fract + c0;
+    }
+    
+    static float fractDelayCubicInt (const float* delayBuffer,
+                                     const float delayInSamples,
+                                     const int delayCounter,
+                                     const int delayBufferSize)
+    {
+        int delayInSamplesInt = (int) ceilf (delayInSamples);
+        float fraction = delayInSamples - floorf (delayInSamples);
+        
+        //read delayed signal
+        int indexPrev = 0;
+        int indexN = 0;
+        int indexN1 = 0;
+        int indexN2 = 0;
+        
+        //count indexes
+        
+        if (delayCounter >= delayInSamplesInt)
+            indexN = delayCounter - delayInSamplesInt;
+        else
+            indexN = (delayBufferSize) - (delayInSamplesInt - delayCounter);
+        
+        if (indexN == 0)
+            indexPrev = delayBufferSize - 1;
+        else
+            indexPrev = indexN - 1;
+        
+        if (indexN == delayBufferSize - 1)
+            indexN1 = 0;
+        else
+            indexN1 = indexN + 1;
+        
+        if (indexN1 == delayBufferSize - 1)
+            indexN2 = 0;
+        else
+            indexN2 = indexN1 + 1;
+        
+        
+        //intepolate sample
+        
+        float interpolatedSample = cubicInterpolation (fraction,
+                                                       delayBuffer[indexPrev],
+                                                       delayBuffer[indexN],
+                                                       delayBuffer[indexN1],
+                                                       delayBuffer[indexN2]);
+        return interpolatedSample;
     }
     
     //==================================================================================

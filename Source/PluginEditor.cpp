@@ -50,7 +50,10 @@ void Vibrato2AudioProcessorEditor::sliderValueChanged (Slider* slider)
     {
         processor.proc->wavetable->setFrequency ((float) slider->getValue());
         processor.proc->wavetable->valueHasChanged();
-        //processor.proc->frequency = slider->getValue();
+    }
+    else if (slider == &delaySlider)
+    {
+        processor.proc->changeMaxDelayTime (delaySlider.getValue());
     }
 }
 

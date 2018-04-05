@@ -14,11 +14,11 @@
 class Wavetable
 {
 public:
-    Wavetable();
+    Wavetable ();
     virtual ~Wavetable();
     
     virtual void countWavetable() = 0;
-    virtual double applyWavetable (float input) = 0;
+    virtual double applyWavetable (float input, int channel) = 0;
     virtual void setSampleRateRelatedValues (double newSampleRate) = 0;
     
     bool setSampleRate (double newSampleRate);
@@ -35,8 +35,8 @@ protected:
     double sampleRate;
     int wtSize;
     
-private:
     bool valueChanged;
+private:
 };
 
 //========================================================================
@@ -59,11 +59,11 @@ private:
 class Envelope  : public Wavetable
 {
 public:
-    Envelope();
+    Envelope ();
     ~Envelope();
     
     void countWavetable() override;
-    double applyWavetable (float input) override;
+    double applyWavetable (float input, int channel) override;
     void setSampleRateRelatedValues (double newSampleRate) override;
     
     double getAttackTime() const;
@@ -117,23 +117,29 @@ public:
         square
     };
     
-    Oscilator (float minFrequency);
+    Oscilator ();
     ~Oscilator();
     
     void countWavetable() override;
-    double applyWavetable (float input) override;
+    double applyWavetable (float input, int channel) override;
     void setSampleRateRelatedValues (double newSampleRate) override;
+    void setStereoOrMono (bool isStereo, int channelOffsetDegr);
+    void setChannelPhaseOffset (int channelOffsetDegr);
     
     void setAllParameters (double newFrequency, double newAmplitude, double newOffset);
     void setFrequency (double newFrequency);
     void setAmplitude (double newAmplitude);
-    void setOffset (double newOffset);
+    void setAmpOffset (double newOffset);
+    void setPhaseOffset (double newOffset);
     
 private:
-    float minFreq;
     double frequency;
     double amplitude;
-    double offset;
+    double phaseOffsetLeft;
+    double phaseOffsetRight;
+    double ampOffsetLeft;
+    double ampOffsetRight;
+    bool stereo;
 };
 
 

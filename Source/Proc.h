@@ -21,13 +21,13 @@ public:
               delayCounter(0), delayInSamples(0), prevProcessedLeft(0), prevProcessedRight(0)
     {
         //initialise smart pointers with objects
-        wavetable = new Oscilator (0.1);
+        wavetable = new Oscilator();
         
         //set initial values
-        lpFilter.frequency = 18000;
         
         //set wt parameters
         wavetable->setAllParameters (0.1f, 1, 0);
+        wavetable->setStereoOrMono (true, 180);
     }
     
     virtual ~Proc()
@@ -46,9 +46,9 @@ public:
         
         //prepare filters
         //count coefficients
-        lpFilter.frequency = 15000;
+        lpFilter.frequency = floor(sampleRate / 2.4);
         lpFilter.countCoefficients (sampleRate);
-        lpFilter1.frequency = sampleRate / 2.4;
+        lpFilter1.frequency = lpFilter.frequency;
         lpFilter1.countCoefficients (sampleRate);
         
         //prepare ranges: set start, end, interval, skew
@@ -56,7 +56,7 @@ public:
         delayRange.end = Utility::msToSamples ((double) maxDelayInMs, sampleRate * xFactor);
         
         //prepare wavetables
-        //set sample rate, range & count wtt
+        //set sample rate, range, mono/stereo & count wtt
         wavetable->setSampleRate (sampleRate);
         wavetable->setRange (delayRange);
         wavetable->countWavetable();
@@ -66,6 +66,13 @@ public:
         delayBuffer.setSize (2, (int)delayRange.end * 2);
         delayBuffer.clear();
         delayCounter = 0;
+    }
+    
+    void changeMaxDelayTime (float newMaxDelayMs)
+    {
+        delayRange.end = Utility::msToSamples (maxDelayInMs, sampleRate);
+        wavetable->setRange (delayRange);
+        wavetable->valueHasChanged();
     }
     
     ScopedPointer<Oscilator> wavetable;
@@ -132,7 +139,7 @@ public:
     void processBlock (AudioSampleBuffer& buffer, AudioPlayHead* playHead) override
     {
         //prepare transpor state info
-        bool transportIsAvailable = playHead->getCurrentPosition(currentPositionInfo);
+        //bool transportIsAvailable = playHead->getCurrentPosition(currentPositionInfo);
         
         //process only if the transport state = is playing or not available
         //if (currentPositionInfo.isPlaying || !(transportIsAvailable))
@@ -141,12 +148,6 @@ public:
             //constants
             const int numSamples = buffer.getNumSamples();
             const int circularBufferSize = delayBuffer.getNumSamples();
-            const int lfoSize = sampleRate / frequency;
-            const int xBufferSize = numSamples * xFactor;
-            
-            //apply oversampling
-//            AudioSampleBuffer xBuffer;
-//            Utility::oversample (buffer, xBuffer, xFactor);
             
             //get pointers to buffer
             const float* leftBufferR = buffer.getReadPointer(0);
@@ -165,68 +166,35 @@ public:
                 //get input signal
                 const float inputLeft = leftBufferR[sample];
                 const float inputRight = rightBufferR[sample];
-                const float averegeChannelLevel = (Utility::magnitude (inputLeft) +
-                                                   Utility::magnitude (inputRight)) / 2;
-                
-                //get current delay time
-                delayInSamples = wavetable->applyWavetable (averegeChannelLevel);
-                
-                int delayInSamplesInt = (int) ceilf (delayInSamples);
-                float fraction = delayInSamples - floorf (delayInSamples);
                 
                 //check counter
                 if (delayCounter >= circularBufferSize)
                     delayCounter = 0;
                 
-                //read delayed signal
-                int indexPrev = 0;
-                int indexN = 0;
-                int indexN1 = 0;
-                int indexN2 = 0;
+                //get current delay time
+                float delayInSamplesLeft = wavetable->applyWavetable (inputLeft, 0);
+                float delayInSamplesRight = wavetable->applyWavetable (inputRight, 1);
                 
-                //count indexes
+                //interpolate samples
+                //========================================================================
+                float interpolatedLeft = Utility::fractDelayCubicInt (leftDelayR,
+                                                                      delayInSamplesLeft,
+                                                                      delayCounter,
+                                                                      circularBufferSize);
                 
-                if (delayCounter >= delayInSamplesInt)
-                    indexN = delayCounter - delayInSamplesInt;
-                else
-                    indexN = (circularBufferSize) - (delayInSamplesInt - delayCounter);
+                float interpolatedRight = Utility::fractDelayCubicInt (rightDelayR,
+                                                                       delayInSamplesRight,
+                                                                       delayCounter,
+                                                                       circularBufferSize);
+                //=========================================================================
                 
-                if (indexN == 0)
-                    indexPrev = circularBufferSize - 1;
-                else
-                    indexPrev = indexN - 1;
-                
-                if (indexN == circularBufferSize - 1)
-                    indexN1 = 0;
-                else
-                    indexN1 = indexN + 1;
-                
-                if (indexN1 == circularBufferSize - 1)
-                    indexN2 = 0;
-                else
-                    indexN2 = indexN1 + 1;
-                
-                
-                //intepolate samples
-                
-                float interpolatedLeft = Utility::cubicInterpolation (fraction,
-                                                                      leftDelayR [indexPrev],
-                                                                      leftDelayR [indexN],
-                                                                      leftDelayR [indexN1],
-                                                                      leftDelayR [indexN2]);
-                
-                float interpolatedRight = Utility::cubicInterpolation (fraction,
-                                                                       rightDelayR [indexPrev],
-                                                                       rightDelayR [indexN],
-                                                                       rightDelayR [indexN1],
-                                                                       rightDelayR [indexN2]);
                 //filter interpolated samples
                 float processedLeft = lpFilter.filterSignal (interpolatedLeft, 0);
                 float processedRight = lpFilter.filterSignal (interpolatedRight, 1);
                 
                 //output signal
-                leftBufferW [sample] = lpFilter1.filterSignal (processedLeft, 0);
-                rightBufferW [sample] = lpFilter1.filterSignal (processedRight, 1);
+                leftBufferW [sample] = lpFilter1.filterSignal (interpolatedLeft, 0);
+                rightBufferW [sample] = lpFilter1.filterSignal (interpolatedRight, 1);
                     
                 //store input signal in the delay buffer
                 leftDelayW [delayCounter] = inputLeft + 0.9 * processedLeft;
