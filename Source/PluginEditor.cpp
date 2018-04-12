@@ -34,13 +34,13 @@ Vibrato2AudioProcessorEditor::Vibrato2AudioProcessorEditor (Vibrato2AudioProcess
                         "ms", Slider::SliderStyle::RotaryVerticalDrag,
                         Slider::TextEntryBoxPosition::TextBoxBelow, 39, this, this, true);
     
-    Utility::addSlider (&smoothSlider, &smoothLabel, "Smooth", 0, 0.9, 0.01, 3,
+    Utility::addSlider (&smoothSlider, &smoothLabel, "Smooth", -0.5, 0.5, 0.1, 0,
                         " ", Slider::SliderStyle::RotaryVerticalDrag,
-                        Slider::TextEntryBoxPosition::TextBoxBelow, 0.1, this, this, true);
+                        Slider::TextEntryBoxPosition::TextBoxBelow, 0, this, this, true);
     
-    Utility::addSlider (&dryWetSlider, &dryWetLabel, "Mix", 0, 100, 1, 20,
+    Utility::addSlider (&dryWetSlider, &dryWetLabel, "Mix", 0, 100, 1, 50,
                         "%", Slider::SliderStyle::RotaryVerticalDrag,
-                        Slider::TextEntryBoxPosition::TextBoxBelow, 30, this, this, true);
+                        Slider::TextEntryBoxPosition::TextBoxBelow, 100, this, this, true);
 }
 
 Vibrato2AudioProcessorEditor::~Vibrato2AudioProcessorEditor()
@@ -62,6 +62,18 @@ void Vibrato2AudioProcessorEditor::sliderValueChanged (Slider* slider)
     {
         processor.proc->changeSweepWidth (slider->getValue());
     }
+    else if (slider == &feedbackSlider)
+    {
+        processor.proc->setFeedbackGain (slider->getValue() / 100);
+    }
+    else if (slider == &smoothSlider)
+    {
+        processor.proc->setPrevSampleGain (slider->getValue());
+    }
+    else if (slider == &dryWetSlider)
+    {
+        processor.proc->setDryWetMix (slider->getValue() / 100);
+    }
 }
 
 //==============================================================================
@@ -72,8 +84,14 @@ void Vibrato2AudioProcessorEditor::paint (Graphics& g)
 
 void Vibrato2AudioProcessorEditor::resized()
 {
+    //first row
     frequencySlider.setBounds (25, 50, 100, 100);
     maxDelaySlider.setBounds (150, 50, 100, 100);
     sweepWidthSlider.setBounds (275, 50, 100, 100);
+    
+    //second row
+    feedbackSlider.setBounds (25, 175, 100, 100);
+    smoothSlider.setBounds (150, 175, 100, 100);
+    dryWetSlider.setBounds (275, 175, 100, 100);
 }
 

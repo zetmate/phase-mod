@@ -13,17 +13,20 @@
 #include "Wavetable.h"
 #include "Ramp.h"
 #include "Filter.h"
+#include "Limiter.h"
 
 class Proc
 {
 public:
     Proc()  : sampleRate (44100), minDelayInMs (0), maxDelayInMs (40), delayBuffer (0, 0),
-              delayCounter(0), delayInSamples(0), prevProcessedLeft(0), prevProcessedRight(0)
+              delayCounter(0), delayInSamples(0), prevDelayedLeft(0), prevDelayedRight(0),
+              feedbackGain(0.9), prevSampleGain(0), dryWetPropotion(100), dryGain(0), wetGain(0)
     {
         //initialise smart pointers with objects
         wavetable = new Oscilator (0.1);
         
         //set initial values
+        setDryWetMix (100);
         
         //set wt parameters
         wavetable->setAllParameters (0.1, 1, 0);
@@ -43,6 +46,9 @@ public:
         
         //prepare ramps
         //set time
+        feedbackRamp.setTime (5, sampleRate);
+        prevSampleRamp.setTime (5, sampleRate);
+        dryWetRamp.setTime (5, sampleRate);
         
         //prepare filters
         //count coefficients
@@ -85,6 +91,21 @@ public:
         changeMinDelayTime (maxDelayInMs - sweepWidthMs);
     }
     
+    void setFeedbackGain (float newFeedbackGain)
+    {
+        feedbackRamp.setRange (feedbackGain, newFeedbackGain);
+    }
+    
+    void setPrevSampleGain (float newPrevSampGain)
+    {
+        prevSampleRamp.setRange (prevSampleGain, newPrevSampGain);
+    }
+    
+    void setDryWetMix (float newDryWetPropotion)
+    {
+        dryWetRamp.setRange (dryWetPropotion, newDryWetPropotion);
+    }
+    
     ScopedPointer<Oscilator> wavetable;
     
 protected:
@@ -101,12 +122,19 @@ protected:
     int delayCounter;
     double delayInSamples;
     
-    float prevProcessedLeft, prevProcessedRight;
+    float prevDelayedLeft, prevDelayedRight;
     
     //gain values
-    float feedbackGain;
-    float dryWet;
-    float prevSampleGain;
+    double feedbackGain;
+    double prevSampleGain;
+    double dryGain;
+    double wetGain;
+    double dryWetPropotion;
+    
+    //ramps
+    Ramp feedbackRamp;
+    Ramp prevSampleRamp;
+    Ramp dryWetRamp;
     
     AudioPlayHead::CurrentPositionInfo currentPositionInfo;
     
@@ -154,8 +182,8 @@ public:
         bool transportIsAvailable = playHead->getCurrentPosition(currentPositionInfo);
         
         //process only if the transport state = is playing or not available
-        //if (currentPositionInfo.isPlaying || !(transportIsAvailable))
-        if (true)
+        if (currentPositionInfo.isPlaying || !(transportIsAvailable))
+        //if (true)
         {
             //constants
             const int numSamples = buffer.getNumSamples();
@@ -213,20 +241,36 @@ public:
                 //=========================================================================
                 
                 //filter interpolated samples
-                float processedLeft = lpFilter.filterSignal (interpolatedLeft, 0);
-                float processedRight = lpFilter.filterSignal (interpolatedRight, 1);
+                float delayedLeft = lpFilter.filterSignal (interpolatedLeft, 0);
+                float delayedRight = lpFilter.filterSignal (interpolatedRight, 1);
+                
+                //apply gain ramps
+                feedbackRamp.applyRamp (feedbackGain);
+                prevSampleRamp.applyRamp (prevSampleGain);
+                dryWetRamp.applyRamp (dryWetPropotion);
+                
+                //count dry & wet gains
+                wetGain = dryWetPropotion;
+                dryGain = 1 - wetGain;
+                
+                dryGain += 1;
+                wetGain += 1;
                 
                 //output signal
-                leftBufferW [sample] = lpFilter1.filterSignal (interpolatedLeft, 0);
-                rightBufferW [sample] = lpFilter1.filterSignal (interpolatedRight, 1);
+                leftBufferW [sample] = (dryGain * inputLeft + wetGain * delayedLeft) * 0.5;
+                
+                rightBufferW [sample] = (dryGain * inputRight + wetGain * delayedRight) * 0.5;
                     
                 //store input signal in the delay buffer
-                leftDelayW [delayCounter] = inputLeft + 0.9 * processedLeft;
-                rightDelayW [delayCounter] = inputRight + 0.9 * processedRight;
+                leftDelayW [delayCounter] = (inputLeft + feedbackGain * delayedLeft
+                                             + prevSampleGain * prevDelayedLeft);
+                
+                rightDelayW [delayCounter] = (inputRight + feedbackGain * delayedRight
+                                              + prevSampleGain * prevDelayedRight);
                 
                 //store previous values
-                prevProcessedLeft = processedLeft;
-                prevProcessedRight = processedRight;
+                prevDelayedLeft = delayedLeft;
+                prevDelayedRight = delayedRight;
                 
                 //increase counters
                 delayCounter++;

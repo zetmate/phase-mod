@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <JUCERPROJECT name="Vibrato-2" projectType="audioplug" jucerVersion="5.2.1"
-              buildVST="0" pluginName="Vibrato-2" buildStandalone="1">
+              buildVST="0" pluginName="Vibrato-2">
   <MAINGROUP id="tWmXHB" name="Vibrato-2">
     <GROUP id="{34B66B48-FA1C-EDCA-2DD6-03316E3E6503}" name="Source">
       <FILE id="QVxRk1" name="PluginProcessor.cpp" compile="1" resource="0"
@@ -11,6 +11,7 @@
       <FILE id="A3NXut" name="Proc.h" compile="0" resource="0" file="Source/Proc.h"/>
       <FILE id="SuzrIt" name="Wavetable.cpp" compile="1" resource="0" file="Source/Wavetable.cpp"/>
       <FILE id="QThQ9J" name="Wavetable.h" compile="0" resource="0" file="Source/Wavetable.h"/>
+      <FILE id="ZWriDD" name="Limiter.h" compile="0" resource="0" file="Source/Limiter.h"/>
       <FILE id="MkFQMv" name="Filter.cpp" compile="1" resource="0" file="Source/Filter.cpp"/>
       <FILE id="GBlnDv" name="Filter.h" compile="0" resource="0" file="Source/Filter.h"/>
       <FILE id="DoitoU" name="Ramp.cpp" compile="1" resource="0" file="Source/Ramp.cpp"/>
