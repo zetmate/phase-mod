@@ -16,9 +16,9 @@
 Vibrato2AudioProcessorEditor::Vibrato2AudioProcessorEditor (Vibrato2AudioProcessor& p)
     : AudioProcessorEditor (&p), processor (p)
 {
-    setSize (600, 400);
+    setSize (400, 300);
     
-    Utility::addSlider (&frequencySlider, &frequencyLabel, "Frequency", 0.1, 20, 0.01, 5,
+    Utility::addSlider (&frequencySlider, &frequencyLabel, "Frequency", 0.1, 20, 0.01, 1,
                         "Hz", Slider::SliderStyle::RotaryVerticalDrag,
                         Slider::TextEntryBoxPosition::TextBoxBelow, 0.1, this, this, true);
     
@@ -26,7 +26,11 @@ Vibrato2AudioProcessorEditor::Vibrato2AudioProcessorEditor (Vibrato2AudioProcess
                         "%", Slider::SliderStyle::RotaryVerticalDrag,
                         Slider::TextEntryBoxPosition::TextBoxBelow, 70, this, this, true);
     
-    Utility::addSlider (&delaySlider, &delayLabel, "Delay", 25, 60, 0.01, 39,
+    Utility::addSlider (&maxDelaySlider, &maxDelayLabel, "Max Delay", 25, 60, 0.01, 39,
+                        "ms", Slider::SliderStyle::RotaryVerticalDrag,
+                        Slider::TextEntryBoxPosition::TextBoxBelow, 39, this, this, true);
+    
+    Utility::addSlider (&sweepWidthSlider, &sweepWidthLabel, "Sweep Width", 0.4, 60, 0.01, 10,
                         "ms", Slider::SliderStyle::RotaryVerticalDrag,
                         Slider::TextEntryBoxPosition::TextBoxBelow, 39, this, this, true);
     
@@ -50,9 +54,13 @@ void Vibrato2AudioProcessorEditor::sliderValueChanged (Slider* slider)
     {
         processor.proc->wavetable->setFrequency ((float) slider->getValue());
     }
-    else if (slider == &delaySlider)
+    else if (slider == &maxDelaySlider)
     {
         processor.proc->changeMaxDelayTime (slider->getValue());
+    }
+    else if (slider == &sweepWidthSlider)
+    {
+        processor.proc->changeSweepWidth (slider->getValue());
     }
 }
 
@@ -64,7 +72,8 @@ void Vibrato2AudioProcessorEditor::paint (Graphics& g)
 
 void Vibrato2AudioProcessorEditor::resized()
 {
-    frequencySlider.setBounds (100, 50, 100, 100);
-    delaySlider.setBounds (350, 50, 100, 100);
-    
+    frequencySlider.setBounds (25, 50, 100, 100);
+    maxDelaySlider.setBounds (150, 50, 100, 100);
+    sweepWidthSlider.setBounds (275, 50, 100, 100);
 }
+

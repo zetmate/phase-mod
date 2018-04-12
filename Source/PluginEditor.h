@@ -36,8 +36,11 @@ private:
     Slider feedbackSlider;
     Label feedbackLabel;
     
-    Slider delaySlider;
-    Label delayLabel;
+    Slider maxDelaySlider;
+    Label maxDelayLabel;
+    
+    Slider sweepWidthSlider;
+    Label sweepWidthLabel;
     
     Slider smoothSlider;
     Label smoothLabel;

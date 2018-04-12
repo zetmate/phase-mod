@@ -17,7 +17,7 @@
 class Proc
 {
 public:
-    Proc()  : frequency (0.1), xFactor(1), sampleRate (44100), minDelayInMs (0), maxDelayInMs (40), delayBuffer (0, 0),
+    Proc()  : sampleRate (44100), minDelayInMs (0), maxDelayInMs (40), delayBuffer (0, 0),
               delayCounter(0), delayInSamples(0), prevProcessedLeft(0), prevProcessedRight(0)
     {
         //initialise smart pointers with objects
@@ -53,7 +53,7 @@ public:
         
         //prepare ranges: set start, end, interval, skew
         delayRange.start = 4;
-        delayRange.end = Utility::msToSamples ((double) maxDelayInMs, sampleRate * xFactor);
+        delayRange.end = Utility::msToSamples ((double) maxDelayInMs, sampleRate);
         
         //prepare wavetables
         //set sample rate, range, mono/stereo & count wtt
@@ -73,13 +73,24 @@ public:
         delayRange.end = Utility::msToSamples (maxDelayInMs, sampleRate);
     }
     
+    void changeMinDelayTime (float newMinDelayMs)
+    {
+        float minDelaySamp = std::max (4, Utility::msToSamples (newMinDelayMs, sampleRate));
+        delayRange.start = minDelaySamp;
+    }
+    
+    void changeSweepWidth (float sweepWidthMs)
+    {
+        sweepWidthMs = std::min (sweepWidthMs, maxDelayInMs);
+        changeMinDelayTime (maxDelayInMs - sweepWidthMs);
+    }
+    
     ScopedPointer<Oscilator> wavetable;
-    float frequency;
-    int xFactor;
     
 protected:
     double sampleRate;
     
+    //filters
     AntiAliasingFilter lpFilter;
     AntiAliasingFilter lpFilter1;
     
@@ -91,6 +102,11 @@ protected:
     double delayInSamples;
     
     float prevProcessedLeft, prevProcessedRight;
+    
+    //gain values
+    float feedbackGain;
+    float dryWet;
+    float prevSampleGain;
     
     AudioPlayHead::CurrentPositionInfo currentPositionInfo;
     
