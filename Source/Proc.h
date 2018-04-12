@@ -27,7 +27,7 @@ public:
         
         //set wt parameters
         wavetable->setAllParameters (0.1f, 1, 0);
-        wavetable->setStereoOrMono (true, 180);
+        wavetable->setStereoOrMono (true, 90);
     }
     
     virtual ~Proc()
@@ -81,8 +81,6 @@ public:
     
 protected:
     double sampleRate;
-    
-    int lfoSample;
     
     AntiAliasingFilter lpFilter;
     AntiAliasingFilter lpFilter1;

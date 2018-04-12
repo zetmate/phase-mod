@@ -278,9 +278,6 @@ double Oscilator::applyWavetable (float input, int channel)
     if (currentSample >= wtSize)
         resetWavetable();
     
-    else if (valueChanged && currentSample >= 1000)
-        resetWavetable();
-    
     //get read pointer to wt
     const double* wtR = wavetable->getReadPointer (channel);
     double currentValue = range.convertFrom0to1 (wtR[currentSample]);

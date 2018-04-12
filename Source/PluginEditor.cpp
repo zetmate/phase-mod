@@ -18,7 +18,7 @@ Vibrato2AudioProcessorEditor::Vibrato2AudioProcessorEditor (Vibrato2AudioProcess
 {
     setSize (600, 400);
     
-    Utility::addSlider (&frequencySlider, &frequencyLabel, "Frequency", 0.1, 20, 0.1, 5,
+    Utility::addSlider (&frequencySlider, &frequencyLabel, "Frequency", 0.1, 19, 0.01, 5000,
                         "Hz", Slider::SliderStyle::RotaryVerticalDrag,
                         Slider::TextEntryBoxPosition::TextBoxBelow, 0.1, this, this, true);
     
