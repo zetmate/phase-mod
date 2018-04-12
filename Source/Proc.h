@@ -17,16 +17,16 @@
 class Proc
 {
 public:
-    Proc()  : frequency (0.1), xFactor(1), sampleRate (44100), lfoSample(0), minDelayInMs (0), maxDelayInMs (37), delayBuffer (0, 0),
+    Proc()  : frequency (0.1), xFactor(1), sampleRate (44100), minDelayInMs (0), maxDelayInMs (40), delayBuffer (0, 0),
               delayCounter(0), delayInSamples(0), prevProcessedLeft(0), prevProcessedRight(0)
     {
         //initialise smart pointers with objects
-        wavetable = new Oscilator();
+        wavetable = new Oscilator (0.1);
         
         //set initial values
         
         //set wt parameters
-        wavetable->setAllParameters (0.1f, 1, 0);
+        wavetable->setAllParameters (0.1, 1, 0);
         wavetable->setStereoOrMono (true, 90);
     }
     
@@ -58,7 +58,6 @@ public:
         //prepare wavetables
         //set sample rate, range, mono/stereo & count wtt
         wavetable->setSampleRate (sampleRate);
-        wavetable->setRange (delayRange);
         wavetable->countWavetable();
         
         //prepare copy buffers
@@ -70,9 +69,8 @@ public:
     
     void changeMaxDelayTime (float newMaxDelayMs)
     {
+        maxDelayInMs = newMaxDelayMs;
         delayRange.end = Utility::msToSamples (maxDelayInMs, sampleRate);
-        wavetable->setRange (delayRange);
-        wavetable->valueHasChanged();
     }
     
     ScopedPointer<Oscilator> wavetable;
@@ -137,7 +135,7 @@ public:
     void processBlock (AudioSampleBuffer& buffer, AudioPlayHead* playHead) override
     {
         //prepare transpor state info
-        //bool transportIsAvailable = playHead->getCurrentPosition(currentPositionInfo);
+        bool transportIsAvailable = playHead->getCurrentPosition(currentPositionInfo);
         
         //process only if the transport state = is playing or not available
         //if (currentPositionInfo.isPlaying || !(transportIsAvailable))
@@ -170,8 +168,20 @@ public:
                     delayCounter = 0;
                 
                 //get current delay time
-                float delayInSamplesLeft = wavetable->applyWavetable (inputLeft, 0);
-                float delayInSamplesRight = wavetable->applyWavetable (inputRight, 1);
+                //========================================================================
+                float delayInSamplesLeft;
+                float delayInSamplesRight;
+                
+                {
+                    //get current wt value
+                    float wtValueLeft = wavetable->applyWavetable (inputLeft, 0);
+                    float wtValueRight = wavetable->applyWavetable (inputRight, 1);
+                    
+                    //convert wt value
+                    delayInSamplesLeft = delayRange.convertFrom0to1 (wtValueLeft);
+                    delayInSamplesRight = delayRange.convertFrom0to1 (wtValueRight);
+                }
+                //========================================================================
                 
                 //interpolate samples
                 //========================================================================

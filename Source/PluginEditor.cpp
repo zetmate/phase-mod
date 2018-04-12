@@ -18,7 +18,7 @@ Vibrato2AudioProcessorEditor::Vibrato2AudioProcessorEditor (Vibrato2AudioProcess
 {
     setSize (600, 400);
     
-    Utility::addSlider (&frequencySlider, &frequencyLabel, "Frequency", 0.1, 19, 0.01, 5000,
+    Utility::addSlider (&frequencySlider, &frequencyLabel, "Frequency", 0.1, 20, 0.01, 5,
                         "Hz", Slider::SliderStyle::RotaryVerticalDrag,
                         Slider::TextEntryBoxPosition::TextBoxBelow, 0.1, this, this, true);
     
@@ -26,9 +26,9 @@ Vibrato2AudioProcessorEditor::Vibrato2AudioProcessorEditor (Vibrato2AudioProcess
                         "%", Slider::SliderStyle::RotaryVerticalDrag,
                         Slider::TextEntryBoxPosition::TextBoxBelow, 70, this, this, true);
     
-    Utility::addSlider (&delaySlider, &delayLabel, "Delay", 3, 40, 0.1, 15,
+    Utility::addSlider (&delaySlider, &delayLabel, "Delay", 25, 60, 0.01, 39,
                         "ms", Slider::SliderStyle::RotaryVerticalDrag,
-                        Slider::TextEntryBoxPosition::TextBoxBelow, 7, this, this, true);
+                        Slider::TextEntryBoxPosition::TextBoxBelow, 39, this, this, true);
     
     Utility::addSlider (&smoothSlider, &smoothLabel, "Smooth", 0, 0.9, 0.01, 3,
                         " ", Slider::SliderStyle::RotaryVerticalDrag,
@@ -49,11 +49,10 @@ void Vibrato2AudioProcessorEditor::sliderValueChanged (Slider* slider)
     if (slider == &frequencySlider)
     {
         processor.proc->wavetable->setFrequency ((float) slider->getValue());
-        processor.proc->wavetable->valueHasChanged();
     }
     else if (slider == &delaySlider)
     {
-        processor.proc->changeMaxDelayTime (delaySlider.getValue());
+        processor.proc->changeMaxDelayTime (slider->getValue());
     }
 }
 

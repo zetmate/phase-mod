@@ -14,7 +14,7 @@
 //===============================================================================
 //===============================================================================
 Wavetable::Wavetable()
-        : wavetable (new AudioBuffer<double>(0, 0)), currentSample(INFINITY), sampleRate(44100), wtSize(0), valueChanged(false)
+        : wavetable (new AudioBuffer<double> (0, 0)), currentSample(INFINITY), sampleRate(44100), wtSize(0), valueChanged(false)
 
 {
 }
@@ -38,15 +38,9 @@ bool Wavetable::setSampleRate (double newSampleRate)
     }
 }
 
-void Wavetable::setRange (NormalisableRange<float> const &rangeToUse)
-{
-    range = rangeToUse;
-}
-
 void Wavetable::resetWavetable()
 {
     currentSample = 0;
-    //countWavetable();
     
     if (valueChanged)
     {
@@ -87,7 +81,7 @@ double Envelope::applyWavetable (float input, int channel)
     if (currentSample == wtSize)
         return getReleaseLevel();
     
-    double value = range.convertFrom0to1 (wtData[currentSample]);
+    double value = wtData[currentSample];
     currentSample++;
     
     return value;
@@ -148,12 +142,12 @@ double Envelope::getAttackTime() const
 
 double Envelope::getAttackStartLevel() const
 {
-    return range.convertFrom0to1 (attackStartLevel);
+    return attackStartLevel;
 }
 
 double Envelope::getAttackEndLevel() const
 {
-    return range.convertFrom0to1 (attackEndLevel);
+    return attackEndLevel;
 }
 
 double Envelope::getReleaseTime() const
@@ -163,7 +157,7 @@ double Envelope::getReleaseTime() const
 
 double Envelope::getReleaseLevel() const
 {
-    return range.convertFrom0to1 (releaseLevel);
+    return releaseLevel;
 }
 
 //setters
@@ -200,7 +194,7 @@ void Envelope::setReleaseTime (double newReleaseTime)
 
 void Envelope::setAttackStartLevel (double newAttackStartLevel)
 {
-    attackStartLevel = range.convertTo0to1 (newAttackStartLevel);
+    attackStartLevel = newAttackStartLevel;
     
     if (attackStartLevel > 1)
         attackStartLevel = 1;
@@ -210,7 +204,7 @@ void Envelope::setAttackStartLevel (double newAttackStartLevel)
 
 void Envelope::setAttackEndLevel (double newAttackEndLevel)
 {
-    attackEndLevel = range.convertTo0to1 (newAttackEndLevel);
+    attackEndLevel = newAttackEndLevel;
     
     if (attackEndLevel > 1)
         attackEndLevel = 1;
@@ -220,7 +214,7 @@ void Envelope::setAttackEndLevel (double newAttackEndLevel)
 
 void Envelope::setReleaseLevel (double newReleaseLevel)
 {
-    releaseLevel = range.convertTo0to1 (newReleaseLevel);
+    releaseLevel = newReleaseLevel;
     
     if (releaseLevel > 1)
         releaseLevel = 1;
@@ -262,8 +256,7 @@ void Envelope::setSampleRateRelatedValues (double newSampleRate)
 //======================================================================================
 //======================================================================================
 
-Oscilator::Oscilator()  : frequency(1), amplitude(1), phaseOffsetLeft(0), phaseOffsetRight(0.5),
-                          stereo(false)
+Oscilator::Oscilator (double minFreq)  : minFrequency(minFreq), amplitude(1), phaseOffsetLeft(0), phaseOffsetRight(0.5), stereo(false), counterStep(1)
 {
 }
 
@@ -280,19 +273,17 @@ double Oscilator::applyWavetable (float input, int channel)
     
     //get read pointer to wt
     const double* wtR = wavetable->getReadPointer (channel);
-    double currentValue = range.convertFrom0to1 (wtR[currentSample]);
+    double currentValue = wtR[currentSample];
     
     if (!(stereo) || channel == 1)
-        currentSample++;
+        currentSample += counterStep;
     
     return currentValue;
 }
 
 void Oscilator::countWavetable()
 {
-    //set wavetable size
-    wtSize = sampleRate / frequency;
-    
+    //check and set appropriate number of channels
     if (stereo)
         wavetable->setSize (2, wtSize);
     else
@@ -329,6 +320,7 @@ void Oscilator::countWavetable()
 
 void Oscilator::setSampleRateRelatedValues (double newSampleRate)
 {
+    wtSize = newSampleRate / minFrequency;
 }
 
 //setters
@@ -370,7 +362,10 @@ void Oscilator::setAllParameters (double newFrequency, double newAmplitude, doub
 
 void Oscilator::setFrequency (double newFrequency)
 {
-    frequency = newFrequency;
+    if (newFrequency < minFrequency)
+        newFrequency = minFrequency;
+        
+    counterStep = newFrequency / minFrequency;
 }
 
 void Oscilator::setAmplitude (double newAmplitude)

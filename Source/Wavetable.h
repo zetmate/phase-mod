@@ -22,14 +22,12 @@ public:
     virtual void setSampleRateRelatedValues (double newSampleRate) = 0;
     
     bool setSampleRate (double newSampleRate);
-    void setRange (NormalisableRange<float> const &rangeToUse);
     void resetWavetable();
     void valueHasChanged();
     
-    std::shared_ptr<AudioBuffer<double>> wavetable;
+    ScopedPointer<AudioBuffer<double>> wavetable;
     
 protected:
-    NormalisableRange<float> range;
     int currentSample;
     
     double sampleRate;
@@ -117,7 +115,7 @@ public:
         square
     };
     
-    Oscilator ();
+    Oscilator (double minFreq);
     ~Oscilator();
     
     void countWavetable() override;
@@ -133,13 +131,14 @@ public:
     void setPhaseOffset (double newOffset);
     
 private:
-    double frequency;
+    double minFrequency;
     double amplitude;
     double phaseOffsetLeft;
     double phaseOffsetRight;
     double ampOffsetLeft;
     double ampOffsetRight;
     bool stereo;
+    float counterStep;
 };
 
 
