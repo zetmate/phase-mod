@@ -22,19 +22,19 @@ Vibrato2AudioProcessorEditor::Vibrato2AudioProcessorEditor (Vibrato2AudioProcess
                         "Hz", Slider::SliderStyle::RotaryVerticalDrag,
                         Slider::TextEntryBoxPosition::TextBoxBelow, 0.1, this, this, true);
     
-    Utility::addSlider (&feedbackSlider, &feedbackLabel, "Feedback", -100, 100, 1, 50,
+    Utility::addSlider (&feedbackSlider, &feedbackLabel, "Feedback", -100, 100, 1, 0,
                         "%", Slider::SliderStyle::RotaryVerticalDrag,
                         Slider::TextEntryBoxPosition::TextBoxBelow, 70, this, this, true);
     
-    Utility::addSlider (&maxDelaySlider, &maxDelayLabel, "Max Delay", 25, 60, 0.01, 39,
+    Utility::addSlider (&maxDelaySlider, &maxDelayLabel, "Max Delay", 3, 60, 0.001, 39,
                         "ms", Slider::SliderStyle::RotaryVerticalDrag,
                         Slider::TextEntryBoxPosition::TextBoxBelow, 39, this, this, true);
     
-    Utility::addSlider (&sweepWidthSlider, &sweepWidthLabel, "Sweep Width", 0.4, 60, 0.01, 10,
+    Utility::addSlider (&sweepWidthSlider, &sweepWidthLabel, "Sweep Width", 0.4, 60, 0.001, 10,
                         "ms", Slider::SliderStyle::RotaryVerticalDrag,
                         Slider::TextEntryBoxPosition::TextBoxBelow, 39, this, this, true);
     
-    Utility::addSlider (&smoothSlider, &smoothLabel, "Smooth", -0.5, 0.5, 0.1, 0,
+    Utility::addSlider (&smoothSlider, &smoothLabel, "Smooth", -0.1, 0.1, 0.01, 0,
                         " ", Slider::SliderStyle::RotaryVerticalDrag,
                         Slider::TextEntryBoxPosition::TextBoxBelow, 0, this, this, true);
     

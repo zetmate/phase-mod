@@ -18,15 +18,15 @@
 class Proc
 {
 public:
-    Proc()  : sampleRate (44100), minDelayInMs (0), maxDelayInMs (40), delayBuffer (0, 0),
+    Proc()  : sampleRate (44100), minDelayInMs (0), maxDelayInMs (39), delayBuffer (0, 0),
               delayCounter(0), delayInSamples(0), prevDelayedLeft(0), prevDelayedRight(0),
-              feedbackGain(0.9), prevSampleGain(0), dryWetPropotion(100), dryGain(0), wetGain(0)
+              feedbackGain(0), prevSampleGain(0), dryGain(0), wetGain(0), dryWetPropotion(1)
     {
         //initialise smart pointers with objects
         wavetable = new Oscilator (0.1);
         
         //set initial values
-        setDryWetMix (100);
+        setDryWetMix (1);
         
         //set wt parameters
         wavetable->setAllParameters (0.1, 1, 0);
@@ -251,15 +251,12 @@ public:
                 
                 //count dry & wet gains
                 wetGain = dryWetPropotion;
-                dryGain = 1 - wetGain;
-                
-                dryGain += 1;
-                wetGain += 1;
+                dryGain = 1;
                 
                 //output signal
-                leftBufferW [sample] = (dryGain * inputLeft + wetGain * delayedLeft) * 0.5;
+                leftBufferW [sample] = dryGain * inputLeft + wetGain * delayedLeft;
                 
-                rightBufferW [sample] = (dryGain * inputRight + wetGain * delayedRight) * 0.5;
+                rightBufferW [sample] = dryGain * inputRight + wetGain * delayedRight;
                     
                 //store input signal in the delay buffer
                 leftDelayW [delayCounter] = (inputLeft + feedbackGain * delayedLeft
