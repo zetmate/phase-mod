@@ -96,13 +96,12 @@ void Vibrato2AudioProcessor::changeProgramName (int index, const String& newName
 //==============================================================================
 void Vibrato2AudioProcessor::prepareToPlay (double sampleRate, int samplesPerBlock)
 {
-    stereoProc.prepare (sampleRate, samplesPerBlock);
-    monoProc.prepare (sampleRate, samplesPerBlock);
-    
     if (getTotalNumInputChannels() == 1)
         proc = &monoProc;
     else
         proc = &stereoProc;
+    
+    proc->prepare (sampleRate, samplesPerBlock);
 }
 
 void Vibrato2AudioProcessor::releaseResources()

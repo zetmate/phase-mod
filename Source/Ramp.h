@@ -18,8 +18,9 @@ public:
     Ramp();
     ~Ramp();
     
-    void setRange(double start, double end);
-    void setTime(double ms, double sampleRate);
+    void setRange (double start, double end);
+    void setTime (double ms, double sampleRate);
+    void updateInterval();
     double applyRamp (double &value);
     
 private:

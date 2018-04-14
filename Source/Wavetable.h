@@ -38,22 +38,6 @@ private:
 };
 
 //========================================================================
-//========================================================================
-
-//class Sine  : public Wavetable
-//{
-//    Sine();
-//    ~Sine();
-//    
-//    void countWavetable (int numChannels) override;
-//    double applyWavetable (int channel) override;
-//    void setFrequency (double newFrequency);
-//    
-//private:
-//    double frequency, interval;
-//};
-
-//========================================================================
 class Envelope  : public Wavetable
 {
 public:

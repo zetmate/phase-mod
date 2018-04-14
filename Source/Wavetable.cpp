@@ -14,7 +14,7 @@
 //===============================================================================
 //===============================================================================
 Wavetable::Wavetable()
-        : wavetable (new AudioBuffer<double> (0, 0)), currentSample(INFINITY), sampleRate(44100), wtSize(0), valueChanged(false)
+        : wavetable (new AudioBuffer<double> (0, 0)), currentSample(INFINITY), sampleRate(10000), wtSize(0), valueChanged(false)
 
 {
 }

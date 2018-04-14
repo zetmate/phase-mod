@@ -18,7 +18,7 @@
 class Proc
 {
 public:
-    Proc()  : sampleRate (44100), minDelayInMs (0), maxDelayInMs (39), delayBuffer (0, 0),
+    Proc()  : sampleRate (0), minDelayInMs (0), maxDelayInMs (39), delayBuffer (0, 0),
               delayCounter(0), delayInSamples(0), prevDelayedLeft(0), prevDelayedRight(0),
               feedbackGain(0), prevSampleGain(0), dryGain(0), wetGain(0), dryWetPropotion(1)
     {
@@ -45,10 +45,15 @@ public:
         sampleRate = newSampleRate;
         
         //prepare ramps
-        //set time
+        //set time & update interval
         feedbackRamp.setTime (5, sampleRate);
+        feedbackRamp.updateInterval();
+        
         prevSampleRamp.setTime (5, sampleRate);
+        prevSampleRamp.updateInterval();
+        
         dryWetRamp.setTime (5, sampleRate);
+        dryWetRamp.updateInterval();
         
         //prepare filters
         //count coefficients
@@ -93,7 +98,8 @@ public:
     
     void setFeedbackGain (float newFeedbackGain)
     {
-        feedbackRamp.setRange (feedbackGain, newFeedbackGain);
+        //feedbackRamp.setRange (feedbackGain, newFeedbackGain);
+        feedbackGain = newFeedbackGain;
     }
     
     void setPrevSampleGain (float newPrevSampGain)
@@ -182,8 +188,8 @@ public:
         bool transportIsAvailable = playHead->getCurrentPosition(currentPositionInfo);
         
         //process only if the transport state = is playing or not available
-        if (currentPositionInfo.isPlaying || !(transportIsAvailable))
-        //if (true)
+        //if (currentPositionInfo.isPlaying || !(transportIsAvailable))
+        if (true)
         {
             //constants
             const int numSamples = buffer.getNumSamples();
@@ -245,7 +251,7 @@ public:
                 float delayedRight = lpFilter.filterSignal (interpolatedRight, 1);
                 
                 //apply gain ramps
-                feedbackRamp.applyRamp (feedbackGain);
+                //feedbackRamp.applyRamp (feedbackGain);
                 prevSampleRamp.applyRamp (prevSampleGain);
                 dryWetRamp.applyRamp (dryWetPropotion);
                 

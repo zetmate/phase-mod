@@ -32,6 +32,11 @@ void Ramp::setRange (double start, double end)
     currentValue = start;
 }
 
+void Ramp::updateInterval()
+{
+    setRange (startValue, endValue);
+}
+
 void Ramp::setTime (double ms, double sampleRate)
 {
     if (roundToInt(time) != roundToInt(ms))
@@ -52,3 +57,4 @@ double Ramp::applyRamp (double &value)
     
     return value;
 }
+
