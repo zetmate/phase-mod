@@ -46,12 +46,6 @@ public:
         
         //prepare ramps
         //set time & update interval
-        feedbackRamp.setTime (5, sampleRate);
-        feedbackRamp.updateInterval();
-        
-        prevSampleRamp.setTime (5, sampleRate);
-        prevSampleRamp.updateInterval();
-        
         dryWetRamp.setTime (5, sampleRate);
         dryWetRamp.updateInterval();
         
@@ -98,13 +92,12 @@ public:
     
     void setFeedbackGain (float newFeedbackGain)
     {
-        //feedbackRamp.setRange (feedbackGain, newFeedbackGain);
         feedbackGain = newFeedbackGain;
     }
     
     void setPrevSampleGain (float newPrevSampGain)
     {
-        prevSampleRamp.setRange (prevSampleGain, newPrevSampGain);
+        prevSampleGain = newPrevSampGain;
     }
     
     void setDryWetMix (float newDryWetPropotion)
@@ -138,8 +131,6 @@ protected:
     double dryWetPropotion;
     
     //ramps
-    Ramp feedbackRamp;
-    Ramp prevSampleRamp;
     Ramp dryWetRamp;
     
     AudioPlayHead::CurrentPositionInfo currentPositionInfo;
@@ -251,8 +242,6 @@ public:
                 float delayedRight = lpFilter.filterSignal (interpolatedRight, 1);
                 
                 //apply gain ramps
-                //feedbackRamp.applyRamp (feedbackGain);
-                prevSampleRamp.applyRamp (prevSampleGain);
                 dryWetRamp.applyRamp (dryWetPropotion);
                 
                 //count dry & wet gains
