@@ -50,30 +50,30 @@ Vibrato2AudioProcessorEditor::~Vibrato2AudioProcessorEditor()
 //==============================================================================
 void Vibrato2AudioProcessorEditor::sliderValueChanged (Slider* slider)
 {
-//    if (slider == &frequencySlider)
-//    {
-//        processor.proc.wavetable->setFrequency ((float) slider->getValue());
-//    }
-//    else if (slider == &maxDelaySlider)
-//    {
-//        processor.proc.changeMaxDelayTime (slider->getValue());
-//    }
-//    else if (slider == &sweepWidthSlider)
-//    {
-//        processor.proc.changeSweepWidth (slider->getValue());
-//    }
-//    else if (slider == &feedbackSlider)
-//    {
-//        processor.proc.setFeedbackGain (slider->getValue() / 100);
-//    }
-//    else if (slider == &smoothSlider)
-//    {
-//        processor.proc.setPrevSampleGain (slider->getValue());
-//    }
-//    else if (slider == &dryWetSlider)
-//    {
-//        processor.proc.setDryWetMix (slider->getValue() / 100);
-//    }
+    if (slider == &frequencySlider)
+    {
+        processor.proc.voiceClose.wavetable->setFrequency ((float) slider->getValue());
+    }
+    else if (slider == &maxDelaySlider)
+    {
+        processor.proc.voiceClose.setMaxDelayTime (slider->getValue());
+    }
+    else if (slider == &sweepWidthSlider)
+    {
+        processor.proc.voiceClose.setSweepWidth (slider->getValue());
+    }
+    else if (slider == &feedbackSlider)
+    {
+        processor.proc.voiceClose.setFeedbackGain (slider->getValue() / 100);
+    }
+    else if (slider == &smoothSlider)
+    {
+        processor.proc.voiceClose.setPrevSampleGain (slider->getValue());
+    }
+    else if (slider == &dryWetSlider)
+    {
+        processor.proc.voiceClose.setDryWetMix (slider->getValue() / 100);
+    }
 }
 
 //==============================================================================

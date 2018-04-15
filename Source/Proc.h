@@ -37,6 +37,9 @@ public:
         //update sample rate
         sampleRate = newSampleRate;
         
+        //prepare internal processors
+        voiceClose.prepare (newSampleRate, bufferSize);
+        
         //prepare ramps
         //set time & update interval
         
@@ -55,12 +58,26 @@ public:
     //functions for changing number of the proceesor's channels
     void setToMono()
     {
+        //set appropriate processing functions
         processBlock = &Proc::processBlockMono;
+        
+        //set internal processors to mono behaviour
+        voiceClose.setToMono();
+        
+        //set wavetavle to mono
+        
     }
     
     void setToStereo()
     {
+        //set appropriate processing functions
         processBlock = &Proc::processBlockStereo;
+        
+        //set internal processors to stereo behaviour
+        voiceClose.setToStereo();
+        
+        //set wavetavle to mono
+        
     }
     
     void releaseResources()
@@ -76,6 +93,7 @@ public:
             //reset counters
             
             //release resources of the internal processors
+            voiceClose.releaseResources();
             
             //set resourcesReleased to true
             resourcesReleased = true;
@@ -84,6 +102,9 @@ public:
     
     //functions for connection with GUI
     //----------
+    
+    //internal processors
+    Flanger voiceClose;
     
     //function pointers
     std::function<void (Proc&, AudioSampleBuffer& buffer, AudioPlayHead* playHead)>
@@ -116,12 +137,11 @@ private:
         bool transportIsAvailable = playHead->getCurrentPosition(currentPositionInfo);
         
         //process only if the transport state = is playing or not available
-        if (currentPositionInfo.isPlaying || !(transportIsAvailable))
-        //if (true)
+        //if (currentPositionInfo.isPlaying || !(transportIsAvailable))
+        if (true)
         {
             //constants
             const int numSamples = buffer.getNumSamples();
-            const int circularBufferSize = delayBuffer.getNumSamples();
             
             //get pointers to buffer
             const float* leftBufferR = buffer.getReadPointer(0);
@@ -129,11 +149,38 @@ private:
             float* leftBufferW = buffer.getWritePointer (0);
             float* rightBufferW = buffer.getWritePointer (1);
             
+            //======get pointers to delay buffers
+            //voice
+            const float* voiceClose_LeftDelayR = voiceClose.getReadPointerToDelayBuffer (0);
+            const float* voiceClose_RightDelayR = voiceClose.getReadPointerToDelayBuffer (1);
+            float* voiceClose_LeftDelayW = voiceClose.getWritePointerToDelayBuffer (0);
+            float* voiceClose_RightDelayW = voiceClose.getWritePointerToDelayBuffer (1);
+            
             for (int sample = 0; sample < numSamples; ++sample)
             {
                 //get input signal
                 const float inputLeft = leftBufferR[sample];
                 const float inputRight = rightBufferR[sample];
+                
+                //============================================
+                //  PROCESS CLOSE VOICE
+                //============================================
+                
+                //declare variables to store output of the Close voice
+                float voiceCloseLeft = 0.0;
+                float voiceCloseRight = 0.0;
+                
+                voiceClose.processSample (voiceClose,
+                                          inputLeft, inputRight,
+                                          voiceCloseLeft, voiceCloseRight,
+                                          voiceClose_LeftDelayR,
+                                          voiceClose_RightDelayR,
+                                          voiceClose_LeftDelayW,
+                                          voiceClose_RightDelayW);
+                
+                //output signal
+                leftBufferW [sample] = voiceCloseLeft;
+                rightBufferW [sample] = voiceCloseRight;
             }
         }
         else

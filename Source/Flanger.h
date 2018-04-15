@@ -28,10 +28,11 @@ public:
         
         //set wt parameters
         wavetable->setAllParameters (0.1, 1, 0);
-        wavetable->setStereoOrMono (true, 90);
         
         //function pointers' default values
-        processBlock = &Flanger::processBlockMono;
+        
+        //set default mono behaviour
+        setToMono();
     }
     
     virtual ~Flanger()
@@ -99,14 +100,19 @@ public:
     //functions for changing number of the proceesor's channels
     void setToMono()
     {
-        //processBlockFunc = &Proc::processBlockMono;
+        //set appropriate processing functions
         processBlock = &Flanger::processBlockMono;
+        processSample = &Flanger::processSampleMono;
+        
+        //set wavetavle to mono
+        wavetable->setStereoOrMono (false, 90);
     }
     
     void setToStereo()
     {
-        //processBlockFunc = &Proc::processBlockStereo;
+        wavetable->setStereoOrMono (true, 90);
         processBlock = &Flanger::processBlockStereo;
+        processSample = &Flanger::processSampleStereo;
     }
     
     //setters
@@ -146,12 +152,12 @@ public:
     //getters
     const float* getReadPointerToDelayBuffer (int channel)
     {
-        delayBuffer.getReadPointer (channel);
+        return delayBuffer.getReadPointer (channel);
     }
     
     float* getWritePointerToDelayBuffer (int channel)
     {
-        delayBuffer.getWritePointer (channel);
+        return delayBuffer.getWritePointer (channel);
     }
     
     ScopedPointer<Oscilator> wavetable;
@@ -160,11 +166,13 @@ public:
     std::function<void (Flanger&, AudioSampleBuffer& buffer, AudioPlayHead* playHead)>
                             processBlock = {};
     
-    std::function<AudioSampleBuffer (Flanger&, const float leftInput, const float rightInput,
-                                     const float* leftDelayR,
-                                     const float* rightDelayR,
-                                     float* leftDelayW,
-                                     float* rightDelayW)>
+    std::function<void (Flanger&,
+                        const float inputLeft, const float inputRight,
+                        float& outputLeft, float& outputRight,
+                        const float* leftDelayR,
+                        const float* rightDelayR,
+                        float* leftDelayW,
+                        float* rightDelayW)>
                             processSample = {};
     
 protected:
@@ -319,33 +327,69 @@ private:
 //=====================================================================================
 //    PROCESSING FUNCTIONS FOR ONE SAMPLE
 //=====================================================================================
-    AudioSampleBuffer processSampleMono (const float leftInput, const float rightInput,
-                                         const float* leftDelayR,
-                                         const float* rightDelayR,
-                                         float* leftDelayW,
-                                         float* rightDelayW)
+    void processSampleMono (const float inputLeft, const float inputRight,
+                            float& outputLeft, float& outputRight,
+                            const float* leftDelayR,
+                            const float* rightDelayR,
+                            float* leftDelayW,
+                            float* rightDelayW)
     {
-        AudioSampleBuffer output (1, 1);
-        float* outputLeft = output.getWritePointer (0, 0);
+        //check counter
+        if (delayCounter >= circularBufferSize)
+            delayCounter = 0;
+        
+        //get current delay time
+        //========================================================================
+        float delayInSamples;
+        
+        {
+            //get current wt value
+            float wtValue = wavetable->applyWavetable (inputLeft, 0);
+            
+            //convert wt value
+            delayInSamples = delayRange.convertFrom0to1 (wtValue);
+        }
+        //========================================================================
+        
+        //interpolate samples
+        //========================================================================
+        float interpolated = Utility::fractDelayCubicInt (leftDelayR,
+                                                          delayInSamples,
+                                                          delayCounter,
+                                                          circularBufferSize);
+        //=========================================================================
+        
+        //filter interpolated samples
+        float delayed = lpFilter.filterSignal (interpolated, 0);
+        
+        //apply gain ramps
+        dryWetRamp.applyRamp (dryWetPropotion);
+        
+        //count dry & wet gains
+        wetGain = dryWetPropotion;
+        dryGain = 1;
+        
+        //output signal
+        outputLeft = dryGain * inputLeft + wetGain * delayed;
+        
+        //store input signal in the delay buffer
+        leftDelayW [delayCounter] = (inputLeft + feedbackGain * delayed
+                                     + prevSampleGain * prevDelayedLeft);
+        
+        //store previous values
+        prevDelayedLeft = delayed;
+        
+        //increase counters
+        delayCounter++;
     }
     
-    AudioSampleBuffer processSampleStereo (const float leftInput, const float rightInput,
-                                           const float* leftDelayR,
-                                           const float* rightDelayR,
-                                           float* leftDelayW,
-                                           float* rightDelayW)
+    void processSampleStereo (const float inputLeft, const float inputRight,
+                              float& outputLeft, float& outputRight,
+                              const float* leftDelayR,
+                              const float* rightDelayR,
+                              float* leftDelayW,
+                              float* rightDelayW)
     {
-        //=================================================
-        //  PREPARE OUTPUT BUFFER
-        //=================================================
-        AudioSampleBuffer output (2, 1);
-        float* outputLeft = output.getWritePointer (0, 0);
-        float* outputRight = output.getWritePointer (1, 0);
-        
-        //=================================================
-        //  DO PROCESSING
-        //=================================================
-        
         //check counter
         if (delayCounter >= circularBufferSize)
             delayCounter = 0;
@@ -391,9 +435,9 @@ private:
         dryGain = 1;
         
         //output signal
-        leftBufferW [sample] = dryGain * inputLeft + wetGain * delayedLeft;
+        outputLeft = dryGain * inputLeft + wetGain * delayedLeft;
         
-        rightBufferW [sample] = dryGain * inputRight + wetGain * delayedRight;
+        outputRight = dryGain * inputRight + wetGain * delayedRight;
         
         //store input signal in the delay buffer
         leftDelayW [delayCounter] = (inputLeft + feedbackGain * delayedLeft
