@@ -9,6 +9,7 @@
       <FILE id="rps4y6" name="PluginProcessor.h" compile="0" resource="0"
             file="Source/PluginProcessor.h"/>
       <FILE id="A3NXut" name="Proc.h" compile="0" resource="0" file="Source/Proc.h"/>
+      <FILE id="A40KWb" name="Flanger.h" compile="0" resource="0" file="Source/Flanger.h"/>
       <FILE id="SuzrIt" name="Wavetable.cpp" compile="1" resource="0" file="Source/Wavetable.cpp"/>
       <FILE id="QThQ9J" name="Wavetable.h" compile="0" resource="0" file="Source/Wavetable.h"/>
       <FILE id="ZWriDD" name="Limiter.h" compile="0" resource="0" file="Source/Limiter.h"/>

@@ -19,8 +19,6 @@ public:
     virtual ~Filter();
     
     virtual void countCoefficients (double sampleRate) = 0;
-//    virtual void countLpfCoefficients (double sampleRate, double cutOffFreq) = 0;
-//    virtual void countHpfCoefficients (double sampleRate, double cutOffFreq) = 0;
 
     virtual float filterSignal (float input, int channel);
     

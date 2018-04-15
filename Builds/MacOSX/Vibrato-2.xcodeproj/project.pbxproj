@@ -50,6 +50,7 @@
 		6AD387D4753B4785419E1B07 = {isa = PBXBuildFile; fileRef = 780D179E479C2A5C5DFFA06F; };
 		E33D172A50934AB7754F4AE6 = {isa = PBXBuildFile; fileRef = B6CB31C36F12236755B43B0F; };
 		06BD59ED04694212619F3839 = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; name = "include_juce_gui_extra.mm"; path = "../../JuceLibraryCode/include_juce_gui_extra.mm"; sourceTree = "SOURCE_ROOT"; };
+		0718BE2FE95565170A279EE7 = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = Flanger.h; path = ../../Source/Flanger.h; sourceTree = "SOURCE_ROOT"; };
 		087017775F0ECAB8876FF5A8 = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; name = "include_juce_audio_basics.mm"; path = "../../JuceLibraryCode/include_juce_audio_basics.mm"; sourceTree = "SOURCE_ROOT"; };
 		1171B4B7A89C19EB284E2AF9 = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = System/Library/Frameworks/AudioToolbox.framework; sourceTree = SDKROOT; };
 		156AAE72E7B75665ABE6AFFE = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; name = "include_juce_gui_basics.mm"; path = "../../JuceLibraryCode/include_juce_gui_basics.mm"; sourceTree = "SOURCE_ROOT"; };
@@ -123,6 +124,7 @@
 					DD1CF160F1798922EC1AD046,
 					CA1415B2B90C8E966864900B,
 					E8807FE1D7322EC878E5CBA7,
+					0718BE2FE95565170A279EE7,
 					88977F4CAAE7153D4EB7368E,
 					7A6EB49C440D22D75A02CA1B,
 					8DB2CF1071FA8162A896F3D1,
