@@ -56,12 +56,9 @@ public:
     void getStateInformation (MemoryBlock& destData) override;
     void setStateInformation (const void* data, int sizeInBytes) override;
     
-    //Proc* proc;
     Proc proc;
     
 private:
-    StereoProc stereoProc;
-    MonoProc monoProc;
     //==============================================================================
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (Vibrato2AudioProcessor)
 };

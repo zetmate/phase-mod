@@ -129,9 +129,8 @@ public:
     ScopedPointer<Oscilator> wavetable;
     
     //function pointers
-    void (Proc::*processBlockFunc) (AudioSampleBuffer& buffer, AudioPlayHead* playHead) = nullptr;
-    
-    std::function<void (Proc&, AudioSampleBuffer& buffer, AudioPlayHead* playHead)> processBlock = {};
+    std::function<void (Proc&, AudioSampleBuffer& buffer, AudioPlayHead* playHead)>
+                            processBlock = {};
     
 protected:
     double sampleRate;

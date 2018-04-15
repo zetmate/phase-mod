@@ -96,16 +96,10 @@ void Vibrato2AudioProcessor::changeProgramName (int index, const String& newName
 //==============================================================================
 void Vibrato2AudioProcessor::prepareToPlay (double sampleRate, int samplesPerBlock)
 {
-//    if (getTotalNumInputChannels() == 1)
-//        proc = &monoProc;
-//    else
-//        proc = &stereoProc;
-    
     if (getTotalNumInputChannels() == 1)
         proc.setToMono();
     else
         proc.setToStereo();
-    
     
     proc.prepare (sampleRate, samplesPerBlock);
 }
@@ -149,8 +143,6 @@ void Vibrato2AudioProcessor::processBlock (AudioBuffer<float>& buffer, MidiBuffe
     for (auto i = totalNumInputChannels; i < totalNumOutputChannels; ++i)
         buffer.clear (i, 0, buffer.getNumSamples());
 
-    //proc->processBlockFunc (buffer, getPlayHead());
-    //(proc.*processBlockFunc) (buffer, getPlayHead());
     proc.processBlock (proc, buffer, getPlayHead());
 }
 
