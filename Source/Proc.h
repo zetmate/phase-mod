@@ -15,6 +15,8 @@
 #include "Filter.h"
 #include "Limiter.h"
 
+#include <functional>
+
 class Proc
 {
 public:
@@ -31,14 +33,19 @@ public:
         //set wt parameters
         wavetable->setAllParameters (0.1, 1, 0);
         wavetable->setStereoOrMono (true, 90);
+        
+        //function pointers' default values
+        //processBlockFunc = &Proc::processBlockMono;
+        processBlock = &Proc::processBlockMono;
     }
     
     virtual ~Proc()
     {
     }
     
-    void virtual processBlock (AudioSampleBuffer& buffer, AudioPlayHead* playHead) = 0;
+    //void virtual processBlock (AudioSampleBuffer& buffer, AudioPlayHead* playHead) = 0;
     
+    //Prepare for play function
     void prepare (double newSampleRate, int bufferSize)
     {
         //update sample rate
@@ -72,6 +79,20 @@ public:
         delayCounter = 0;
     }
     
+    //functions for changing number of the proceesor's channels
+    void setToMono()
+    {
+        //processBlockFunc = &Proc::processBlockMono;
+        processBlock = &Proc::processBlockMono;
+    }
+    
+    void setToStereo()
+    {
+        //processBlockFunc = &Proc::processBlockStereo;
+        processBlock = &Proc::processBlockStereo;
+    }
+    
+    //functions for connection with GUI
     void changeMaxDelayTime (float newMaxDelayMs)
     {
         maxDelayInMs = newMaxDelayMs;
@@ -107,6 +128,11 @@ public:
     
     ScopedPointer<Oscilator> wavetable;
     
+    //function pointers
+    void (Proc::*processBlockFunc) (AudioSampleBuffer& buffer, AudioPlayHead* playHead) = nullptr;
+    
+    std::function<void (Proc&, AudioSampleBuffer& buffer, AudioPlayHead* playHead)> processBlock = {};
+    
 protected:
     double sampleRate;
     
@@ -133,24 +159,12 @@ protected:
     //ramps
     Ramp dryWetRamp;
     
+    //DAW transport state object
     AudioPlayHead::CurrentPositionInfo currentPositionInfo;
     
 private:
-    
-};
-
-class MonoProc  : public Proc
-{
-public:
-    MonoProc()
-    {
-    }
-    
-    ~MonoProc()
-    {
-    }
-    
-    void processBlock (AudioSampleBuffer& buffer, AudioPlayHead* playHead) override
+    //Mono processing function
+    void processBlockMono (AudioSampleBuffer& buffer, AudioPlayHead* playHead)
     {
         //constants
         const int numSamples = buffer.getNumSamples();
@@ -160,27 +174,16 @@ public:
         float* bufferW = buffer.getWritePointer (0);
         
     };
-};
-
-class StereoProc  : public Proc
-{
-public:
-    StereoProc()
-    {
-    }
     
-    ~StereoProc()
-    {
-    }
-    
-    void processBlock (AudioSampleBuffer& buffer, AudioPlayHead* playHead) override
+    //Stereo processing function
+    void processBlockStereo (AudioSampleBuffer& buffer, AudioPlayHead* playHead)
     {
         //prepare transpor state info
         bool transportIsAvailable = playHead->getCurrentPosition(currentPositionInfo);
         
         //process only if the transport state = is playing or not available
-        //if (currentPositionInfo.isPlaying || !(transportIsAvailable))
-        if (true)
+        if (currentPositionInfo.isPlaying || !(transportIsAvailable))
+        //if (true)
         {
             //constants
             const int numSamples = buffer.getNumSamples();
@@ -252,7 +255,7 @@ public:
                 leftBufferW [sample] = dryGain * inputLeft + wetGain * delayedLeft;
                 
                 rightBufferW [sample] = dryGain * inputRight + wetGain * delayedRight;
-                    
+                
                 //store input signal in the delay buffer
                 leftDelayW [delayCounter] = (inputLeft + feedbackGain * delayedLeft
                                              + prevSampleGain * prevDelayedLeft);

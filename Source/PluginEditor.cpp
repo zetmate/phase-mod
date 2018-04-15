@@ -52,27 +52,27 @@ void Vibrato2AudioProcessorEditor::sliderValueChanged (Slider* slider)
 {
     if (slider == &frequencySlider)
     {
-        processor.proc->wavetable->setFrequency ((float) slider->getValue());
+        processor.proc.wavetable->setFrequency ((float) slider->getValue());
     }
     else if (slider == &maxDelaySlider)
     {
-        processor.proc->changeMaxDelayTime (slider->getValue());
+        processor.proc.changeMaxDelayTime (slider->getValue());
     }
     else if (slider == &sweepWidthSlider)
     {
-        processor.proc->changeSweepWidth (slider->getValue());
+        processor.proc.changeSweepWidth (slider->getValue());
     }
     else if (slider == &feedbackSlider)
     {
-        processor.proc->setFeedbackGain (slider->getValue() / 100);
+        processor.proc.setFeedbackGain (slider->getValue() / 100);
     }
     else if (slider == &smoothSlider)
     {
-        processor.proc->setPrevSampleGain (slider->getValue());
+        processor.proc.setPrevSampleGain (slider->getValue());
     }
     else if (slider == &dryWetSlider)
     {
-        processor.proc->setDryWetMix (slider->getValue() / 100);
+        processor.proc.setDryWetMix (slider->getValue() / 100);
     }
 }
 

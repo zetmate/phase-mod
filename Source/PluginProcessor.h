@@ -56,7 +56,8 @@ public:
     void getStateInformation (MemoryBlock& destData) override;
     void setStateInformation (const void* data, int sizeInBytes) override;
     
-    Proc* proc;
+    //Proc* proc;
+    Proc proc;
     
 private:
     StereoProc stereoProc;
