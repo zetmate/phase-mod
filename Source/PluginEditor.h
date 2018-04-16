@@ -12,24 +12,44 @@
 
 #include "Utility.h"
 #include "PluginProcessor.h"
+#include "VoiceCloseEditor.h"
+#include "VoiceMidEditor.h"
+#include "VoiceFarEditor.h"
+#include "VoiceEchoEditor.h"
+#include "MasterEditor.h"
 
 
 //==============================================================================
 /**
 */
-class Vibrato2AudioProcessorEditor  : public AudioProcessorEditor,
-                                             Slider::Listener
+class Vibrato2AudioProcessorEditor  : public AudioProcessorEditor
 {
 public:
     Vibrato2AudioProcessorEditor (Vibrato2AudioProcessor&);
     ~Vibrato2AudioProcessorEditor();
-
-    //==============================================================================
-    void sliderValueChanged (Slider* slider) override;
+    
     void paint (Graphics&) override;
     void resized() override;
 
 private:
+    
+    Vibrato2AudioProcessor& processor;
+//=============================================
+    //size values
+    int voiceWidth;
+    int voiceHeight;
+    
+    int width;
+    int height;
+//=============================================
+    //child editors
+    VoiceCloseEditor voiceCloseEditor;
+    VoiceMidEditor voiceMidEditor;
+    VoiceFarEditor voiceFarEditor;
+    VoiceEchoEditor voiceEchoEditor;
+    
+    MasterEditor masterEditor;
+//=============================================
     Slider frequencySlider;
     Label frequencyLabel;
     
@@ -47,11 +67,6 @@ private:
     
     Slider dryWetSlider;
     Label dryWetLabel;
-    
-    TextButton polarityButton;
-    
-//=============================================
-    Vibrato2AudioProcessor& processor;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (Vibrato2AudioProcessorEditor)
 };

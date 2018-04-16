@@ -21,6 +21,15 @@
       <FILE id="eQJryR" name="PluginEditor.cpp" compile="1" resource="0"
             file="Source/PluginEditor.cpp"/>
       <FILE id="vgj6hr" name="PluginEditor.h" compile="0" resource="0" file="Source/PluginEditor.h"/>
+      <FILE id="nvPVSH" name="VoiceCloseEditor.h" compile="0" resource="0"
+            file="Source/VoiceCloseEditor.h"/>
+      <FILE id="iBrTzv" name="VoiceMidEditor.h" compile="0" resource="0"
+            file="Source/VoiceMidEditor.h"/>
+      <FILE id="BPsZ9u" name="VoiceEchoEditor.h" compile="0" resource="0"
+            file="Source/VoiceEchoEditor.h"/>
+      <FILE id="SdqU36" name="VoiceFarEditor.h" compile="0" resource="0"
+            file="Source/VoiceFarEditor.h"/>
+      <FILE id="uOYf1d" name="MasterEditor.h" compile="0" resource="0" file="Source/MasterEditor.h"/>
     </GROUP>
   </MAINGROUP>
   <EXPORTFORMATS>

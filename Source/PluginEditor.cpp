@@ -14,66 +14,27 @@
 
 //==============================================================================
 Vibrato2AudioProcessorEditor::Vibrato2AudioProcessorEditor (Vibrato2AudioProcessor& p)
-    : AudioProcessorEditor (&p), processor (p)
+    : AudioProcessorEditor (&p), processor (p),
+        voiceWidth (275), voiceHeight (350),
+        width (voiceWidth * 3), height (voiceHeight * 2),
+        voiceCloseEditor (p.proc.voiceClose, voiceWidth, voiceHeight),
+        voiceMidEditor (p.proc.voiceMid, voiceWidth, voiceHeight),
+        voiceFarEditor (p.proc.voiceFar, voiceWidth, voiceHeight),
+        voiceEchoEditor (p.proc.voiceEcho, voiceWidth, voiceHeight),
+        masterEditor (p.proc, width, height)
 {
-    setSize (400, 300);
+    setSize (width, height);
     
-    Utility::addSlider (&frequencySlider, &frequencyLabel, "Frequency", 0.1, 20, 0.01, 1,
-                        "Hz", Slider::SliderStyle::RotaryVerticalDrag,
-                        Slider::TextEntryBoxPosition::TextBoxBelow, 0.1, this, this, true);
+    addAndMakeVisible (voiceCloseEditor);
+    addAndMakeVisible (voiceMidEditor);
+    addAndMakeVisible (voiceFarEditor);
+    addAndMakeVisible (voiceEchoEditor);
     
-    Utility::addSlider (&feedbackSlider, &feedbackLabel, "Feedback", -100, 100, 1, 0,
-                        "%", Slider::SliderStyle::RotaryVerticalDrag,
-                        Slider::TextEntryBoxPosition::TextBoxBelow, 70, this, this, true);
-    
-    Utility::addSlider (&maxDelaySlider, &maxDelayLabel, "Max Delay", 3, 60, 0.001, 39,
-                        "ms", Slider::SliderStyle::RotaryVerticalDrag,
-                        Slider::TextEntryBoxPosition::TextBoxBelow, 39, this, this, true);
-    
-    Utility::addSlider (&sweepWidthSlider, &sweepWidthLabel, "Sweep Width", 0.4, 60, 0.001, 10,
-                        "ms", Slider::SliderStyle::RotaryVerticalDrag,
-                        Slider::TextEntryBoxPosition::TextBoxBelow, 39, this, this, true);
-    
-    Utility::addSlider (&smoothSlider, &smoothLabel, "Smooth", -0.1, 0.1, 0.01, 0,
-                        " ", Slider::SliderStyle::RotaryVerticalDrag,
-                        Slider::TextEntryBoxPosition::TextBoxBelow, 0, this, this, true);
-    
-    Utility::addSlider (&dryWetSlider, &dryWetLabel, "Mix", 0, 100, 1, 50,
-                        "%", Slider::SliderStyle::RotaryVerticalDrag,
-                        Slider::TextEntryBoxPosition::TextBoxBelow, 100, this, this, true);
+    addAndMakeVisible (masterEditor);
 }
 
 Vibrato2AudioProcessorEditor::~Vibrato2AudioProcessorEditor()
 {
-}
-
-//==============================================================================
-void Vibrato2AudioProcessorEditor::sliderValueChanged (Slider* slider)
-{
-    if (slider == &frequencySlider)
-    {
-        processor.proc.voiceClose.wavetable->setFrequency ((float) slider->getValue());
-    }
-    else if (slider == &maxDelaySlider)
-    {
-        processor.proc.voiceClose.setMaxDelayTime (slider->getValue());
-    }
-    else if (slider == &sweepWidthSlider)
-    {
-        processor.proc.voiceClose.setSweepWidth (slider->getValue());
-    }
-    else if (slider == &feedbackSlider)
-    {
-        processor.proc.voiceClose.setFeedbackGain (slider->getValue() / 100);
-    }
-    else if (slider == &smoothSlider)
-    {
-        processor.proc.voiceClose.setPrevSampleGain (slider->getValue());
-    }
-    else if (slider == &dryWetSlider)
-    {
-        processor.proc.voiceClose.setDryWetMix (slider->getValue() / 100);
-    }
 }
 
 //==============================================================================
@@ -84,14 +45,18 @@ void Vibrato2AudioProcessorEditor::paint (Graphics& g)
 
 void Vibrato2AudioProcessorEditor::resized()
 {
+//voices section
+    
     //first row
-    frequencySlider.setBounds (25, 50, 100, 100);
-    maxDelaySlider.setBounds (150, 50, 100, 100);
-    sweepWidthSlider.setBounds (275, 50, 100, 100);
+    voiceCloseEditor.setBounds (0, 0, voiceWidth, voiceHeight);
+    voiceMidEditor.setBounds (voiceWidth, 0, voiceWidth, voiceHeight);
     
     //second row
-    feedbackSlider.setBounds (25, 175, 100, 100);
-    smoothSlider.setBounds (150, 175, 100, 100);
-    dryWetSlider.setBounds (275, 175, 100, 100);
+    voiceFarEditor.setBounds (0, voiceHeight, voiceWidth, voiceHeight);
+    voiceEchoEditor.setBounds (voiceWidth, voiceHeight, voiceWidth, voiceHeight);
+    
+//master section
+    masterEditor.setBounds (voiceWidth * 2, 0, voiceWidth, getHeight());
+    
 }
 

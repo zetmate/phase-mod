@@ -18,13 +18,14 @@
 class Flanger
 {
 public:
-    Flanger()  : sampleRate (0), resourcesReleased(false), minDelayInMs (0), maxDelayInMs (39), delayBuffer (0, 0), circularBufferSize (0), delayCounter(0), delayInSamples(0), prevDelayedLeft(0), prevDelayedRight(0), feedbackGain(0), prevSampleGain(0), dryGain(0), wetGain(0), dryWetPropotion(1)
+    Flanger()  : sampleRate (1), resourcesReleased(false), minDelayInMs(0), maxDelayInMs (39), delayBuffer (0, 0), circularBufferSize (0), delayCounter(0), delayInSamples(0), prevDelayedLeft(0), prevDelayedRight(0), feedbackGain(0), prevSampleGain(0), dryGain(0), wetGain(0), dryWetPropotion(1)
     {
         //initialise smart pointers with objects
-        wavetable = new Oscilator (0.1);
+        wavetable = new Oscilator (0.01);
         
         //set initial values
         setDryWetMix (1);
+        delayRange.start = 4;
         
         //set wt parameters
         wavetable->setAllParameters (0.1, 1, 0);
@@ -54,11 +55,9 @@ public:
         //count coefficients
         lpFilter.frequency = floor(sampleRate / 2.4);
         lpFilter.countCoefficients (sampleRate);
-        lpFilter1.frequency = lpFilter.frequency;
-        lpFilter1.countCoefficients (sampleRate);
         
         //prepare ranges: set start, end, interval, skew
-        delayRange.start = 4;
+        setMinDelayTime (minDelayInMs);
         delayRange.end = Utility::msToSamples ((double) maxDelayInMs, sampleRate);
         
         //prepare wavetables
@@ -82,9 +81,8 @@ public:
             //clear copy buffers
             delayBuffer.clear();
             
-            //clear filter buffers
+            //clear filters' buffers
             lpFilter.clearBuffers();
-            lpFilter1.clearBuffers();
             
             //reset wavetables
             wavetable->resetWavetable();
@@ -124,6 +122,7 @@ public:
     
     void setMinDelayTime (float newMinDelayMs)
     {
+        minDelayInMs = newMinDelayMs;
         float minDelaySamp = std::max (4, Utility::msToSamples (newMinDelayMs, sampleRate));
         delayRange.start = minDelaySamp;
     }
@@ -134,9 +133,14 @@ public:
         setMinDelayTime (maxDelayInMs - sweepWidthMs);
     }
     
+    void setDepth (float depthFrom0to1)
+    {
+        setSweepWidth (maxDelayInMs * depthFrom0to1);
+    }
+    
     void setFeedbackGain (float newFeedbackGain)
     {
-        feedbackGain = newFeedbackGain;
+        feedbackGain = std::min (0.99f, newFeedbackGain);
     }
     
     void setPrevSampleGain (float newPrevSampGain)
@@ -182,7 +186,6 @@ protected:
     
     //filters
     AntiAliasingFilter lpFilter;
-    AntiAliasingFilter lpFilter1;
     
     NormalisableRange <float> delayRange;
     float minDelayInMs, maxDelayInMs;
@@ -297,7 +300,7 @@ private:
                 
                 //count dry & wet gains
                 wetGain = dryWetPropotion;
-                dryGain = 1;
+                dryGain = 1 - wetGain;
                 
                 //output signal
                 leftBufferW [sample] = dryGain * inputLeft + wetGain * delayedLeft;
@@ -367,7 +370,7 @@ private:
         
         //count dry & wet gains
         wetGain = dryWetPropotion;
-        dryGain = 1;
+        dryGain = 1 - wetGain;
         
         //output signal
         outputLeft = dryGain * inputLeft + wetGain * delayed;
@@ -432,7 +435,7 @@ private:
         
         //count dry & wet gains
         wetGain = dryWetPropotion;
-        dryGain = 1;
+        dryGain = 1 - wetGain;
         
         //output signal
         outputLeft = dryGain * inputLeft + wetGain * delayedLeft;
