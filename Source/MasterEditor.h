@@ -45,11 +45,7 @@ public:
     //===================================================================================
     void sliderValueChanged (Slider* slider) override
     {
-        if (slider == &feedbackSlider)
-        {
-            proc.setGlobalFeedbackGain (slider->getValue());
-        }
-        else if (slider == &dryWetSlider)
+        if (slider == &dryWetSlider)
         {
             proc.setGlobalDryWet (slider->getValue());
         }

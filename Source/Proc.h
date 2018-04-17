@@ -24,7 +24,7 @@ public:
     
     Proc()  : sampleRate (1), resourcesReleased (false), separateProcessing (true),
                 dryWetPropotion(1), prevOutputLeft (0.0f), prevOutputRight (0.0f),
-                globalFeedbackGain (0), channelSet (mono)
+                channelSet (mono)
     {
         //initialise smart pointers with objects
         
@@ -181,11 +181,6 @@ public:
         separateProcessing = false;
     }
     
-    void setGlobalFeedbackGain (float feedbackGain)
-    {
-        globalFeedbackGain = std::min (0.99f, feedbackGain);
-    }
-    
     void setGlobalDryWet (float newDryWetPropotion)
     {
         dryWetRamp.setRange (dryWetPropotion, newDryWetPropotion);
@@ -211,7 +206,6 @@ protected:
     
     //for global feedback
     float prevOutputLeft, prevOutputRight;
-    float globalFeedbackGain;
     
     //channel set
     ChannelSet channelSet;
@@ -497,8 +491,8 @@ private:
                 
                 //voice Close
                 voiceClose.processSample (voiceClose,
-                                          inputLeft + prevOutputLeft * globalFeedbackGain,
-                                          inputRight + prevOutputRight * globalFeedbackGain,
+                                          inputLeft,
+                                          inputRight,
                                           voiceClose_outputLeft, voiceClose_outputRight,
                                           voiceClose_LeftDelayR,
                                           voiceClose_RightDelayR,
@@ -536,24 +530,29 @@ private:
                                          voiceEcho_RightDelayW);
                 
                 //============================================
-                //  COMPUTE OUTPUT
+                //  COMPUTE DRY & WET GAINS
                 //============================================
                 
                 //get current dry/wet propotion value
                 dryWetRamp.applyRamp (dryWetPropotion);
                 float wetGain = dryWetPropotion;
-                float dryGain = 1 - wetGain;
+                float dryGain = 1;
+                float k = Utility::fatCurveDown (dryWetPropotion, 0.5, 1, 1, 1, 0);
+                
+                //============================================
+                //  LIMIT PROCESSED SIGNAL
+                //============================================
+                
+                float g = limiterLeft.getGainReductionValueForSample ((voiceEcho_outputLeft
+                                                                      + voiceEcho_outputRight)
+                                                                      * 0.5);
                 
                 //output signal
-                float outputLeft = voiceEcho_outputLeft;
-                float outputRight = voiceEcho_outputRight;
+                float outputLeft = g * voiceEcho_outputLeft;
+                float outputRight = g * voiceEcho_outputRight;
                 
-                leftBufferW [sample] = outputLeft * wetGain + inputLeft * dryGain;
-                rightBufferW [sample] = outputRight * wetGain + inputRight * dryGain;
-                
-                //store output values
-                prevOutputLeft = outputLeft;
-                prevOutputRight = outputRight;
+                leftBufferW [sample] = (outputLeft * wetGain + inputLeft * dryGain) * k;
+                rightBufferW [sample] = (outputRight * wetGain + inputRight * dryGain) * k;
             }
         }
         else
