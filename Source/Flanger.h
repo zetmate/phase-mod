@@ -102,17 +102,15 @@ public:
     void setToMono()
     {
         //set appropriate processing functions
-        processBlock = &Flanger::processBlockMono;
         processSample = &Flanger::processSampleMono;
         
         //set wavetavle to mono
-        wavetable->setStereoOrMono (false, 90);
+        wavetable->setStereoOrMono (false, 0);
     }
     
     void setToStereo()
     {
-        wavetable->setStereoOrMono (true, 90);
-        processBlock = &Flanger::processBlockStereo;
+        wavetable->setStereoOrMono (false, 0);
         processSample = &Flanger::processSampleStereo;
     }
     
@@ -170,8 +168,6 @@ public:
     ScopedPointer<Oscilator> wavetable;
     
     //function pointers
-    std::function<void (Flanger&, AudioSampleBuffer& buffer, AudioPlayHead* playHead)>
-                            processBlock = {};
     
     std::function<void (Flanger&,
                         const float inputLeft, const float inputRight,
@@ -215,125 +211,7 @@ protected:
     AudioPlayHead::CurrentPositionInfo currentPositionInfo;
     
 private:
-//=====================================================================================
-//    PROCESSING FUNCTIONS FOR THE BLOCK
-//=====================================================================================
-    //Mono processing function
-    void processBlockMono (AudioSampleBuffer& buffer, AudioPlayHead* playHead)
-    {
-        //constants
-        const int numSamples = buffer.getNumSamples();
-        
-        //get pointers to buffer
-        const float* bufferR = buffer.getReadPointer(0);
-        float* bufferW = buffer.getWritePointer (0);
-        
-    };
-    
-    //Stereo processing function
-    void processBlockStereo (AudioSampleBuffer& buffer, AudioPlayHead* playHead)
-    {
-        //prepare transpor state info
-        bool transportIsAvailable = playHead->getCurrentPosition(currentPositionInfo);
-        
-        //process only if the transport state = is playing or not available
-        if (currentPositionInfo.isPlaying || !(transportIsAvailable))
-        //if (true)
-        {
-            //constants
-            const int numSamples = buffer.getNumSamples();
-            const int circularBufferSize = delayBuffer.getNumSamples();
-            
-            //get pointers to buffer
-            const float* leftBufferR = buffer.getReadPointer(0);
-            const float* rightBufferR = buffer.getReadPointer(1);
-            float* leftBufferW = buffer.getWritePointer (0);
-            float* rightBufferW = buffer.getWritePointer (1);
-            
-            //get pointers to delay buffer
-            const float* leftDelayR = delayBuffer.getReadPointer(0);
-            const float* rightDelayR = delayBuffer.getReadPointer(1);
-            float* leftDelayW = delayBuffer.getWritePointer (0);
-            float* rightDelayW = delayBuffer.getWritePointer (1);
-            
-            for (int sample = 0; sample < numSamples; ++sample)
-            {
-                //get input signal
-                const float inputLeft = leftBufferR[sample];
-                const float inputRight = rightBufferR[sample];
-                
-                //check counter
-                if (delayCounter >= circularBufferSize)
-                    delayCounter = 0;
-                
-                //get current delay time
-                //========================================================================
-                float delayInSamplesLeft;
-                float delayInSamplesRight;
-                
-                {
-                    //get current wt value
-                    float wtValueLeft = wavetable->applyWavetable (inputLeft, 0);
-                    float wtValueRight = wavetable->applyWavetable (inputRight, 1);
-                    
-                    //convert wt value
-                    delayInSamplesLeft = delayRange.convertFrom0to1 (wtValueLeft);
-                    delayInSamplesRight = delayRange.convertFrom0to1 (wtValueRight);
-                }
-                //========================================================================
-                
-                //interpolate samples
-                //========================================================================
-                float interpolatedLeft = Utility::fractDelayCubicInt (leftDelayR,
-                                                                      delayInSamplesLeft,
-                                                                      delayCounter,
-                                                                      circularBufferSize);
-                
-                float interpolatedRight = Utility::fractDelayCubicInt (rightDelayR,
-                                                                       delayInSamplesRight,
-                                                                       delayCounter,
-                                                                       circularBufferSize);
-                //=========================================================================
-                
-                //filter interpolated samples
-                float delayedLeft = lpFilter.filterSignal (interpolatedLeft, 0);
-                float delayedRight = lpFilter.filterSignal (interpolatedRight, 1);
-                
-                float filteredLeft = lpFilter1.filterSignal (delayedLeft, 0);
-                float filteredRight = lpFilter1.filterSignal (delayedRight, 1);
-                
-                //apply gain ramps
-                dryWetRamp.applyRamp (dryWetPropotion);
-                
-                //count dry & wet gains
-                wetGain = dryWetPropotion;
-                dryGain = 1 - wetGain;
-                
-                //output signal
-                leftBufferW [sample] = dryGain * inputLeft + wetGain * filteredLeft;
-                
-                rightBufferW [sample] = dryGain * inputRight + wetGain * filteredRight;
-                
-                //store input signal in the delay buffer
-                leftDelayW [delayCounter] = (inputLeft + feedbackGain * filteredLeft
-                                             + prevSampleGain * prevDelayedLeft);
-                
-                rightDelayW [delayCounter] = (inputRight + feedbackGain * filteredRight
-                                              + prevSampleGain * prevDelayedRight);
-                
-                //store previous values
-                prevDelayedLeft = filteredLeft;
-                prevDelayedRight = filteredRight;
-                
-                //increase counters
-                delayCounter++;
-            }
-        }
-        else
-        {
-            releaseResources();
-        }
-    }
+
 //=====================================================================================
 //    PROCESSING FUNCTIONS FOR ONE SAMPLE
 //=====================================================================================
@@ -406,30 +284,26 @@ private:
         
         //get current delay time
         //========================================================================
-        float delayInSamplesLeft;
-        float delayInSamplesRight;
+        float delayInSamples;
         
         {
             //get current wt value
             float wtValueLeft = wavetable->applyWavetable (inputLeft, 0);
-            float wtValueRight = wavetable->applyWavetable (inputRight, 1);
             
             //convert wt value
-            delayInSamplesLeft = delayRange.convertFrom0to1 (wtValueLeft);
-            delayInSamplesRight = delayInSamplesLeft;
-            //delayInSamplesRight = delayRange.convertFrom0to1 (wtValueRight);
+            delayInSamples = delayRange.convertFrom0to1 (wtValueLeft);
         }
         //========================================================================
         
         //interpolate samples
         //========================================================================
         float interpolatedLeft = Utility::fractDelayCubicInt (leftDelayR,
-                                                              delayInSamplesLeft,
+                                                              delayInSamples,
                                                               delayCounter,
                                                               circularBufferSize);
         
         float interpolatedRight = Utility::fractDelayCubicInt (rightDelayR,
-                                                               delayInSamplesRight,
+                                                               delayInSamples,
                                                                delayCounter,
                                                                circularBufferSize);
         //=========================================================================
