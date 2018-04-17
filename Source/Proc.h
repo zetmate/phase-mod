@@ -370,7 +370,6 @@ private:
         
         //process only if the transport state = is playing or not available
         if (currentPositionInfo.isPlaying || !(transportIsAvailable))
-        //if (true)
         {
             //constants
             const int numSamples = buffer.getNumSamples();
@@ -494,8 +493,8 @@ private:
                     float voiceFar = voiceFar_outputLeft + voiceFar_outputRight;
                     float voiceEcho = voiceEcho_outputLeft + voiceEcho_outputRight;
                     
-                    processedLeft = voiceClose + voiceFar;
-                    processedRight = voiceMid + voiceEcho;
+                    processedLeft = (voiceClose + voiceFar) * 0.5;
+                    processedRight = (voiceMid + voiceEcho) * 0.5;
                 }
                 
                 //============================================
@@ -522,7 +521,7 @@ private:
                 float k = Utility::fatCurveDown (dryWetPropotion, 0.5, 1, 1.5, 1, 0);
                 
                 leftBufferW [sample] = (outputLeft * wetGain + inputLeft * dryGain) * k;
-                rightBufferW [sample] = (outputRight * wetGain + inputLeft * dryGain) * k;
+                rightBufferW [sample] = (outputRight * wetGain + inputRight * dryGain) * k;
             }
         }
         else
