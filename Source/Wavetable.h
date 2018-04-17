@@ -25,7 +25,7 @@ public:
     void resetWavetable();
     void valueHasChanged();
     
-    ScopedPointer<AudioBuffer<double>> wavetable;
+    AudioBuffer<double> wavetable;
     
 protected:
     int currentSample;

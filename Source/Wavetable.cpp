@@ -14,7 +14,7 @@
 //===============================================================================
 //===============================================================================
 Wavetable::Wavetable()
-        : wavetable (new AudioBuffer<double> (0, 0)), currentSample(INFINITY), sampleRate(10000), wtSize(0), valueChanged(false)
+        : wavetable (0, 0), currentSample(INFINITY), sampleRate(10000), wtSize(0), valueChanged(false)
 
 {
 }
@@ -73,7 +73,7 @@ Envelope::~Envelope()
 
 double Envelope::applyWavetable (float input, int channel)
 {
-    const double* wtData = wavetable->getReadPointer(channel);
+    const double* wtData = wavetable.getReadPointer(channel);
     
     if (input >= threshold && currentSample >= Utility::max (wtSize, 250))
         resetWavetable();
@@ -93,7 +93,7 @@ void Envelope::countWavetable()
     wtSize = attackSamples + releaseSamples;
     
     //get write pointer to wavetable
-    double* wtW = wavetable->getWritePointer (0);
+    double* wtW = wavetable.getWritePointer (0);
    
     //add attack curve
     if (attackStartLevel < attackEndLevel)
@@ -272,7 +272,7 @@ double Oscilator::applyWavetable (float input, int channel)
         resetWavetable();
     
     //get read pointer to wt
-    const double* wtR = wavetable->getReadPointer (channel);
+    const double* wtR = wavetable.getReadPointer (channel);
     double currentValue = wtR[currentSample];
     
     if (!(stereo) || channel == 1)
@@ -285,14 +285,14 @@ void Oscilator::countWavetable()
 {
     //check and set appropriate number of channels
     if (stereo)
-        wavetable->setSize (2, wtSize);
+        wavetable.setSize (2, wtSize);
     else
-        wavetable->setSize (1, wtSize);
+        wavetable.setSize (1, wtSize);
     
-    wavetable->clear();
+    wavetable.clear();
     
     //get write pointer to wavetable buffer
-    double* wtW = wavetable->getWritePointer (0);
+    double* wtW = wavetable.getWritePointer (0);
     
     //write
     for (int sample = 0; sample < wtSize; ++sample)
@@ -304,7 +304,7 @@ void Oscilator::countWavetable()
     
     if (stereo)
     {
-        wtW = wavetable->getWritePointer (1);
+        wtW = wavetable.getWritePointer (1);
         
         //write
         for (int sample = 0; sample < wtSize; ++sample)
