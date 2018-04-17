@@ -55,6 +55,8 @@ public:
         //count coefficients
         lpFilter.frequency = floor(sampleRate / 2.4);
         lpFilter.countCoefficients (sampleRate);
+        lpFilter1.frequency = floor(sampleRate / 2.4);
+        lpFilter1.countCoefficients (sampleRate);
         
         //prepare ranges: set start, end, interval, skew
         setMinDelayTime (minDelayInMs);
@@ -83,6 +85,7 @@ public:
             
             //clear filters' buffers
             lpFilter.clearBuffers();
+            lpFilter1.clearBuffers();
             
             //reset wavetables
             wavetable->resetWavetable();
@@ -186,6 +189,7 @@ protected:
     
     //filters
     AntiAliasingFilter lpFilter;
+    AntiAliasingFilter lpFilter1;
     
     NormalisableRange <float> delayRange;
     float minDelayInMs, maxDelayInMs;
@@ -295,6 +299,9 @@ private:
                 float delayedLeft = lpFilter.filterSignal (interpolatedLeft, 0);
                 float delayedRight = lpFilter.filterSignal (interpolatedRight, 1);
                 
+                float filteredLeft = lpFilter1.filterSignal (delayedLeft, 0);
+                float filteredRight = lpFilter1.filterSignal (delayedRight, 1);
+                
                 //apply gain ramps
                 dryWetRamp.applyRamp (dryWetPropotion);
                 
@@ -303,20 +310,20 @@ private:
                 dryGain = 1 - wetGain;
                 
                 //output signal
-                leftBufferW [sample] = dryGain * inputLeft + wetGain * delayedLeft;
+                leftBufferW [sample] = dryGain * inputLeft + wetGain * filteredLeft;
                 
-                rightBufferW [sample] = dryGain * inputRight + wetGain * delayedRight;
+                rightBufferW [sample] = dryGain * inputRight + wetGain * filteredRight;
                 
                 //store input signal in the delay buffer
-                leftDelayW [delayCounter] = (inputLeft + feedbackGain * delayedLeft
+                leftDelayW [delayCounter] = (inputLeft + feedbackGain * filteredLeft
                                              + prevSampleGain * prevDelayedLeft);
                 
-                rightDelayW [delayCounter] = (inputRight + feedbackGain * delayedRight
+                rightDelayW [delayCounter] = (inputRight + feedbackGain * filteredRight
                                               + prevSampleGain * prevDelayedRight);
                 
                 //store previous values
-                prevDelayedLeft = delayedLeft;
-                prevDelayedRight = delayedRight;
+                prevDelayedLeft = filteredLeft;
+                prevDelayedRight = filteredRight;
                 
                 //increase counters
                 delayCounter++;
@@ -409,7 +416,8 @@ private:
             
             //convert wt value
             delayInSamplesLeft = delayRange.convertFrom0to1 (wtValueLeft);
-            delayInSamplesRight = delayRange.convertFrom0to1 (wtValueRight);
+            delayInSamplesRight = delayInSamplesLeft;
+            //delayInSamplesRight = delayRange.convertFrom0to1 (wtValueRight);
         }
         //========================================================================
         
@@ -430,6 +438,9 @@ private:
         float delayedLeft = lpFilter.filterSignal (interpolatedLeft, 0);
         float delayedRight = lpFilter.filterSignal (interpolatedRight, 1);
         
+        float filteredLeft = lpFilter1.filterSignal (delayedLeft, 0);
+        float filteredRight = lpFilter1.filterSignal (delayedRight, 1);
+        
         //apply gain ramps
         dryWetRamp.applyRamp (dryWetPropotion);
         
@@ -438,20 +449,20 @@ private:
         dryGain = 1 - wetGain;
         
         //output signal
-        outputLeft = dryGain * inputLeft + wetGain * delayedLeft;
+        outputLeft = dryGain * inputLeft + wetGain * filteredLeft;
         
-        outputRight = dryGain * inputRight + wetGain * delayedRight;
+        outputRight = dryGain * inputRight + wetGain * filteredRight;
         
         //store input signal in the delay buffer
-        leftDelayW [delayCounter] = (inputLeft + feedbackGain * delayedLeft
+        leftDelayW [delayCounter] = (inputLeft + feedbackGain * filteredLeft
                                      + prevSampleGain * prevDelayedLeft);
         
-        rightDelayW [delayCounter] = (inputRight + feedbackGain * delayedRight
+        rightDelayW [delayCounter] = (inputRight + feedbackGain * filteredRight
                                       + prevSampleGain * prevDelayedRight);
         
         //store previous values
-        prevDelayedLeft = delayedLeft;
-        prevDelayedRight = delayedRight;
+        prevDelayedLeft = filteredLeft;
+        prevDelayedRight = filteredRight;
         
         //increase counters
         delayCounter++;

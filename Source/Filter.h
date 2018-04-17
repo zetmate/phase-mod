@@ -255,7 +255,7 @@ public:
     {
     }
     
-    AntiAliasingFilter (float frequency, int nummPoles = 8)
+    AntiAliasingFilter (float frequency, int nummPoles = 16)
         : frequency (frequency), numPoles (nummPoles)
     {
     }
@@ -281,6 +281,22 @@ public:
         filter4.frequency = frequency;
         filter4.quality = 0.707 / (numPoles / 2);
         filter4.countCoefficients (sampleRate);
+        
+        filter5.frequency = frequency;
+        filter5.quality = 0.707 / (numPoles / 2);
+        filter5.countCoefficients (sampleRate);
+        
+        filter6.frequency = frequency;
+        filter6.quality = 0.707 / (numPoles / 2);
+        filter6.countCoefficients (sampleRate);
+        
+        filter7.frequency = frequency;
+        filter7.quality = 0.707 / (numPoles / 2);
+        filter7.countCoefficients (sampleRate);
+        
+        filter8.frequency = frequency;
+        filter8.quality = 0.707 / (numPoles / 2);
+        filter8.countCoefficients (sampleRate);
     }
     
     float filterSignal (float input, int channel) override
@@ -291,6 +307,10 @@ public:
         output = filter2.filterSignal (output, channel);
         output = filter3.filterSignal (output, channel);
         output = filter4.filterSignal (output, channel);
+        output = filter5.filterSignal (output, channel);
+        output = filter6.filterSignal (output, channel);
+        output = filter7.filterSignal (output, channel);
+        output = filter8.filterSignal (output, channel);
         
         return output;
     }
@@ -302,6 +322,10 @@ private:
     LowPassFilter filter2;
     LowPassFilter filter3;
     LowPassFilter filter4;
+    LowPassFilter filter5;
+    LowPassFilter filter6;
+    LowPassFilter filter7;
+    LowPassFilter filter8;
     int numPoles;
 };
 

@@ -23,7 +23,7 @@ public:
     {
         setSize (width, height);
         
-        Utility::addSlider (&frequencySlider, &frequencyLabel, "Frequency", 0.01, 17, 0.01, 3,
+        Utility::addSlider (&frequencySlider, &frequencyLabel, "Frequency", 0.1, 17, 0.01, 3,
                             "Hz", Slider::SliderStyle::RotaryVerticalDrag,
                             Slider::TextEntryBoxPosition::NoTextBox, 0.1, this, this, true);
         

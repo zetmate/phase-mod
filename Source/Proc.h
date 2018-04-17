@@ -15,9 +15,16 @@
 class Proc
 {
 public:
+    
+    enum ChannelSet
+    {
+        mono,
+        stereo
+    };
+    
     Proc()  : sampleRate (1), resourcesReleased (false), separateProcessing (true),
                 dryWetPropotion(1), prevOutputLeft (0.0f), prevOutputRight (0.0f),
-                globalFeedbackGain (0)
+                globalFeedbackGain (0), channelSet (mono)
     {
         //initialise smart pointers with objects
         
@@ -54,6 +61,10 @@ public:
         dryWetRamp.setTime (5, sampleRate);
         dryWetRamp.updateInterval();
         
+        //prepare compressors & limiters
+        limiterLeft.prepare (sampleRate);
+        limiterRight.prepare (sampleRate);
+        
         //prepare filters
         //count coefficients
         
@@ -70,7 +81,15 @@ public:
     void setToMono()
     {
         //set appropriate processing functions
-        processBlock = &Proc::processBlockMono;
+        if (separateProcessing)
+        {
+            processBlock = &Proc::processBlockMonoSeparate;
+        }
+        else
+        {
+            processBlock = &Proc::processBlockMonoCascade;
+        }
+        
         
         //set internal processors to mono behaviour
         voiceClose.setToMono();
@@ -80,12 +99,21 @@ public:
         
         //set wavetavle to mono
         
+        //change channel set
+        channelSet = mono;
     }
     
     void setToStereo()
     {
         //set appropriate processing functions
-        processBlock = &Proc::processBlockStereo;
+        if (separateProcessing)
+        {
+            processBlock = &Proc::processBlockStereoSeparate;
+        }
+        else
+        {
+            processBlock = &Proc::processBlockStereoCascade;
+        }
         
         //set internal processors to stereo behaviour
         voiceClose.setToStereo();
@@ -95,6 +123,8 @@ public:
         
         //set wavetavle to stereo
         
+        //set channel set
+        channelSet = stereo;
     }
     
     void releaseResources()
@@ -123,11 +153,31 @@ public:
     //functions for connection with GUI
     void setSeparateProcessing()
     {
+        if (channelSet == stereo)
+        {
+            processBlock = &Proc::processBlockStereoSeparate;
+        }
+        else
+        {
+            processBlock = &Proc::processBlockMonoSeparate;
+        }
+        
         separateProcessing = true;
+        prevOutputLeft = 0.0;
+        prevOutputRight = 0.0;
     }
     
     void setCascadeProcessing()
     {
+        if (channelSet == stereo)
+        {
+            processBlock = &Proc::processBlockStereoCascade;
+        }
+        else
+        {
+            processBlock = &Proc::processBlockMonoCascade;
+        }
+
         separateProcessing = false;
     }
     
@@ -163,12 +213,30 @@ protected:
     float prevOutputLeft, prevOutputRight;
     float globalFeedbackGain;
     
+    //channel set
+    ChannelSet channelSet;
+    
+    //limiter
+    Compressor limiterLeft;
+    Compressor limiterRight;
+    
     //DAW transport state object
     AudioPlayHead::CurrentPositionInfo currentPositionInfo;
     
 private:
     //Mono processing functions
-    void processBlockMono (AudioSampleBuffer& buffer, AudioPlayHead* playHead)
+    void processBlockMonoSeparate (AudioSampleBuffer& buffer, AudioPlayHead* playHead)
+    {
+        //constants
+        const int numSamples = buffer.getNumSamples();
+        
+        //get pointers to buffer
+        const float* bufferR = buffer.getReadPointer(0);
+        float* bufferW = buffer.getWritePointer (0);
+        
+    };
+    
+    void processBlockMonoCascade (AudioSampleBuffer& buffer, AudioPlayHead* playHead)
     {
         //constants
         const int numSamples = buffer.getNumSamples();
@@ -181,9 +249,9 @@ private:
     
     //Stereo processing functions
     
-    void processBlockStereo (AudioSampleBuffer& buffer, AudioPlayHead* playHead)
+    void processBlockStereoSeparate (AudioSampleBuffer& buffer, AudioPlayHead* playHead)
     {
-        //prepare transpor state info
+        //prepare transport state info
         bool transportIsAvailable = playHead->getCurrentPosition(currentPositionInfo);
         
         //process only if the transport state = is playing or not available
@@ -255,62 +323,6 @@ private:
                 float voiceEcho_outputLeft = 0.0;
                 float voiceEcho_outputRight = 0.0;
                 
-                //voices' inputs
-                float voiceClose_inputLeft = 0.0;
-                float voiceClose_inputRight = 0.0;
-                //
-                float voiceMid_inputLeft = 0.0;
-                float voiceMid_inputRight = 0.0;
-                //
-                float voiceFar_inputLeft = 0.0;
-                float voiceFar_inputRight = 0.0;
-                //
-                float voiceEcho_inputLeft = 0.0;
-                float voiceEcho_inputRight = 0.0;
-                
-                //============================================
-                //  SET INPUT DEPENDING ON PROCESSING TYPE
-                //============================================
-                if (separateProcessing)
-                {
-                    //FOR SEPARATE PROCESSING
-                    
-                    //voice close
-                    voiceClose_inputLeft = inputLeft;
-                    voiceClose_inputRight = inputRight;
-                    
-                    //voice mid
-                    voiceMid_inputLeft = inputLeft;
-                    voiceMid_inputRight = inputRight;
-                    
-                    //voice far
-                    voiceFar_inputLeft = inputLeft;
-                    voiceFar_inputRight = inputRight;
-                    
-                    //voice echo
-                    voiceEcho_inputLeft = inputLeft;
-                    voiceEcho_inputRight = inputRight;
-                }
-                else
-                {
-                    //FOR CASCADE PROCESSING
-                    
-                    //voice close
-                    voiceClose_inputLeft = inputLeft + prevOutputLeft * globalFeedbackGain;
-                    voiceClose_inputRight = inputRight + prevOutputRight * globalFeedbackGain;
-                    
-                    //voice mid
-                    voiceMid_inputLeft = voiceClose_outputLeft;
-                    voiceMid_inputRight = voiceClose_outputRight;
-                    
-                    //voice far
-                    voiceFar_inputLeft = voiceMid_outputLeft;
-                    voiceFar_inputRight = voiceMid_outputRight;
-                    
-                    //voice echo
-                    voiceEcho_inputLeft = voiceFar_outputLeft;
-                    voiceEcho_inputRight = voiceFar_outputRight;
-                }
                 
                 //============================================
                 //  PROCESS VOICES
@@ -318,8 +330,8 @@ private:
                 
                 //voice Close
                 voiceClose.processSample (voiceClose,
-                                          voiceClose_inputLeft,
-                                          voiceClose_inputRight,
+                                          inputLeft,
+                                          inputRight,
                                           voiceClose_outputLeft, voiceClose_outputRight,
                                           voiceClose_LeftDelayR,
                                           voiceClose_RightDelayR,
@@ -328,8 +340,8 @@ private:
                 
                 //voice Mid
                 voiceMid.processSample (voiceMid,
-                                        voiceMid_inputLeft,
-                                        voiceMid_inputRight,
+                                        inputLeft,
+                                        inputRight,
                                         voiceMid_outputLeft, voiceMid_outputRight,
                                         voiceMid_LeftDelayR,
                                         voiceMid_RightDelayR,
@@ -338,8 +350,8 @@ private:
                 
                 //voice Far
                 voiceFar.processSample (voiceFar,
-                                        voiceFar_inputLeft,
-                                        voiceFar_inputRight,
+                                        inputLeft,
+                                        inputRight,
                                         voiceFar_outputLeft, voiceFar_outputRight,
                                         voiceFar_LeftDelayR,
                                         voiceFar_RightDelayR,
@@ -348,8 +360,175 @@ private:
                 
                 //voice Echo
                 voiceEcho.processSample (voiceEcho,
-                                         voiceEcho_inputLeft,
-                                         voiceEcho_inputRight,
+                                         inputLeft,
+                                         inputRight,
+                                         voiceEcho_outputLeft, voiceEcho_outputRight,
+                                         voiceEcho_LeftDelayR,
+                                         voiceEcho_RightDelayR,
+                                         voiceEcho_LeftDelayW,
+                                         voiceEcho_RightDelayW);
+                
+                //============================================
+                //  COMPUTE RESULTS
+                //============================================
+                
+                float processedLeft = 0.0;
+                float processedRight = 0.0;
+                {
+                    float voiceClose = voiceClose_outputLeft + voiceClose_outputRight;
+                    float voiceMid = voiceMid_outputLeft + voiceMid_outputRight;
+                    float voiceFar = voiceFar_outputLeft + voiceFar_outputRight;
+                    float voiceEcho = voiceEcho_outputLeft + voiceEcho_outputRight;
+                    
+                    processedLeft = voiceClose + voiceFar;
+                    processedRight = voiceMid + voiceEcho;
+                }
+                
+                //============================================
+                //  LIMIT PROCESSED SIGNAL
+                //============================================
+                float outputLeft = 0.0;
+                float outputRight = 0.0;
+                {
+                    float gLeft = limiterLeft.getGainReductionValueForSample (processedLeft);
+                    float gRight = limiterRight.getGainReductionValueForSample (processedRight);
+                    
+                    outputLeft = processedLeft * gLeft;
+                    outputRight = processedRight * gRight;
+                }
+                
+                //============================================
+                // COMPUTE DRY/WET
+                //============================================
+                
+                //get current dry/wet propotion value
+                dryWetRamp.applyRamp (dryWetPropotion);
+                float wetGain = dryWetPropotion;
+                float dryGain = 1;
+                float k = Utility::fatCurveDown (dryWetPropotion, 0.5, 1, 1.5, 1, 0);
+                
+                leftBufferW [sample] = (outputLeft * wetGain + inputLeft * dryGain) * k;
+                rightBufferW [sample] = (outputRight * wetGain + inputLeft * dryGain) * k;
+            }
+        }
+        else
+        {
+            releaseResources();
+        }
+    }
+    
+    void processBlockStereoCascade (AudioSampleBuffer& buffer, AudioPlayHead* playHead)
+    {
+        //prepare transport state info
+        bool transportIsAvailable = playHead->getCurrentPosition(currentPositionInfo);
+        
+        //process only if the transport state = is playing or not available
+        if (currentPositionInfo.isPlaying || !(transportIsAvailable))
+        //if (true)
+        {
+            //constants
+            const int numSamples = buffer.getNumSamples();
+            
+            //get pointers to buffer
+            const float* leftBufferR = buffer.getReadPointer(0);
+            const float* rightBufferR = buffer.getReadPointer(1);
+            float* leftBufferW = buffer.getWritePointer (0);
+            float* rightBufferW = buffer.getWritePointer (1);
+            
+            //============================================
+            //  GET POINTERS TO DELAY BUFFERS
+            //============================================
+            
+            //voice close
+            const float* voiceClose_LeftDelayR = voiceClose.getReadPointerToDelayBuffer (0);
+            const float* voiceClose_RightDelayR = voiceClose.getReadPointerToDelayBuffer (1);
+            float* voiceClose_LeftDelayW = voiceClose.getWritePointerToDelayBuffer (0);
+            float* voiceClose_RightDelayW = voiceClose.getWritePointerToDelayBuffer (1);
+            
+            //voice mid
+            const float* voiceMid_LeftDelayR = voiceMid.getReadPointerToDelayBuffer (0);
+            const float* voiceMid_RightDelayR = voiceMid.getReadPointerToDelayBuffer (1);
+            float* voiceMid_LeftDelayW = voiceMid.getWritePointerToDelayBuffer (0);
+            float* voiceMid_RightDelayW = voiceMid.getWritePointerToDelayBuffer (1);
+            
+            //voice far
+            const float* voiceFar_LeftDelayR = voiceFar.getReadPointerToDelayBuffer (0);
+            const float* voiceFar_RightDelayR = voiceFar.getReadPointerToDelayBuffer (1);
+            float* voiceFar_LeftDelayW = voiceFar.getWritePointerToDelayBuffer (0);
+            float* voiceFar_RightDelayW = voiceFar.getWritePointerToDelayBuffer (1);
+            
+            //voice echo
+            const float* voiceEcho_LeftDelayR = voiceEcho.getReadPointerToDelayBuffer (0);
+            const float* voiceEcho_RightDelayR = voiceEcho.getReadPointerToDelayBuffer (1);
+            float* voiceEcho_LeftDelayW = voiceEcho.getWritePointerToDelayBuffer (0);
+            float* voiceEcho_RightDelayW = voiceEcho.getWritePointerToDelayBuffer (1);
+            
+            
+            //============================================
+            //  PROCESS EACH SAMPLE
+            //============================================
+            
+            for (int sample = 0; sample < numSamples; ++sample)
+            {
+                //get input signal
+                const float inputLeft = leftBufferR[sample];
+                const float inputRight = rightBufferR[sample];
+                
+                //============================================
+                //  DECLARE VARIABLES
+                //============================================
+                
+                //voices' outputs
+                float voiceClose_outputLeft = 0.0;
+                float voiceClose_outputRight = 0.0;
+                //
+                float voiceMid_outputLeft = 0.0;
+                float voiceMid_outputRight = 0.0;
+                //
+                float voiceFar_outputLeft = 0.0;
+                float voiceFar_outputRight = 0.0;
+                //
+                float voiceEcho_outputLeft = 0.0;
+                float voiceEcho_outputRight = 0.0;
+                
+                //============================================
+                //  PROCESS VOICES
+                //============================================
+                
+                //voice Close
+                voiceClose.processSample (voiceClose,
+                                          inputLeft + prevOutputLeft * globalFeedbackGain,
+                                          inputRight + prevOutputRight * globalFeedbackGain,
+                                          voiceClose_outputLeft, voiceClose_outputRight,
+                                          voiceClose_LeftDelayR,
+                                          voiceClose_RightDelayR,
+                                          voiceClose_LeftDelayW,
+                                          voiceClose_RightDelayW);
+                
+                //voice Mid
+                voiceMid.processSample (voiceMid,
+                                        voiceClose_outputLeft,
+                                        voiceClose_outputRight,
+                                        voiceMid_outputLeft, voiceMid_outputRight,
+                                        voiceMid_LeftDelayR,
+                                        voiceMid_RightDelayR,
+                                        voiceMid_LeftDelayW,
+                                        voiceMid_RightDelayW);
+                
+                //voice Far
+                voiceFar.processSample (voiceFar,
+                                        voiceMid_outputLeft,
+                                        voiceMid_outputRight,
+                                        voiceFar_outputLeft, voiceFar_outputRight,
+                                        voiceFar_LeftDelayR,
+                                        voiceFar_RightDelayR,
+                                        voiceFar_LeftDelayW,
+                                        voiceFar_RightDelayW);
+                
+                //voice Echo
+                voiceEcho.processSample (voiceEcho,
+                                         voiceFar_outputLeft,
+                                         voiceFar_outputRight,
                                          voiceEcho_outputLeft, voiceEcho_outputRight,
                                          voiceEcho_LeftDelayR,
                                          voiceEcho_RightDelayR,
@@ -366,42 +545,8 @@ private:
                 float dryGain = 1 - wetGain;
                 
                 //output signal
-                float outputLeft = 0.0;
-                float outputRight = 0.0;
-                
-//                if (separateProcessing)
-//                {
-//                    outputLeft = (voiceClose_outputLeft
-//                                  + voiceMid_outputLeft
-//                                  + voiceFar_outputLeft
-//                                  + voiceEcho_outputLeft) * 0.25;
-//                    
-//                    outputRight = (voiceClose_outputRight
-//                                  + voiceMid_outputRight
-//                                  + voiceFar_outputRight
-//                                  + voiceEcho_outputRight) * 0.25;
-//                }
-//                else
-//                {
-//                    outputLeft = voiceEcho_outputLeft;
-//                    outputRight = voiceEcho_outputRight;
-//                }
-                
-                if (separateProcessing)
-                {
-                    float voiceClose = voiceClose_outputLeft + voiceClose_outputRight;
-                    float voiceMid = voiceMid_outputLeft + voiceMid_outputRight;
-                    float voiceFar = voiceFar_outputLeft + voiceFar_outputRight;
-                    float voiceEcho = voiceEcho_outputLeft + voiceEcho_outputRight;
-                    
-                    outputLeft = voiceClose + voiceFar;
-                    outputRight = voiceMid + voiceEcho;
-                }
-                else
-                {
-                    outputLeft = voiceEcho_outputLeft;
-                    outputRight = voiceEcho_outputRight;
-                }
+                float outputLeft = voiceEcho_outputLeft;
+                float outputRight = voiceEcho_outputRight;
                 
                 leftBufferW [sample] = outputLeft * wetGain + inputLeft * dryGain;
                 rightBufferW [sample] = outputRight * wetGain + inputRight * dryGain;
@@ -417,4 +562,6 @@ private:
         }
     }
 };
+
+
 

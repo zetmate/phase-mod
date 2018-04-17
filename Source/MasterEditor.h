@@ -28,9 +28,9 @@ public:
                             "", Slider::SliderStyle::RotaryVerticalDrag,
                             Slider::TextEntryBoxPosition::NoTextBox, 0, this, this, true);
         
-        Utility::addSlider (&dryWetSlider, &dryWetLabel, "Mix", 0, 1, 0.01, 0.5,
+        Utility::addSlider (&dryWetSlider, &dryWetLabel, "Mix", 0, 1, 0.01, 0.3,
                             "", Slider::SliderStyle::RotaryVerticalDrag,
-                            Slider::TextEntryBoxPosition::NoTextBox, 1, this, this, true);
+                            Slider::TextEntryBoxPosition::NoTextBox, 0.5, this, this, true);
         
         separateProcessingButton.setToggleState (true, dontSendNotification);
         separateProcessingButton.setButtonText ("separate processing");
