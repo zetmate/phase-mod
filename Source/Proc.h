@@ -517,8 +517,8 @@ private:
                 //get current dry/wet propotion value
                 dryWetRamp.applyRamp (dryWetPropotion);
                 float wetGain = dryWetPropotion;
-                float dryGain = 1;
-                float k = Utility::fatCurveDown (dryWetPropotion, 0.5, 1, 1.5, 1, 0);
+                float dryGain = 1 - wetGain;
+                float k = Utility::fatCurveUp (wetGain, 1, 1.5, 1.3, 1, 1);
                 
                 leftBufferW [sample] = (outputLeft * wetGain + inputLeft * dryGain) * k;
                 rightBufferW [sample] = (outputRight * wetGain + inputRight * dryGain) * k;
@@ -655,8 +655,7 @@ private:
                 //get current dry/wet propotion value
                 dryWetRamp.applyRamp (dryWetPropotion);
                 float wetGain = dryWetPropotion;
-                float dryGain = 1;
-                float k = Utility::fatCurveDown (dryWetPropotion, 0.5, 1, 1, 1, 0);
+                float dryGain = 1 - wetGain;
                 
                 //============================================
                 //  LIMIT PROCESSED SIGNAL
@@ -670,8 +669,8 @@ private:
                 float outputLeft = g * voiceEcho_outputLeft;
                 float outputRight = g * voiceEcho_outputRight;
                 
-                leftBufferW [sample] = (outputLeft * wetGain + inputLeft * dryGain) * k;
-                rightBufferW [sample] = (outputRight * wetGain + inputRight * dryGain) * k;
+                leftBufferW [sample] = (outputLeft * wetGain + inputLeft * dryGain);
+                rightBufferW [sample] = (outputRight * wetGain + inputRight * dryGain);
             }
         }
         else
