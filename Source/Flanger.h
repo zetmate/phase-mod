@@ -18,7 +18,14 @@
 class Flanger
 {
 public:
-    Flanger()  : sampleRate (1), resourcesReleased(false), minDelayInMs(0), maxDelayInMs (39), delayBuffer (0, 0), circularBufferSize (0), delayCounter(0), delayInSamples(0), prevDelayedLeft(0), prevDelayedRight(0), feedbackGain(0), prevSampleGain(0), dryGain(0), wetGain(0), dryWetPropotion(1)
+    
+    enum ChannelSet
+    {
+        mono,
+        stereo
+    };
+    
+    Flanger()  : sampleRate (1), channelSet (mono), resourcesReleased(false), minDelayInMs(0), maxDelayInMs (39), delayBuffer (0, 0), circularBufferSize (0), delayCounter(0), delayInSamples(0), prevDelayedLeft(0), prevDelayedRight(0), feedbackGain(0), prevSampleGain(0), dryGain(0), wetGain(0), dryWetPropotion(1)
     {
         //initialise smart pointers with objects
         wavetable = new Oscilator (0.01);
@@ -98,11 +105,23 @@ public:
         }
     }
     
+    void processSampleMono (const float input,
+                            float& output,
+                            const float* delayR,
+                            float* delayW);
+    
+    void processSampleStereo (const float inputLeft, const float inputRight,
+                              float& outputLeft, float& outputRight,
+                              const float* leftDelayR,
+                              const float* rightDelayR,
+                              float* leftDelayW,
+                              float* rightDelayW);
+    
     //functions for changing number of the proceesor's channels
     void setToMono()
     {
-        //set appropriate processing functions
-        processSample = &Flanger::processSampleMono;
+        //set channelSet
+        channelSet = mono;
         
         //set wavetavle to mono
         wavetable->setStereoOrMono (false, 0);
@@ -110,8 +129,11 @@ public:
     
     void setToStereo()
     {
+        //set channelSet
+        channelSet = stereo;
+        
+        //set wavetavle to mono
         wavetable->setStereoOrMono (false, 0);
-        processSample = &Flanger::processSampleStereo;
     }
     
     //setters
@@ -167,19 +189,9 @@ public:
     
     ScopedPointer<Oscilator> wavetable;
     
-    //function pointers
-    
-    std::function<void (Flanger&,
-                        const float inputLeft, const float inputRight,
-                        float& outputLeft, float& outputRight,
-                        const float* leftDelayR,
-                        const float* rightDelayR,
-                        float* leftDelayW,
-                        float* rightDelayW)>
-                            processSample = {};
-    
 protected:
     double sampleRate;
+    ChannelSet channelSet;
     
     bool resourcesReleased;
     
@@ -209,137 +221,6 @@ protected:
     
     //DAW transport state object
     AudioPlayHead::CurrentPositionInfo currentPositionInfo;
-    
-private:
-
-//=====================================================================================
-//    PROCESSING FUNCTIONS FOR ONE SAMPLE
-//=====================================================================================
-    void processSampleMono (const float inputLeft, const float inputRight,
-                            float& outputLeft, float& outputRight,
-                            const float* leftDelayR,
-                            const float* rightDelayR,
-                            float* leftDelayW,
-                            float* rightDelayW)
-    {
-        //check counter
-        if (delayCounter >= circularBufferSize)
-            delayCounter = 0;
-        
-        //get current delay time
-        //========================================================================
-        float delayInSamples;
-        
-        {
-            //get current wt value
-            float wtValue = wavetable->applyWavetable (inputLeft, 0);
-            
-            //convert wt value
-            delayInSamples = delayRange.convertFrom0to1 (wtValue);
-        }
-        //========================================================================
-        
-        //interpolate samples
-        //========================================================================
-        float interpolated = Utility::fractDelayCubicInt (leftDelayR,
-                                                          delayInSamples,
-                                                          delayCounter,
-                                                          circularBufferSize);
-        //=========================================================================
-        
-        //filter interpolated samples
-        float delayed = lpFilter.filterSignal (interpolated, 0);
-        
-        //apply gain ramps
-        dryWetRamp.applyRamp (dryWetPropotion);
-        
-        //count dry & wet gains
-        wetGain = dryWetPropotion;
-        dryGain = 1 - wetGain;
-        
-        //output signal
-        outputLeft = dryGain * inputLeft + wetGain * delayed;
-        
-        //store input signal in the delay buffer
-        leftDelayW [delayCounter] = (inputLeft + feedbackGain * delayed
-                                     + prevSampleGain * prevDelayedLeft);
-        
-        //store previous values
-        prevDelayedLeft = delayed;
-        
-        //increase counters
-        delayCounter++;
-    }
-    
-    void processSampleStereo (const float inputLeft, const float inputRight,
-                              float& outputLeft, float& outputRight,
-                              const float* leftDelayR,
-                              const float* rightDelayR,
-                              float* leftDelayW,
-                              float* rightDelayW)
-    {
-        //check counter
-        if (delayCounter >= circularBufferSize)
-            delayCounter = 0;
-        
-        //get current delay time
-        //========================================================================
-        float delayInSamples;
-        
-        {
-            //get current wt value
-            float wtValueLeft = wavetable->applyWavetable (inputLeft, 0);
-            
-            //convert wt value
-            delayInSamples = delayRange.convertFrom0to1 (wtValueLeft);
-        }
-        //========================================================================
-        
-        //interpolate samples
-        //========================================================================
-        float interpolatedLeft = Utility::fractDelayCubicInt (leftDelayR,
-                                                              delayInSamples,
-                                                              delayCounter,
-                                                              circularBufferSize);
-        
-        float interpolatedRight = Utility::fractDelayCubicInt (rightDelayR,
-                                                               delayInSamples,
-                                                               delayCounter,
-                                                               circularBufferSize);
-        //=========================================================================
-        
-        //filter interpolated samples
-        float delayedLeft = lpFilter.filterSignal (interpolatedLeft, 0);
-        float delayedRight = lpFilter.filterSignal (interpolatedRight, 1);
-        
-        float filteredLeft = lpFilter1.filterSignal (delayedLeft, 0);
-        float filteredRight = lpFilter1.filterSignal (delayedRight, 1);
-        
-        //apply gain ramps
-        dryWetRamp.applyRamp (dryWetPropotion);
-        
-        //count dry & wet gains
-        wetGain = dryWetPropotion;
-        dryGain = 1 - wetGain;
-        
-        //output signal
-        outputLeft = dryGain * inputLeft + wetGain * filteredLeft;
-        
-        outputRight = dryGain * inputRight + wetGain * filteredRight;
-        
-        //store input signal in the delay buffer
-        leftDelayW [delayCounter] = (inputLeft + feedbackGain * filteredLeft
-                                     + prevSampleGain * prevDelayedLeft);
-        
-        rightDelayW [delayCounter] = (inputRight + feedbackGain * filteredRight
-                                      + prevSampleGain * prevDelayedRight);
-        
-        //store previous values
-        prevDelayedLeft = filteredLeft;
-        prevDelayedRight = filteredRight;
-        
-        //increase counters
-        delayCounter++;
-    }
 };
+
 

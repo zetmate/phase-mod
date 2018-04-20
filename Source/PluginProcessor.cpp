@@ -143,7 +143,7 @@ void Vibrato2AudioProcessor::processBlock (AudioBuffer<float>& buffer, MidiBuffe
     for (auto i = totalNumInputChannels; i < totalNumOutputChannels; ++i)
         buffer.clear (i, 0, buffer.getNumSamples());
 
-    proc.processBlock (proc, buffer, getPlayHead());
+    proc.processBlock (buffer, getPlayHead());
 }
 
 //==============================================================================
