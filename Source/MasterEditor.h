@@ -36,6 +36,11 @@ public:
         separateProcessingButton.setButtonText ("separate processing");
         separateProcessingButton.addListener (this);
         addAndMakeVisible (separateProcessingButton);
+        
+        feedbackPolarityButton.setToggleState (false, dontSendNotification);
+        feedbackPolarityButton.setButtonText ("negative");
+        feedbackPolarityButton.addListener (this);
+        addAndMakeVisible (feedbackPolarityButton);
     }
 
     ~MasterEditor()
@@ -70,6 +75,24 @@ public:
                 proc.setSeparateProcessing();
             }
         }
+        else if (button == &feedbackPolarityButton)
+        {
+            bool isOn = button->getToggleState();
+            
+            if (isOn)
+            {
+                button->setToggleState (false, dontSendNotification);
+                button->setButtonText ("negative");
+                proc.setFeedbackPolarity (false);
+            }
+            else
+            {
+                button->setToggleState (true, dontSendNotification);
+                button->setButtonText ("positive");
+                proc.setFeedbackPolarity (true);
+            }
+        }
+
     }
     //===================================================================================
 
@@ -83,11 +106,14 @@ public:
 
     void resized() override
     {
-        feedbackSlider.setBounds (25, 225, 100, 100);
-        dryWetSlider.setBounds (150, 225, 100, 100);
+        //feedbackSlider.setBounds (25, 225, 100, 100);
+        dryWetSlider.setBounds (87.5, 225, 100, 100);
         
         separateProcessingButton.setBounds ((getWidth() - 100) * 0.5,
-                                            350, 100, 30);
+                                            350, 100, 35);
+        
+        feedbackPolarityButton.setBounds ((getWidth() - 100) * 0.5,
+                                          400, 100, 35);
     }
 
 private:
@@ -99,6 +125,7 @@ private:
     Label dryWetLabel;
     
     TextButton separateProcessingButton;
+    TextButton feedbackPolarityButton;
     
     Proc& proc;
 //==============================================================

@@ -16,7 +16,8 @@
 /*
 */
 class VoiceEditor    : public Component,
-                              Slider::Listener
+                              Slider::Listener,
+                              Button::Listener
 {
 public:
     VoiceEditor (Flanger& f, int width, int height) : voiceProc (f)
@@ -38,6 +39,11 @@ public:
         Utility::addSlider (&dryWetSlider, &dryWetLabel, "Mix", 0, 1, 0.01, 0.5,
                             "", Slider::SliderStyle::RotaryVerticalDrag,
                             Slider::TextEntryBoxPosition::NoTextBox, 1, this, this, true);
+        
+        doubleFeedbackButton.setToggleState (false, dontSendNotification);
+        doubleFeedbackButton.setButtonText ("single feedback");
+        doubleFeedbackButton.addListener (this);
+        addAndMakeVisible (doubleFeedbackButton);
     }
     
     ~VoiceEditor()
@@ -64,6 +70,28 @@ public:
         }
     }
     
+    void buttonClicked (Button* button) override
+    {
+        if (button == &doubleFeedbackButton)
+        {
+            bool isOn = button->getToggleState();
+            
+            if (isOn)
+            {
+                button->setToggleState (false, dontSendNotification);
+                button->setButtonText ("single feedback");
+                voiceProc.setPrevSampleGain (0);
+            }
+            else
+            {
+                button->setToggleState (true, dontSendNotification);
+                button->setButtonText ("double feedback");
+                double fb = feedbackSlider.getValue();
+                voiceProc.setPrevSampleGain (0.95 - fb);
+            }
+        }
+    }
+    
     void paint (Graphics& g) override
     {
         g.fillAll (Colours::black);
@@ -81,6 +109,9 @@ public:
         //second row
         feedbackSlider.setBounds (25, 175, 100, 100);
         dryWetSlider.setBounds (150, 175, 100, 100);
+        
+        //third row
+        doubleFeedbackButton.setBounds (25, 300, 100, 35);
     }
 
 private:
@@ -95,6 +126,8 @@ private:
     
     Slider dryWetSlider;
     Label dryWetLabel;
+    
+    TextButton doubleFeedbackButton;
     
     //voice processor reference
     Flanger& voiceProc;

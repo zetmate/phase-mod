@@ -13,10 +13,6 @@
 #include "Utility.h"
 #include "PluginProcessor.h"
 #include "VoiceEditor.h"
-//#include "VoiceCloseEditor.h"
-//#include "VoiceMidEditor.h"
-//#include "VoiceFarEditor.h"
-//#include "VoiceEchoEditor.h"
 #include "MasterEditor.h"
 
 

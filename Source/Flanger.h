@@ -25,7 +25,7 @@ public:
         stereo
     };
     
-    Flanger()  : sampleRate (1), channelSet (mono), resourcesReleased(false), minDelayInMs(0), maxDelayInMs (39), delayBuffer (0, 0), circularBufferSize (0), delayCounter(0), delayInSamples(0), prevDelayedLeft(0), prevDelayedRight(0), feedbackGain(0), prevSampleGain(0), dryGain(0), wetGain(0), dryWetPropotion(1)
+    Flanger()  : sampleRate (1), channelSet (mono), pingPong (false), resourcesReleased(false), minDelayInMs(0), maxDelayInMs (39), delayBuffer (0, 0), circularBufferSize (0), delayCounter(0), delayInSamples(0), prevDelayedLeft(0), prevDelayedRight(0), feedbackGain(0), prevSampleGain(0), dryGain(0), wetGain(0), dryWetPropotion(1)
     {
         //initialise smart pointers with objects
         wavetable = new Oscilator (0.01);
@@ -166,6 +166,15 @@ public:
         feedbackGain = std::min (0.99f, newFeedbackGain);
     }
     
+    void setFeedbackPolarity (bool isPositive)
+    {
+        if (isPositive && feedbackGain < 0)
+            feedbackGain *= -1;
+        
+        else if (!isPositive && feedbackGain > 0)
+            feedbackGain *= -1;
+    }
+    
     void setPrevSampleGain (float newPrevSampGain)
     {
         prevSampleGain = newPrevSampGain;
@@ -177,6 +186,7 @@ public:
     }
     
     //getters
+    //get pointers
     const float* getReadPointerToDelayBuffer (int channel)
     {
         return delayBuffer.getReadPointer (channel);
@@ -192,6 +202,8 @@ public:
 protected:
     double sampleRate;
     ChannelSet channelSet;
+    
+    bool pingPong;
     
     bool resourcesReleased;
     

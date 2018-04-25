@@ -124,11 +124,12 @@ void Flanger::processSampleStereo (const float inputLeft, const float inputRight
     outputRight = dryGain * inputRight + wetGain * filteredRight;
     
     //store input signal in the delay buffer
-    leftDelayW [delayCounter] = (inputLeft + feedbackGain * filteredLeft
-                                 + prevSampleGain * prevDelayedLeft);
     
-    rightDelayW [delayCounter] = (inputRight + feedbackGain * filteredRight
-                                  + prevSampleGain * prevDelayedRight);
+        leftDelayW [delayCounter] = (inputLeft + feedbackGain * filteredLeft
+                                     + prevSampleGain * prevDelayedLeft);
+        
+        rightDelayW [delayCounter] = (inputRight + feedbackGain * filteredRight
+                                      + prevSampleGain * prevDelayedRight);
     
     //store previous values
     prevDelayedLeft = filteredLeft;

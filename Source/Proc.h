@@ -152,11 +152,13 @@ public:
         dryWetRamp.setRange (dryWetPropotion, newDryWetPropotion);
     }
     
-    //internal processors
-    Flanger voiceClose,
-            voiceMid,
-            voiceFar,
-            voiceEcho;
+    void setFeedbackPolarity (bool shouldBePositive)
+    {
+        voiceClose.setFeedbackPolarity (shouldBePositive);
+        voiceMid.setFeedbackPolarity (shouldBePositive);
+        voiceFar.setFeedbackPolarity (shouldBePositive);
+        voiceEcho.setFeedbackPolarity (shouldBePositive);
+    }
     
     void processBlock (AudioSampleBuffer& buffer, AudioPlayHead* playHead)
     {
@@ -175,6 +177,12 @@ public:
                 processBlockMonoCascade (buffer, playHead);
         }
     }
+    
+    //internal processors
+    Flanger voiceClose,
+    voiceMid,
+    voiceFar,
+    voiceEcho;
     
 protected:
     double sampleRate;
@@ -417,10 +425,11 @@ private:
     void processBlockStereoSeparate (AudioSampleBuffer& buffer, AudioPlayHead* playHead)
     {
         //prepare transport state info
-        bool transportIsAvailable = playHead->getCurrentPosition(currentPositionInfo);
+        //bool transportIsAvailable = playHead->getCurrentPosition(currentPositionInfo);
         
         //process only if the transport state = is playing or not available
-        if (currentPositionInfo.isPlaying || !(transportIsAvailable))
+        //if (currentPositionInfo.isPlaying || !(transportIsAvailable))
+        if (true)
         {
             //constants
             const int numSamples = buffer.getNumSamples();
@@ -568,10 +577,11 @@ private:
     void processBlockStereoCascade (AudioSampleBuffer& buffer, AudioPlayHead* playHead)
     {
         //prepare transport state info
-        bool transportIsAvailable = playHead->getCurrentPosition(currentPositionInfo);
+        //bool transportIsAvailable = playHead->getCurrentPosition(currentPositionInfo);
         
         //process only if the transport state = is playing or not available
-        if (currentPositionInfo.isPlaying || !(transportIsAvailable))
+        //if (currentPositionInfo.isPlaying || !(transportIsAvailable))
+        if (true)
         {
             //constants
             const int numSamples = buffer.getNumSamples();
