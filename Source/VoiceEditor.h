@@ -28,22 +28,21 @@ public:
                             "Hz", Slider::SliderStyle::RotaryVerticalDrag,
                             Slider::TextEntryBoxPosition::NoTextBox, 0.1, this, this, true);
         
-        Utility::addSlider (&depthSlider, &depthLabel, "Depth", 0, 1, 0.001, 0.5,
-                            "", Slider::SliderStyle::RotaryVerticalDrag,
-                            Slider::TextEntryBoxPosition::NoTextBox, 0.3, this, this, true);
+        Utility::addSlider (&lowCutSlider, &lowCutLabel, "Low cut", 20, 20000, 1, 3000,
+                            "Hz", Slider::SliderStyle::RotaryVerticalDrag,
+                            Slider::TextEntryBoxPosition::NoTextBox, 70, this, this, true);
         
-        Utility::addSlider (&feedbackSlider, &feedbackLabel, "Feedback", 0, 0.99, 0.01, 0.5,
+        Utility::addSlider (&highCutSlider, &highCutLabel, "High cut", 20, 20000, 1, 3000,
+                            "Hz", Slider::SliderStyle::RotaryVerticalDrag,
+                            Slider::TextEntryBoxPosition::NoTextBox, 20000, this, this, true);
+        
+        Utility::addSlider (&resoSlider, &resoLabel, "Resonance", 0.7, 80, 0.01, 10,
                             "", Slider::SliderStyle::RotaryVerticalDrag,
-                            Slider::TextEntryBoxPosition::NoTextBox, 0, this, this, true);
+                            Slider::TextEntryBoxPosition::NoTextBox, 0.7, this, this, true);
         
         Utility::addSlider (&dryWetSlider, &dryWetLabel, "Mix", 0, 1, 0.01, 0.5,
                             "", Slider::SliderStyle::RotaryVerticalDrag,
                             Slider::TextEntryBoxPosition::NoTextBox, 1, this, this, true);
-        
-        doubleFeedbackButton.setToggleState (false, dontSendNotification);
-        doubleFeedbackButton.setButtonText ("single feedback");
-        doubleFeedbackButton.addListener (this);
-        addAndMakeVisible (doubleFeedbackButton);
     }
     
     ~VoiceEditor()
@@ -56,40 +55,27 @@ public:
         {
             voiceProc.wavetable->setFrequency ((float) slider->getValue());
         }
-        else if (slider == &depthSlider)
-        {
-            voiceProc.setDepth (slider->getValue());
-        }
-        else if (slider == &feedbackSlider)
-        {
-            voiceProc.setFeedbackGain (slider->getValue());
-        }
         else if (slider == &dryWetSlider)
         {
             voiceProc.setDryWetMix (slider->getValue());
+        }
+        else if (slider == &lowCutSlider)
+        {
+            voiceProc.hpFilter.frequency = slider->getValue();
+        }
+        else if (slider == &highCutSlider)
+        {
+            voiceProc.lpFilter.frequency = slider->getValue();
+        }
+        else if (slider == &resoSlider)
+        {
+            voiceProc.hpFilter.quality = slider->getValue();
+            voiceProc.lpFilter.quality = slider->getValue();
         }
     }
     
     void buttonClicked (Button* button) override
     {
-        if (button == &doubleFeedbackButton)
-        {
-            bool isOn = button->getToggleState();
-            
-            if (isOn)
-            {
-                button->setToggleState (false, dontSendNotification);
-                button->setButtonText ("single feedback");
-                voiceProc.setPrevSampleGain (0);
-            }
-            else
-            {
-                button->setToggleState (true, dontSendNotification);
-                button->setButtonText ("double feedback");
-                double fb = feedbackSlider.getValue();
-                voiceProc.setPrevSampleGain (0.95 - fb);
-            }
-        }
     }
     
     void paint (Graphics& g) override
@@ -103,31 +89,29 @@ public:
     void resized() override
     {
         //first row
-        frequencySlider.setBounds (25, 50, 100, 100);
-        depthSlider.setBounds (150, 50, 100, 100);
+        lowCutSlider.setBounds (25, 50, 100, 100);
+        highCutSlider.setBounds (150, 50, 100, 100);
         
         //second row
-        feedbackSlider.setBounds (25, 175, 100, 100);
-        dryWetSlider.setBounds (150, 175, 100, 100);
-        
-        //third row
-        doubleFeedbackButton.setBounds (25, 300, 100, 35);
+        resoSlider.setBounds (25, 175, 100, 100);
+        frequencySlider.setBounds (150, 175, 100, 100);
     }
 
 private:
     Slider frequencySlider;
     Label frequencyLabel;
     
-    Slider depthSlider;
-    Label depthLabel;
+    Slider lowCutSlider;
+    Label lowCutLabel;
     
-    Slider feedbackSlider;
-    Label feedbackLabel;
+    Slider highCutSlider;
+    Label highCutLabel;
+    
+    Slider resoSlider;
+    Label resoLabel;
     
     Slider dryWetSlider;
     Label dryWetLabel;
-    
-    TextButton doubleFeedbackButton;
     
     //voice processor reference
     Flanger& voiceProc;

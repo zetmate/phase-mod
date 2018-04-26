@@ -160,6 +160,43 @@ public:
         voiceEcho.setFeedbackPolarity (shouldBePositive);
     }
     
+    void setFeedbackGain (float feedbackGain)
+    {
+        voiceClose.setFeedbackGain (feedbackGain);
+        voiceMid.setFeedbackGain (feedbackGain);
+        voiceFar.setFeedbackGain (feedbackGain);
+        voiceEcho.setFeedbackGain (feedbackGain);
+    }
+    
+    void setDepth (float depth)
+    {
+        voiceClose.setDepth (depth);
+        voiceMid.setDepth (depth);
+        voiceFar.setDepth (depth);
+        voiceEcho.setDepth (depth);
+    }
+    
+    void setDoubleFeedback (bool doubleFeedback, float feedbackValue)
+    {
+        if (doubleFeedback)
+        {
+            float prevSampleGain = Utility::thinCurveDown (feedbackValue, 0.05, 0.9, 1.1, 0.99, 0.99);
+            
+            voiceClose.setPrevSampleGain (prevSampleGain);
+            voiceMid.setPrevSampleGain (prevSampleGain);
+            voiceFar.setPrevSampleGain (prevSampleGain);
+            voiceEcho.setPrevSampleGain (prevSampleGain);
+        }
+        else
+        {
+            voiceClose.setPrevSampleGain (0);
+            voiceMid.setPrevSampleGain (0);
+            voiceFar.setPrevSampleGain (0);
+            voiceEcho.setPrevSampleGain (0);
+        }
+    }
+    
+    //PROCESSING FUNCTION
     void processBlock (AudioSampleBuffer& buffer, AudioPlayHead* playHead)
     {
         if (channelSet == stereo)

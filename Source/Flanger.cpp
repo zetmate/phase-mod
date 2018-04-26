@@ -44,7 +44,10 @@ void Flanger::processSampleMono (const float input,
     //=========================================================================
     
     //filter interpolated samples
-    float delayed = lpFilter.filterSignal (interpolated, 0);
+    float delayed = aaFilter.filterSignal (interpolated, 0);
+    float lp = lpFilter.filterSignal (delayed, 0);
+    float hp = hpFilter.filterSignal (lp, 0);
+    float filtered = aaFilter1.filterSignal (hp, 0);
     
     //apply gain ramps
     dryWetRamp.applyRamp (dryWetPropotion);
@@ -54,14 +57,14 @@ void Flanger::processSampleMono (const float input,
     dryGain = 1 - wetGain;
     
     //output signal
-    output = dryGain * input + wetGain * delayed;
+    output = dryGain * input + wetGain * filtered;
     
     //store input signal in the delay buffer
-    delayW [delayCounter] = (input + feedbackGain * delayed
+    delayW [delayCounter] = (input + feedbackGain * filtered
                              + prevSampleGain * prevDelayedLeft);
     
     //store previous values
-    prevDelayedLeft = delayed;
+    prevDelayedLeft = filtered;
     
     //increase counters
     delayCounter++;
@@ -105,11 +108,17 @@ void Flanger::processSampleStereo (const float inputLeft, const float inputRight
     //=========================================================================
     
     //filter interpolated samples
-    float delayedLeft = lpFilter.filterSignal (interpolatedLeft, 0);
-    float delayedRight = lpFilter.filterSignal (interpolatedRight, 1);
+    float delayedLeft = aaFilter.filterSignal (interpolatedLeft, 0);
+    float delayedRight = aaFilter.filterSignal (interpolatedRight, 1);
     
-    float filteredLeft = lpFilter1.filterSignal (delayedLeft, 0);
-    float filteredRight = lpFilter1.filterSignal (delayedRight, 1);
+    float lpLeft = lpFilter.filterSignal (delayedLeft, 0);
+    float lpRight = lpFilter.filterSignal (delayedRight, 1);
+    
+    float hpLeft = hpFilter.filterSignal (lpLeft, 0);
+    float hpRight = hpFilter.filterSignal (lpRight, 1);
+    
+    float filteredLeft = aaFilter1.filterSignal (hpLeft, 0);
+    float filteredRight = aaFilter1.filterSignal (hpRight, 1);
     
     //apply gain ramps
     dryWetRamp.applyRamp (dryWetPropotion);

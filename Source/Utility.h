@@ -238,9 +238,9 @@ public:
     //GUI STUFF
     
     static void addSlider (Slider* slider, Label* label,
-                           String labelText, double minValue, double maxValue,
+                           const String& labelText, double minValue, double maxValue,
                            double interval, double skewMidPoint,
-                           String valueSuff, Slider::SliderStyle sliderStyle,
+                           const String& valueSuff, Slider::SliderStyle sliderStyle,
                            Slider::TextEntryBoxPosition textBoxPosition,
                            double initialValue, Component* parent,
                            Slider::Listener* listener,
@@ -278,6 +278,33 @@ public:
             {
                 parent->addChildComponent (slider);
             }
+        }
+    }
+    
+    static void addTextButton (TextButton* button, const String& buttonText,
+                               bool shouldBeOn, bool makeVisible,
+                               Component* parent, Button::Listener* listener)
+    {
+        button->setToggleState (shouldBeOn, dontSendNotification);
+        button->setButtonText (buttonText);
+        
+        if (parent != nullptr)
+        {
+            parent->addAndMakeVisible (button);
+        }
+        
+        if (listener != nullptr)
+        {
+           button->addListener (listener);
+        }
+        
+        if (makeVisible)
+        {
+            parent->addAndMakeVisible (button);
+        }
+        else
+        {
+            parent->addChildComponent (button);
         }
     }
 };

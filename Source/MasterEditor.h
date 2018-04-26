@@ -24,6 +24,11 @@ public:
     {
         setSize (width, height);
 
+        //add sliders
+        Utility::addSlider (&depthSlider, &depthLabel, "Depth", 0, 1, 0.001, 0.5,
+                            "", Slider::SliderStyle::RotaryVerticalDrag,
+                            Slider::TextEntryBoxPosition::NoTextBox, 0.3, this, this, true);
+        
         Utility::addSlider (&feedbackSlider, &feedbackLabel, "Feedback", 0, 0.99, 0.01, 0.5,
                             "", Slider::SliderStyle::RotaryVerticalDrag,
                             Slider::TextEntryBoxPosition::NoTextBox, 0, this, this, true);
@@ -32,15 +37,15 @@ public:
                             "", Slider::SliderStyle::RotaryVerticalDrag,
                             Slider::TextEntryBoxPosition::NoTextBox, 0.5, this, this, true);
         
-        separateProcessingButton.setToggleState (true, dontSendNotification);
-        separateProcessingButton.setButtonText ("separate processing");
-        separateProcessingButton.addListener (this);
-        addAndMakeVisible (separateProcessingButton);
+        //add buttons
+        Utility::addTextButton (&separateProcessingButton, "separate processing",
+                                true, true, this, this);
         
-        feedbackPolarityButton.setToggleState (false, dontSendNotification);
-        feedbackPolarityButton.setButtonText ("negative");
-        feedbackPolarityButton.addListener (this);
-        addAndMakeVisible (feedbackPolarityButton);
+        Utility::addTextButton (&feedbackPolarityButton, "negative",
+                                false, true, this, this);
+        
+        Utility::addTextButton (&doubleFeedbackButton, "single feedback",
+                                false, true, this, this);
     }
 
     ~MasterEditor()
@@ -53,6 +58,14 @@ public:
         if (slider == &dryWetSlider)
         {
             proc.setGlobalDryWet (slider->getValue());
+        }
+        else if (slider == &depthSlider)
+        {
+            proc.setDepth (slider->getValue());
+        }
+        else if (slider == &feedbackSlider)
+        {
+            proc.setFeedbackGain (slider->getValue());
         }
     }
     
@@ -92,7 +105,23 @@ public:
                 proc.setFeedbackPolarity (true);
             }
         }
-
+        else if (button == &doubleFeedbackButton)
+        {
+            bool isOn = button->getToggleState();
+            
+            if (isOn)
+            {
+                button->setToggleState (false, dontSendNotification);
+                button->setButtonText ("single feedback");
+                proc.setDoubleFeedback (false, 0);           }
+            else
+            {
+                button->setToggleState (true, dontSendNotification);
+                button->setButtonText ("double feedback");
+                proc.setDoubleFeedback (true, feedbackSlider.getValue());
+            }
+        }
+        
     }
     //===================================================================================
 
@@ -106,14 +135,19 @@ public:
 
     void resized() override
     {
-        //feedbackSlider.setBounds (25, 225, 100, 100);
-        dryWetSlider.setBounds (87.5, 225, 100, 100);
+        dryWetSlider.setBounds (87.5, 50, 100, 100);
+        
+        feedbackSlider.setBounds (25, 225, 100, 100);
+        depthSlider.setBounds (150, 225, 100, 100);
         
         separateProcessingButton.setBounds ((getWidth() - 100) * 0.5,
                                             350, 100, 35);
         
         feedbackPolarityButton.setBounds ((getWidth() - 100) * 0.5,
                                           400, 100, 35);
+        
+        doubleFeedbackButton.setBounds ((getWidth() - 100) * 0.5,
+                                        450, 100, 35);
     }
 
 private:
@@ -121,11 +155,15 @@ private:
     Slider feedbackSlider;
     Label feedbackLabel;
     
+    Slider depthSlider;
+    Label depthLabel;
+    
     Slider dryWetSlider;
     Label dryWetLabel;
     
     TextButton separateProcessingButton;
     TextButton feedbackPolarityButton;
+    TextButton doubleFeedbackButton;
     
     Proc& proc;
 //==============================================================

@@ -33,6 +33,10 @@ public:
         //set initial values
         setDryWetMix (1);
         delayRange.start = 4;
+        lpFilter.frequency = 20000;
+        hpFilter.frequency = 70;
+        lpFilter.quality = 0.7;
+        hpFilter.quality = 0.7;
         
         //set wt parameters
         wavetable->setAllParameters (0.1, 1, 0);
@@ -60,10 +64,12 @@ public:
         
         //prepare filters
         //count coefficients
-        lpFilter.frequency = floor(sampleRate / 2.4);
+        aaFilter.frequency = floor(sampleRate / 2.4);
+        aaFilter1.frequency = floor(sampleRate / 2.4);
+        aaFilter.countCoefficients (sampleRate);
+        aaFilter1.countCoefficients (sampleRate);
         lpFilter.countCoefficients (sampleRate);
-        lpFilter1.frequency = floor(sampleRate / 2.4);
-        lpFilter1.countCoefficients (sampleRate);
+        hpFilter.countCoefficients (sampleRate);
         
         //prepare ranges: set start, end, interval, skew
         setMinDelayTime (minDelayInMs);
@@ -91,8 +97,10 @@ public:
             delayBuffer.clear();
             
             //clear filters' buffers
+            aaFilter.clearBuffers();
+            aaFilter1.clearBuffers();
             lpFilter.clearBuffers();
-            lpFilter1.clearBuffers();
+            hpFilter.clearBuffers();
             
             //reset wavetables
             wavetable->resetWavetable();
@@ -198,6 +206,8 @@ public:
     }
     
     ScopedPointer<Oscilator> wavetable;
+    LowPassFilter lpFilter;
+    HighPassFilter hpFilter;
     
 protected:
     double sampleRate;
@@ -208,8 +218,8 @@ protected:
     bool resourcesReleased;
     
     //filters
-    AntiAliasingFilter lpFilter;
-    AntiAliasingFilter lpFilter1;
+    AntiAliasingFilter aaFilter;
+    AntiAliasingFilter aaFilter1;
     
     NormalisableRange <float> delayRange;
     float minDelayInMs, maxDelayInMs;
