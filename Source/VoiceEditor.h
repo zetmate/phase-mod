@@ -24,9 +24,9 @@ public:
     {
         setSize (width, height);
         
-        Utility::addSlider (&frequencySlider, &frequencyLabel, "Frequency", 0.1, 17, 0.01, 3,
+        Utility::addSlider (&frequencySlider, &frequencyLabel, "Frequency", 0.01, 17, 0.001, 3,
                             "Hz", Slider::SliderStyle::RotaryVerticalDrag,
-                            Slider::TextEntryBoxPosition::NoTextBox, 0.1, this, this, true);
+                            Slider::TextEntryBoxPosition::NoTextBox, 0.01, this, this, true);
         
         Utility::addSlider (&lowCutSlider, &lowCutLabel, "Low cut", 20, 20000, 1, 3000,
                             "Hz", Slider::SliderStyle::RotaryVerticalDrag,
@@ -61,16 +61,15 @@ public:
         }
         else if (slider == &lowCutSlider)
         {
-            voiceProc.hpFilter.frequency = slider->getValue();
+            voiceProc.setLowCutFrequency (slider->getValue());
         }
         else if (slider == &highCutSlider)
         {
-            voiceProc.lpFilter.frequency = slider->getValue();
+            voiceProc.setHighCutFrequency (slider->getValue());
         }
         else if (slider == &resoSlider)
         {
-            voiceProc.hpFilter.quality = slider->getValue();
-            voiceProc.lpFilter.quality = slider->getValue();
+            voiceProc.setResonance (slider->getValue());
         }
     }
     

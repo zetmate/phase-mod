@@ -193,6 +193,27 @@ public:
         dryWetRamp.setRange (dryWetPropotion, newDryWetPropotion);
     }
     
+    //filters' setters
+    void setHighCutFrequency (float newFrequency)
+    {
+        lpFilter.frequency = newFrequency;
+        lpFilter.countCoefficients (sampleRate);
+    }
+    
+    void setLowCutFrequency (float newFrequency)
+    {
+        hpFilter.frequency = newFrequency;
+        hpFilter.countCoefficients (sampleRate);
+    }
+    
+    void setResonance (float resonance)
+    {
+        lpFilter.quality = resonance;
+        hpFilter.quality = resonance;
+        lpFilter.countCoefficients (sampleRate);
+        hpFilter.countCoefficients (sampleRate);
+    }
+    
     //getters
     //get pointers
     const float* getReadPointerToDelayBuffer (int channel)
@@ -206,10 +227,8 @@ public:
     }
     
     ScopedPointer<Oscilator> wavetable;
-    LowPassFilter lpFilter;
-    HighPassFilter hpFilter;
     
-protected:
+private:
     double sampleRate;
     ChannelSet channelSet;
     
@@ -220,6 +239,8 @@ protected:
     //filters
     AntiAliasingFilter aaFilter;
     AntiAliasingFilter aaFilter1;
+    LowPassFilter lpFilter;
+    HighPassFilter hpFilter;
     
     NormalisableRange <float> delayRange;
     float minDelayInMs, maxDelayInMs;

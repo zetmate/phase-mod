@@ -45,9 +45,9 @@ void Flanger::processSampleMono (const float input,
     
     //filter interpolated samples
     float delayed = aaFilter.filterSignal (interpolated, 0);
-    float lp = lpFilter.filterSignal (delayed, 0);
+    float filtered = aaFilter1.filterSignal (delayed, 0);
+    float lp = lpFilter.filterSignal (filtered, 0);
     float hp = hpFilter.filterSignal (lp, 0);
-    float filtered = aaFilter1.filterSignal (hp, 0);
     
     //apply gain ramps
     dryWetRamp.applyRamp (dryWetPropotion);
@@ -60,7 +60,7 @@ void Flanger::processSampleMono (const float input,
     output = dryGain * input + wetGain * filtered;
     
     //store input signal in the delay buffer
-    delayW [delayCounter] = (input + feedbackGain * filtered
+    delayW [delayCounter] = (input + feedbackGain * hp
                              + prevSampleGain * prevDelayedLeft);
     
     //store previous values
