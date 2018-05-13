@@ -463,11 +463,10 @@ private:
     void processBlockStereoSeparate (AudioSampleBuffer& buffer, AudioPlayHead* playHead)
     {
         //prepare transport state info
-        //bool transportIsAvailable = playHead->getCurrentPosition(currentPositionInfo);
+        bool transportIsAvailable = playHead->getCurrentPosition(currentPositionInfo);
         
         //process only if the transport state = is playing or not available
-        //if (currentPositionInfo.isPlaying || !(transportIsAvailable))
-        if (true)
+        if (currentPositionInfo.isPlaying || !(transportIsAvailable))
         {
             //constants
             const int numSamples = buffer.getNumSamples();
@@ -615,11 +614,10 @@ private:
     void processBlockStereoCascade (AudioSampleBuffer& buffer, AudioPlayHead* playHead)
     {
         //prepare transport state info
-        //bool transportIsAvailable = playHead->getCurrentPosition(currentPositionInfo);
+        bool transportIsAvailable = playHead->getCurrentPosition(currentPositionInfo);
         
         //process only if the transport state = is playing or not available
-        //if (currentPositionInfo.isPlaying || !(transportIsAvailable))
-        if (true)
+        if (currentPositionInfo.isPlaying || !(transportIsAvailable))
         {
             //constants
             const int numSamples = buffer.getNumSamples();
