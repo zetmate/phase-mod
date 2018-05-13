@@ -64,8 +64,8 @@ public:
         
         //prepare filters
         //count coefficients
-        aaFilter.frequency = floor(sampleRate / 2.4);
-        aaFilter1.frequency = floor(sampleRate / 2.4);
+        aaFilter.frequency = floor (sampleRate / 2.4);
+        aaFilter1.frequency = floor (sampleRate / 2.4);
         aaFilter.countCoefficients (sampleRate);
         aaFilter1.countCoefficients (sampleRate);
         lpFilter.countCoefficients (sampleRate);
@@ -237,8 +237,8 @@ private:
     bool resourcesReleased;
     
     //filters
-    AntiAliasingFilter aaFilter;
-    AntiAliasingFilter aaFilter1;
+    AntiAliasingFilter16 aaFilter;
+    AntiAliasingFilter16 aaFilter1;
     LowPassFilter lpFilter;
     HighPassFilter hpFilter;
     

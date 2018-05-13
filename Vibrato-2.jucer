@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<JUCERPROJECT name="Vibrato-2" projectType="audioplug" jucerVersion="5.2.1"
-              buildVST="0" pluginName="Vibrato-2">
+<JUCERPROJECT name="Vibrato-2" projectType="audioplug" jucerVersion="5.3.2"
+              buildVST="0" pluginName="Vibrato-2" id="sFywJT">
   <MAINGROUP id="tWmXHB" name="Vibrato-2">
     <GROUP id="{34B66B48-FA1C-EDCA-2DD6-03316E3E6503}" name="Source">
       <FILE id="QVxRk1" name="PluginProcessor.cpp" compile="1" resource="0"
@@ -70,4 +70,7 @@
     <MODULE id="juce_video" showAllCode="1" useLocalCopy="0" useGlobalPath="0"/>
   </MODULES>
   <JUCEOPTIONS/>
+  <LIVE_SETTINGS>
+    <OSX/>
+  </LIVE_SETTINGS>
 </JUCERPROJECT>

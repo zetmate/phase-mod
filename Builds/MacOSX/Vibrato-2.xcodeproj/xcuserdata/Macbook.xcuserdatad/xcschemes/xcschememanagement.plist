@@ -7,7 +7,7 @@
 		<key>Vibrato-2 - AU.xcscheme</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>1</integer>
+			<integer>2</integer>
 		</dict>
 		<key>Vibrato-2 - All.xcscheme</key>
 		<dict>
@@ -17,82 +17,42 @@
 		<key>Vibrato-2 - Shared Code.xcscheme</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>2</integer>
+			<integer>4</integer>
+		</dict>
+		<key>Vibrato-2 - Standalone Plugin.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>3</integer>
+		</dict>
+		<key>Vibrato-2 - VST.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>1</integer>
 		</dict>
 	</dict>
 	<key>SuppressBuildableAutocreation</key>
 	<dict>
-		<key>1287FB7A2EEF7C7D763A7DB2</key>
+		<key>0C70A1E2E0BCDC4B3E5B5B74</key>
 		<dict>
 			<key>primary</key>
 			<true/>
 		</dict>
-		<key>1CF53CDA5D6E10840C589920</key>
+		<key>19074B42764B91E46E22A660</key>
 		<dict>
 			<key>primary</key>
 			<true/>
 		</dict>
-		<key>32C74C88A1CB6D8AC38C7439</key>
+		<key>4EA8687EE014A07B89B87D25</key>
 		<dict>
 			<key>primary</key>
 			<true/>
 		</dict>
-		<key>567D8689012CB5B6B8B7AE45</key>
+		<key>93F84B065BF6ADF9FD3FC842</key>
 		<dict>
 			<key>primary</key>
 			<true/>
 		</dict>
-		<key>68FCFA9F0F5B9DC9DA30E017</key>
-		<dict>
-			<key>primary</key>
-			<true/>
-		</dict>
-		<key>A26C920EC4C2246FCA68AEE1</key>
-		<dict>
-			<key>primary</key>
-			<true/>
-		</dict>
-		<key>B83AE5FC4B868F991B1C1BC2</key>
-		<dict>
-			<key>primary</key>
-			<true/>
-		</dict>
-		<key>C6E952D96DE5786F8E289C21</key>
-		<dict>
-			<key>primary</key>
-			<true/>
-		</dict>
-		<key>CA7B9BF2A1AF53599156B555</key>
-		<dict>
-			<key>primary</key>
-			<true/>
-		</dict>
-		<key>D38B52B8E194437F1B2EEFCC</key>
-		<dict>
-			<key>primary</key>
-			<true/>
-		</dict>
-		<key>DAA645C621E6F15DCA249AA5</key>
-		<dict>
-			<key>primary</key>
-			<true/>
-		</dict>
-		<key>DB14924220FD7DA11BB0D72C</key>
-		<dict>
-			<key>primary</key>
-			<true/>
-		</dict>
-		<key>E795F205F0C685F10FCC3865</key>
-		<dict>
-			<key>primary</key>
-			<true/>
-		</dict>
-		<key>EF2C5E6EB1C79E4C560ABC24</key>
-		<dict>
-			<key>primary</key>
-			<true/>
-		</dict>
-		<key>F8AD030EFF7EA2CA184B77B9</key>
+		<key>C0D381E172C964B9E28E7916</key>
 		<dict>
 			<key>primary</key>
 			<true/>

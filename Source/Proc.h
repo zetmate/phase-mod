@@ -240,6 +240,7 @@ protected:
     AudioPlayHead::CurrentPositionInfo currentPositionInfo;
     
 private:
+    
     //Mono processing functions
     void processBlockMonoSeparate (AudioSampleBuffer& buffer, AudioPlayHead* playHead)
     {
@@ -332,7 +333,7 @@ private:
                 {
                     float g = limiterLeft.getGainReductionValueForSample (processed);
                     
-                    output = processed * g;
+                    output = processed * g, 0;
                 }
                 
                 //============================================

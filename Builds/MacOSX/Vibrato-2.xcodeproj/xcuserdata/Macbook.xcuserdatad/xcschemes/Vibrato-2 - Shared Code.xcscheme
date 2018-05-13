@@ -14,7 +14,7 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "DB14924220FD7DA11BB0D72C"
+               BlueprintIdentifier = "93F84B065BF6ADF9FD3FC842"
                BuildableName = "libVibrato-2.a"
                BlueprintName = "Vibrato-2 - Shared Code"
                ReferencedContainer = "container:Vibrato-2.xcodeproj">
@@ -45,7 +45,7 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "DB14924220FD7DA11BB0D72C"
+            BlueprintIdentifier = "93F84B065BF6ADF9FD3FC842"
             BuildableName = "libVibrato-2.a"
             BlueprintName = "Vibrato-2 - Shared Code"
             ReferencedContainer = "container:Vibrato-2.xcodeproj">
@@ -63,7 +63,7 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "DB14924220FD7DA11BB0D72C"
+            BlueprintIdentifier = "93F84B065BF6ADF9FD3FC842"
             BuildableName = "libVibrato-2.a"
             BlueprintName = "Vibrato-2 - Shared Code"
             ReferencedContainer = "container:Vibrato-2.xcodeproj">

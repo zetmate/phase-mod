@@ -14,9 +14,9 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "19074B42764B91E46E22A660"
-               BuildableName = "Vibrato-2.component"
-               BlueprintName = "Vibrato-2 - AU"
+               BlueprintIdentifier = "0C70A1E2E0BCDC4B3E5B5B74"
+               BuildableName = "Vibrato-2.vst"
+               BlueprintName = "Vibrato-2 - VST"
                ReferencedContainer = "container:Vibrato-2.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -45,9 +45,9 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "19074B42764B91E46E22A660"
-            BuildableName = "Vibrato-2.component"
-            BlueprintName = "Vibrato-2 - AU"
+            BlueprintIdentifier = "0C70A1E2E0BCDC4B3E5B5B74"
+            BuildableName = "Vibrato-2.vst"
+            BlueprintName = "Vibrato-2 - VST"
             ReferencedContainer = "container:Vibrato-2.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
@@ -63,9 +63,9 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "19074B42764B91E46E22A660"
-            BuildableName = "Vibrato-2.component"
-            BlueprintName = "Vibrato-2 - AU"
+            BlueprintIdentifier = "0C70A1E2E0BCDC4B3E5B5B74"
+            BuildableName = "Vibrato-2.vst"
+            BlueprintName = "Vibrato-2 - VST"
             ReferencedContainer = "container:Vibrato-2.xcodeproj">
          </BuildableReference>
       </MacroExpansion>

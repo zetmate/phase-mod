@@ -26,7 +26,7 @@ public:
     friend class BandStopFilter;
     friend class DevilFilter;
     
-    void clearBuffers();
+    virtual void clearBuffers();
     
     double quality;
     double frequency;
@@ -247,55 +247,49 @@ private:
     double highFrequency;
 };
 
-class AntiAliasingFilter  : public Filter
+class AntiAliasingFilter16  : public Filter
 {
 public:
-    AntiAliasingFilter (int nummPoles = 8)
-    : frequency (20000), numPoles (nummPoles)
+    AntiAliasingFilter16()
     {
     }
     
-    AntiAliasingFilter (float frequency, int nummPoles = 16)
-        : frequency (frequency), numPoles (nummPoles)
-    {
-    }
-    
-    ~AntiAliasingFilter()
+    ~AntiAliasingFilter16()
     {
     }
     
     void countCoefficients (double sampleRate) override
     {
         filter1.frequency = frequency;
-        filter1.quality = 0.707 / (numPoles / 2);
+        filter1.quality = 0.707 / 8.0f;
         filter1.countCoefficients (sampleRate);
         
         filter2.frequency = frequency;
-        filter2.quality = 0.707 / (numPoles / 2);
+        filter2.quality = 0.707 / 8.0f;
         filter2.countCoefficients (sampleRate);
         
         filter3.frequency = frequency;
-        filter3.quality = 0.707 / (numPoles / 2);
+        filter3.quality = 0.707 / 8.0f;
         filter3.countCoefficients (sampleRate);
         
         filter4.frequency = frequency;
-        filter4.quality = 0.707 / (numPoles / 2);
+        filter4.quality = 0.707 / 8.0f;
         filter4.countCoefficients (sampleRate);
         
         filter5.frequency = frequency;
-        filter5.quality = 0.707 / (numPoles / 2);
+        filter5.quality = 0.707 / 8.0f;
         filter5.countCoefficients (sampleRate);
         
         filter6.frequency = frequency;
-        filter6.quality = 0.707 / (numPoles / 2);
+        filter6.quality = 0.707 / 8.0f;
         filter6.countCoefficients (sampleRate);
         
         filter7.frequency = frequency;
-        filter7.quality = 0.707 / (numPoles / 2);
+        filter7.quality = 0.707 / 8.0f;
         filter7.countCoefficients (sampleRate);
         
         filter8.frequency = frequency;
-        filter8.quality = 0.707 / (numPoles / 2);
+        filter8.quality = 0.707 / 8.0f;
         filter8.countCoefficients (sampleRate);
     }
     
@@ -315,6 +309,18 @@ public:
         return output;
     }
     
+    void clearBuffers() override
+    {
+        filter1.clearBuffers();
+        filter2.clearBuffers();
+        filter3.clearBuffers();
+        filter4.clearBuffers();
+        filter5.clearBuffers();
+        filter6.clearBuffers();
+        filter7.clearBuffers();
+        filter8.clearBuffers();
+    }
+    
     float frequency;
     
 private:
@@ -326,6 +332,48 @@ private:
     LowPassFilter filter6;
     LowPassFilter filter7;
     LowPassFilter filter8;
-    int numPoles;
 };
 
+class AntiAliasingFilter32  : public Filter
+{
+public:
+    AntiAliasingFilter32()
+    {
+    }
+    
+    ~AntiAliasingFilter32()
+    {
+    }
+    
+    void countCoefficients (double sampleRate) override
+    {
+        filter1.frequency = frequency;
+        filter1.quality = 0.707 / 2.0f;
+        filter1.countCoefficients (sampleRate);
+        
+        filter2.frequency = frequency;
+        filter2.quality = 0.707 / 2.0f;
+        filter2.countCoefficients (sampleRate);
+    }
+    
+    float filterSignal (float input, int channel) override
+    {
+        float output = input;
+        
+        output = filter1.filterSignal (output, channel);
+        output = filter2.filterSignal (output, channel);
+        
+        return output;
+    }
+    
+    void clearBuffers() override
+    {
+        filter1.clearBuffers();
+        filter2.clearBuffers();
+    }
+    
+    float frequency;
+private:
+    AntiAliasingFilter16 filter1;
+    AntiAliasingFilter16 filter2;
+};
