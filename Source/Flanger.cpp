@@ -111,8 +111,8 @@ void Flanger::processSampleStereo (const float inputLeft, const float inputRight
     float delayedLeft = aaFilter.filterSignal (interpolatedLeft, 0);
     float delayedRight = aaFilter.filterSignal (interpolatedRight, 1);
     
-    float lpLeft = lpFilter.filterSignal (delayedLeft, 0);
-    float lpRight = lpFilter.filterSignal (delayedRight, 1);
+    float lpLeft = lpFilter.filterSignal (interpolatedLeft, 0);
+    float lpRight = lpFilter.filterSignal (interpolatedRight, 1);
     
     float hpLeft = hpFilter.filterSignal (lpLeft, 0);
     float hpRight = hpFilter.filterSignal (lpRight, 1);
@@ -134,10 +134,10 @@ void Flanger::processSampleStereo (const float inputLeft, const float inputRight
     
     //store input signal in the delay buffer
     
-        leftDelayW [delayCounter] = (inputLeft + feedbackGain * filteredLeft
+        leftDelayW [delayCounter] = (inputLeft + feedbackGain * hpLeft
                                      + prevSampleGain * prevDelayedLeft);
         
-        rightDelayW [delayCounter] = (inputRight + feedbackGain * filteredRight
+        rightDelayW [delayCounter] = (inputRight + feedbackGain * hpRight
                                       + prevSampleGain * prevDelayedRight);
     
     //store previous values
