@@ -19,7 +19,8 @@ public:
     enum ChannelSet
     {
         mono,
-        stereo
+        stereo,
+        monoToStereo
     };
     
     enum ProcessorType
@@ -194,6 +195,58 @@ public:
             voiceFar.setPrevSampleGain (0);
             voiceEcho.setPrevSampleGain (0);
         }
+    }
+    
+    void setPrevSampleGain (float gain)
+    {
+        voiceClose.setPrevSampleGain (gain);
+        voiceMid.setPrevSampleGain (gain);
+        voiceFar.setPrevSampleGain (gain);
+        voiceEcho.setPrevSampleGain (gain);
+    }
+    
+    void setLowCut1 (float frequency)
+    {
+        voiceClose.setLowCutFrequency (frequency);
+        voiceMid.setLowCutFrequency (frequency);
+    }
+    
+    void setLowCut2 (float frequency)
+    {
+        voiceFar.setLowCutFrequency (frequency);
+        voiceEcho.setLowCutFrequency (frequency);
+    }
+    
+    void setHighCut1 (float frequency)
+    {
+        voiceClose.setHighCutFrequency (frequency);
+        voiceMid.setHighCutFrequency (frequency);
+    }
+    
+    void setHighCut2 (float frequency)
+    {
+        voiceFar.setHighCutFrequency (frequency);
+        voiceEcho.setHighCutFrequency (frequency);
+    }
+    
+    void setReso (float resonance)
+    {
+        voiceClose.setResonance (resonance);
+        voiceMid.setResonance (resonance);
+        voiceFar.setResonance (resonance);
+        voiceEcho.setResonance (resonance);
+    }
+    
+    void setFreq1 (float frequency)
+    {
+        voiceClose.wavetable->setFrequency (frequency);
+        voiceMid.wavetable->setFrequency (frequency);
+    }
+    
+    void setFreq2 (float frequency)
+    {
+        voiceFar.wavetable->setFrequency (frequency);
+        voiceEcho.wavetable->setFrequency (frequency);
     }
     
     //PROCESSING FUNCTION
@@ -514,7 +567,12 @@ private:
             {
                 //get input signal
                 const float inputLeft = leftBufferR[sample];
-                const float inputRight = rightBufferR[sample];
+                float inputRight;
+                
+                if (channelSet == stereo)
+                    inputRight = rightBufferR[sample];
+                else
+                    inputRight = inputLeft;
                 
                 //============================================
                 //  DECLARE VARIABLES

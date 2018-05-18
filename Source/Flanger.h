@@ -64,8 +64,8 @@ public:
         
         //prepare filters
         //count coefficients
-        aaFilter.frequency = floor (sampleRate / 2.4);
-        aaFilter1.frequency = floor (sampleRate / 2.4);
+        aaFilter.frequency = floor (20000);
+        aaFilter1.frequency = floor (20000);
         aaFilter.countCoefficients (sampleRate);
         aaFilter1.countCoefficients (sampleRate);
         lpFilter.countCoefficients (sampleRate);
@@ -177,10 +177,16 @@ public:
     void setFeedbackPolarity (bool isPositive)
     {
         if (isPositive && feedbackGain < 0)
+        {
             feedbackGain *= -1;
+            prevSampleGain *= -1;
+        }
         
         else if (!isPositive && feedbackGain > 0)
+        {
             feedbackGain *= -1;
+            prevSampleGain *= -1;
+        }
     }
     
     void setPrevSampleGain (float newPrevSampGain)

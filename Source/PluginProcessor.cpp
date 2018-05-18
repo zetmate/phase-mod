@@ -96,10 +96,10 @@ void Vibrato2AudioProcessor::changeProgramName (int index, const String& newName
 //==============================================================================
 void Vibrato2AudioProcessor::prepareToPlay (double sampleRate, int samplesPerBlock)
 {
-    if (getTotalNumInputChannels() == 1)
-        proc.setToMono();
-    else
+    if (getTotalNumOutputChannels() == 2)
         proc.setToStereo();
+    else
+        proc.setToMono();
     
     proc.prepare (sampleRate, samplesPerBlock);
 }
@@ -125,7 +125,8 @@ bool Vibrato2AudioProcessor::isBusesLayoutSupported (const BusesLayout& layouts)
 
     // This checks if the input layout matches the output layout
    #if ! JucePlugin_IsSynth
-    if (layouts.getMainOutputChannelSet() != layouts.getMainInputChannelSet())
+    if (layouts.getMainInputChannelSet() != AudioChannelSet::mono()
+        && layouts.getMainInputChannelSet() != AudioChannelSet::stereo())
         return false;
    #endif
 

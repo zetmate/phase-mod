@@ -19,51 +19,57 @@
 //==============================================================================
 /**
 */
-class Vibrato2AudioProcessorEditor  : public AudioProcessorEditor
+class Vibrato2AudioProcessorEditor  :   public AudioProcessorEditor,
+                                        public Slider::Listener,
+                                        public Button::Listener
 {
 public:
     Vibrato2AudioProcessorEditor (Vibrato2AudioProcessor&);
     ~Vibrato2AudioProcessorEditor();
     
     void paint (Graphics&) override;
+    void sliderValueChanged (Slider* slider) override;
+    void buttonClicked (Button*) override;
     void resized() override;
 
 private:
     
-    Vibrato2AudioProcessor& processor;
-//=============================================
-    //size values
-    int voiceWidth;
-    int voiceHeight;
+    Proc& proc;
+//==============================================================================
+    Slider lowCut1Slider;
+    Label lowCut1Label;
     
-    int width;
-    int height;
-//=============================================
-    //child editors
-    VoiceCloseEditor voiceCloseEditor;
-    VoiceMidEditor voiceMidEditor;
-    VoiceFarEditor voiceFarEditor;
-    VoiceEchoEditor voiceEchoEditor;
+    Slider lowCut2Slider;
+    Label lowCut2Label;
     
-    MasterEditor masterEditor;
-//=============================================
-    Slider frequencySlider;
-    Label frequencyLabel;
+    Slider highCut1Slider;
+    Label highCut1Label;
+    
+    Slider highCut2Slider;
+    Label highCut2Label;
+    
+    Slider freq1Slider;
+    Label freq1Label;
+    
+    Slider freq2Slider;
+    Label freq2Label;
+    
+    Slider resoSlider;
+    Label resoLabel;
+    
+    Slider depthSlider;
+    Label depthLabel;
     
     Slider feedbackSlider;
     Label feedbackLabel;
     
-    Slider maxDelaySlider;
-    Label maxDelayLabel;
-    
-    Slider sweepWidthSlider;
-    Label sweepWidthLabel;
-    
-    Slider smoothSlider;
-    Label smoothLabel;
-    
     Slider dryWetSlider;
     Label dryWetLabel;
-
+    
+    TextButton separateProcessingButton;
+    TextButton doubleFeedbackButton;
+    TextButton feedbackPolarityButton;
+    
+//==============================================================================
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (Vibrato2AudioProcessorEditor)
 };
