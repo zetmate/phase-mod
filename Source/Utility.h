@@ -230,6 +230,7 @@ public:
                                                        delayBuffer[indexN],
                                                        delayBuffer[indexN1],
                                                        delayBuffer[indexN2]);
+        
         return interpolatedSample;
     }
     

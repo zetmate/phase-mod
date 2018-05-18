@@ -87,10 +87,10 @@ void Flanger::processSampleStereo (const float inputLeft, const float inputRight
     
     {
         //get current wt value
-        float wtValueLeft = wavetable->applyWavetable (inputLeft, 0);
+        float wtValue = wavetable->applyWavetable (inputLeft, 0);
         
         //convert wt value
-        delayInSamples = delayRange.convertFrom0to1 (wtValueLeft);
+        delayInSamples = delayRange.convertFrom0to1 (wtValue);
     }
     //========================================================================
     
@@ -128,9 +128,9 @@ void Flanger::processSampleStereo (const float inputLeft, const float inputRight
     dryGain = 1 - wetGain;
     
     //output signal
-    outputLeft = dryGain * inputLeft + wetGain * filteredLeft;
+    outputLeft = dryGain * inputLeft + wetGain * interpolatedLeft;
     
-    outputRight = dryGain * inputRight + wetGain * filteredRight;
+    outputRight = dryGain * inputRight + wetGain * interpolatedRight;
     
     //store input signal in the delay buffer
     
@@ -141,8 +141,8 @@ void Flanger::processSampleStereo (const float inputLeft, const float inputRight
                                       + prevSampleGain * prevDelayedRight);
     
     //store previous values
-    prevDelayedLeft = filteredLeft;
-    prevDelayedRight = filteredRight;
+    prevDelayedLeft = interpolatedLeft;
+    prevDelayedRight = interpolatedRight;
     
     //increase counters
     delayCounter++;
