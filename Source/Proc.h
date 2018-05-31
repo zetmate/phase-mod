@@ -59,10 +59,10 @@ public:
         sampleRate = newSampleRate;
         
         //prepare internal processors
-        voiceClose.prepare (newSampleRate, bufferSize);
-        voiceMid.prepare (newSampleRate, bufferSize);
-        voiceFar.prepare (newSampleRate, bufferSize);
-        voiceEcho.prepare (newSampleRate, bufferSize);
+        voiceClose.prepare (sampleRate, bufferSize);
+        voiceMid.prepare (sampleRate, bufferSize);
+        voiceFar.prepare (sampleRate, bufferSize);
+        voiceEcho.prepare (sampleRate, bufferSize);
         
         //prepare ramps
         //set time & update interval
@@ -386,7 +386,7 @@ private:
                 {
                     float g = limiterLeft.getGainReductionValueForSample (processed);
                     
-                    output = processed * g, 0;
+                    output = processed * g;
                 }
                 
                 //============================================

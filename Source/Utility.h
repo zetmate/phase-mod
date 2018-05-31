@@ -186,6 +186,37 @@ public:
         return c3 * powf (fract, 3) + c2 * powf (fract, 2) + c1 * fract + c0;
     }
     
+    // Optimal 8x (6-point, 5th-order) (z-form)
+    static float optimal8x_6point5order_interpolation (float fract,
+                                                       float sMin2, float sMin1, float s0,
+                                                       float s1, float s2, float s3)
+    {
+        float z = fract;
+        float even1 = s1 + s0, odd1 = s1 - s0;
+        float even2 = s2 + sMin1, odd2 = s2 - sMin1;
+        float even3 = s3 + sMin2, odd3 = s3 - sMin2;
+        
+        float c0 = (even1 * 0.41660797292569773 + even2 * 0.08188468587188069
+                    + even3 * 0.00150734119050266);
+        
+        float c1 = (odd1 * 0.32232780822726981 + odd2 * 0.21076321997422021
+                    + odd3 * 0.00907649978070957);
+        
+        float c2 = (even1 * -0.205219993961471501 + even2 * 0.18282942057327367
+                    + even3 * 0.02239057377093268);
+        
+        float c3 = (odd1 * -0.21022298520246224 + odd2 * 0.02176417471349534
+                    + odd3 * 0.02898626924395209);
+        
+        float c4 = (even1 * 0.04149963966704384 + even2 * -0.06224707096203808
+                    + even3 * 0.02074742969707599);
+        
+        float c5 = (odd1 * 0.07517133281176167 + odd2 * -0.03751837438141215
+                    + odd3 * 0.00747588873055296);
+        
+        return ((((c5 * z + c4) * z + c3) * z + c2) * z + c1) * z + c0;
+    }
+    
     static float fractDelayCubicInt (const float* delayBuffer,
                                      const float delayInSamples,
                                      const int delayCounter,
@@ -231,6 +262,66 @@ public:
                                                        delayBuffer[indexN1],
                                                        delayBuffer[indexN2]);
         
+        return interpolatedSample;
+    }
+    
+    static float fractDelayComplexInt (const float* delayBuffer,
+                                       const float delayInSamples,
+                                       const int delayCounter,
+                                       const int delayBufferSize)
+    {
+        int delayInSamplesInt = (int) ceilf (delayInSamples);
+        float fraction = delayInSamplesInt - delayInSamples;
+        
+        //read delayed signal
+        int sMin2 = 0;
+        int sMin1 = 0;
+        int s0 = 0;
+        int s1 = 0;
+        int s2 = 0;
+        int s3 = 0;
+        
+        //count indexes
+        
+        if (delayCounter >= delayInSamplesInt)
+            s0 = delayCounter - delayInSamplesInt;
+        else
+            s0 = (delayBufferSize) - (delayInSamplesInt - delayCounter);
+        
+        if (s0 == 0)
+            sMin1 = delayBufferSize - 1;
+        else
+            sMin1 = s0 - 1;
+        
+        if (sMin1 == 0)
+            sMin2 = delayBufferSize - 1;
+        else
+            sMin2 = sMin1 - 1;
+        
+        if (s0 == delayBufferSize - 1)
+            s1 = 0;
+        else
+            s1 = s0 + 1;
+        
+        if (s1 == delayBufferSize - 1)
+            s2 = 0;
+        else
+            s2 = s1 + 1;
+        
+        if (s2 == delayBufferSize - 1)
+            s3 = 0;
+        else
+            s3 = s2 + 1;
+        
+        //intepolate sample
+        
+        float interpolatedSample = optimal8x_6point5order_interpolation (fraction,
+                                                                         delayBuffer[sMin2],
+                                                                         delayBuffer[sMin1],
+                                                                         delayBuffer[s0],
+                                                                         delayBuffer[s1],
+                                                                         delayBuffer[s2],
+                                                                         delayBuffer[s3]);
         return interpolatedSample;
     }
     
@@ -308,4 +399,11 @@ public:
             parent->addChildComponent (button);
         }
     }
+};
+
+class MyInterpolator  :  public LagrangeInterpolator
+{
+public:
+    MyInterpolator() {};
+    ~MyInterpolator() {};
 };

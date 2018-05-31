@@ -37,10 +37,10 @@ void Flanger::processSampleMono (const float input,
     
     //interpolate samples
     //========================================================================
-    float interpolated = Utility::fractDelayCubicInt (delayR,
-                                                      delayInSamples,
-                                                      delayCounter,
-                                                      circularBufferSize);
+    float interpolated = Utility::fractDelayComplexInt (delayR,
+                                                        delayInSamples,
+                                                        delayCounter,
+                                                        circularBufferSize);
     //=========================================================================
     
     //filter interpolated samples
@@ -81,6 +81,11 @@ void Flanger::processSampleStereo (const float inputLeft, const float inputRight
     if (delayCounter >= circularBufferSize)
         delayCounter = 0;
     
+    int lfoSize = sampleRate / 0.01;
+   
+    if (lfoCounter >= lfoSize)
+        lfoCounter = 0;
+    
     //get current delay time
     //========================================================================
     float delayInSamples;
@@ -88,6 +93,7 @@ void Flanger::processSampleStereo (const float inputLeft, const float inputRight
     {
         //get current wt value
         float wtValue = wavetable->applyWavetable (inputLeft, 0);
+        //float wtValue = Utility::sinFrom0to1 (lfoCounter, lfoSize, 1.0, 0.0, 0.0, sampleRate);
         
         //convert wt value
         delayInSamples = delayRange.convertFrom0to1 (wtValue);
@@ -96,12 +102,12 @@ void Flanger::processSampleStereo (const float inputLeft, const float inputRight
     
     //interpolate samples
     //========================================================================
-    float interpolatedLeft = Utility::fractDelayCubicInt (leftDelayR,
+    float interpolatedLeft = Utility::fractDelayComplexInt (leftDelayR,
                                                           delayInSamples,
                                                           delayCounter,
                                                           circularBufferSize);
     
-    float interpolatedRight = Utility::fractDelayCubicInt (rightDelayR,
+    float interpolatedRight = Utility::fractDelayComplexInt (rightDelayR,
                                                            delayInSamples,
                                                            delayCounter,
                                                            circularBufferSize);
@@ -111,14 +117,20 @@ void Flanger::processSampleStereo (const float inputLeft, const float inputRight
     float delayedLeft = aaFilter.filterSignal (interpolatedLeft, 0);
     float delayedRight = aaFilter.filterSignal (interpolatedRight, 1);
     
-    float lpLeft = lpFilter.filterSignal (interpolatedLeft, 0);
-    float lpRight = lpFilter.filterSignal (interpolatedRight, 1);
+    float lpLeft = lpFilter.filterSignal (delayedLeft, 0);
+    float lpRight = lpFilter.filterSignal (delayedRight, 1);
     
     float hpLeft = hpFilter.filterSignal (lpLeft, 0);
     float hpRight = hpFilter.filterSignal (lpRight, 1);
     
     float filteredLeft = aaFilter1.filterSignal (hpLeft, 0);
     float filteredRight = aaFilter1.filterSignal (hpRight, 1);
+    
+    int delayIndex = 0;
+    if (delayCounter - floor(delayInSamples) >= 0)
+        delayIndex = delayCounter - floor(delayInSamples);
+    else
+        delayIndex = (circularBufferSize - 1) - (floor(delayInSamples) - delayCounter);
     
     //apply gain ramps
     dryWetRamp.applyRamp (dryWetPropotion);
@@ -128,22 +140,23 @@ void Flanger::processSampleStereo (const float inputLeft, const float inputRight
     dryGain = 1 - wetGain;
     
     //output signal
-    outputLeft = dryGain * inputLeft + wetGain * interpolatedLeft;
+    outputLeft = dryGain * inputLeft + wetGain * filteredLeft;
     
-    outputRight = dryGain * inputRight + wetGain * interpolatedRight;
+    outputRight = dryGain * inputRight + wetGain * filteredRight;
     
     //store input signal in the delay buffer
     
-        leftDelayW [delayCounter] = (inputLeft + feedbackGain * hpLeft
+        leftDelayW [delayCounter] = (inputLeft + feedbackGain * filteredLeft
                                      + prevSampleGain * prevDelayedLeft);
         
-        rightDelayW [delayCounter] = (inputRight + feedbackGain * hpRight
+        rightDelayW [delayCounter] = (inputRight + feedbackGain * filteredRight
                                       + prevSampleGain * prevDelayedRight);
     
     //store previous values
-    prevDelayedLeft = interpolatedLeft;
-    prevDelayedRight = interpolatedRight;
+    prevDelayedLeft = filteredLeft;
+    prevDelayedRight = filteredRight;
     
     //increase counters
     delayCounter++;
+    lfoCounter++;
 }

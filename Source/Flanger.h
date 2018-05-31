@@ -25,14 +25,14 @@ public:
         stereo
     };
     
-    Flanger()  : sampleRate (1), channelSet (mono), pingPong (false), resourcesReleased(false), minDelayInMs(0), maxDelayInMs (39), delayBuffer (0, 0), circularBufferSize (0), delayCounter(0), delayInSamples(0), prevDelayedLeft(0), prevDelayedRight(0), feedbackGain(0), prevSampleGain(0), dryGain(0), wetGain(0), dryWetPropotion(1)
+    Flanger()  : sampleRate (1), channelSet (mono), pingPong (false), resourcesReleased(false), minDelayInMs(0), maxDelayInMs (39), delayBuffer (0, 0), circularBufferSize (0), delayCounter(0), delayInSamples(0), prevDelayedLeft(0), prevDelayedRight(0), feedbackGain(0), prevSampleGain(0), dryGain(0), wetGain(0), dryWetPropotion(1), lfoCounter(0)
     {
         //initialise smart pointers with objects
         wavetable = new Oscilator (0.01);
         
         //set initial values
         setDryWetMix (1);
-        delayRange.start = 4;
+        delayRange.start = 6;
         lpFilter.frequency = 20000;
         hpFilter.frequency = 70;
         lpFilter.quality = 0.7;
@@ -265,8 +265,12 @@ private:
     double wetGain;
     double dryWetPropotion;
     
+    
+    
     //ramps
     Ramp dryWetRamp;
+    
+    int lfoCounter;
     
     //DAW transport state object
     AudioPlayHead::CurrentPositionInfo currentPositionInfo;

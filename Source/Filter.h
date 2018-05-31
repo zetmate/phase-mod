@@ -261,35 +261,35 @@ public:
     void countCoefficients (double sampleRate) override
     {
         filter1.frequency = frequency;
-        filter1.quality = 0.707 / 8.0f;
+        filter1.quality = 0.707;
         filter1.countCoefficients (sampleRate);
         
         filter2.frequency = frequency;
-        filter2.quality = 0.707 / 8.0f;
+        filter2.quality = 0.707;
         filter2.countCoefficients (sampleRate);
         
         filter3.frequency = frequency;
-        filter3.quality = 0.707 / 8.0f;
+        filter3.quality = 0.707;
         filter3.countCoefficients (sampleRate);
         
         filter4.frequency = frequency;
-        filter4.quality = 0.707 / 8.0f;
+        filter4.quality = 0.707;
         filter4.countCoefficients (sampleRate);
         
         filter5.frequency = frequency;
-        filter5.quality = 0.707 / 8.0f;
+        filter5.quality = 0.707;
         filter5.countCoefficients (sampleRate);
         
         filter6.frequency = frequency;
-        filter6.quality = 0.707 / 8.0f;
+        filter6.quality = 0.707;
         filter6.countCoefficients (sampleRate);
         
         filter7.frequency = frequency;
-        filter7.quality = 0.707 / 8.0f;
+        filter7.quality = 0.707;
         filter7.countCoefficients (sampleRate);
         
         filter8.frequency = frequency;
-        filter8.quality = 0.707 / 8.0f;
+        filter8.quality = 0.707;
         filter8.countCoefficients (sampleRate);
     }
     
