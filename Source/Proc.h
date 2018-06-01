@@ -19,8 +19,7 @@ public:
     enum ChannelSet
     {
         mono,
-        stereo,
-        monoToStereo
+        stereo
     };
     
     enum ProcessorType
@@ -183,6 +182,14 @@ public:
         voiceEcho.setPrevSampleGain (gain);
     }
     
+    void setMaxDelayTime (float newMaxDelayMs)
+    {
+        voiceClose.setMaxDelayTime (newMaxDelayMs * 0.25);
+        voiceMid.setMaxDelayTime (newMaxDelayMs * 0.5);
+        voiceFar.setMaxDelayTime (newMaxDelayMs * 0.75);
+        voiceEcho.setMaxDelayTime (newMaxDelayMs);
+    }
+    
     void setLowCut (float frequency)
     {
         voiceClose.setLowCutFrequency (frequency);
@@ -248,23 +255,23 @@ public:
             voiceEcho;
     
 protected:
-double sampleRate;
-bool resourcesReleased;
+    double sampleRate;
+    bool resourcesReleased;
 
-double dryWetPropotion;
-Ramp dryWetRamp;
+    double dryWetPropotion;
+    Ramp dryWetRamp;
 
-//processor info
-ChannelSet channelSet;
-ProcessorType processorType;
+    //processor info
+    ChannelSet channelSet;
+    ProcessorType processorType;
 
-//limiter
-Compressor limiterLeft;
-Compressor limiterRight;
-Compressor limiter1Left;
-Compressor limiter1Right;
+    //limiter
+    Compressor limiterLeft;
+    Compressor limiterRight;
+    Compressor limiter1Left;
+    Compressor limiter1Right;
 
-//DAW transport state object
-AudioPlayHead::CurrentPositionInfo currentPositionInfo;
+    //DAW transport state object
+    AudioPlayHead::CurrentPositionInfo currentPositionInfo;
     
 };

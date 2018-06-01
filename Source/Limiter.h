@@ -50,7 +50,7 @@ public:
     
     void reset()
     {
-        yg_prev = -122,
+        yg_prev = -122;
         yl_prev = 0;
     }
     

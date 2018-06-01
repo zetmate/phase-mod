@@ -110,9 +110,8 @@ void Proc::processBlockMonoSeparate (AudioSampleBuffer& buffer)
         dryWetRamp.applyRamp (dryWetPropotion);
         float wetGain = dryWetPropotion;
         float dryGain = 1 - wetGain;
-        float k = Utility::fatCurveUp (wetGain, 1, 1.5, 1.3, 1, 1);
         
-        bufferW [sample] = (output * wetGain + input * dryGain) * k;
+        bufferW [sample] = output * wetGain + input * dryGain;
     }
 }
 
@@ -203,7 +202,7 @@ void Proc::processBlockMonoCascade (AudioSampleBuffer& buffer)
         //output signal
         float output = g * voiceEcho_output;
         
-        bufferW [sample] = (output * wetGain + input * dryGain);
+        bufferW [sample] = output * wetGain + input * dryGain;
     }
 }
 
@@ -349,10 +348,9 @@ void Proc::processBlockStereoSeparate (AudioSampleBuffer& buffer)
         dryWetRamp.applyRamp (dryWetPropotion);
         float wetGain = dryWetPropotion;
         float dryGain = 1 - wetGain;
-        float k = Utility::fatCurveUp (wetGain, 1, 1.5, 1.3, 1, 1);
         
-        leftBufferW [sample] = (outputLeft * wetGain + inputLeft * dryGain) * k;
-        rightBufferW [sample] = (outputRight * wetGain + inputRight * dryGain) * k;
+        leftBufferW [sample] = outputLeft * wetGain + inputLeft * dryGain;
+        rightBufferW [sample] = outputRight * wetGain + inputRight * dryGain;
     }
 }
 
@@ -473,7 +471,7 @@ void Proc::processBlockStereoCascade (AudioSampleBuffer& buffer)
         float outputLeft = g * voiceEcho_outputLeft;
         float outputRight = g * voiceEcho_outputRight;
         
-        leftBufferW [sample] = (outputLeft * wetGain + inputLeft * dryGain);
-        rightBufferW [sample] = (outputRight * wetGain + inputRight * dryGain);
+        leftBufferW [sample] = outputLeft * wetGain + inputLeft * dryGain;
+        rightBufferW [sample] = outputRight * wetGain + inputRight * dryGain;
     }
 }

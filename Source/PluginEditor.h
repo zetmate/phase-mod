@@ -36,26 +36,14 @@ private:
     
     Proc& proc;
 //==============================================================================
-    Slider lowCut1Slider;
-    Label lowCut1Label;
-    
-    Slider lowCut2Slider;
-    Label lowCut2Label;
-    
-    Slider highCut1Slider;
-    Label highCut1Label;
-    
-    Slider highCut2Slider;
-    Label highCut2Label;
+    Slider lowCutSlider;
+    Label lowCutLabel;
     
     Slider freq1Slider;
     Label freq1Label;
     
     Slider freq2Slider;
     Label freq2Label;
-    
-    Slider resoSlider;
-    Label resoLabel;
     
     Slider depthSlider;
     Label depthLabel;
@@ -67,8 +55,6 @@ private:
     Label dryWetLabel;
     
     TextButton separateProcessingButton;
-    TextButton doubleFeedbackButton;
-    TextButton feedbackPolarityButton;
     
 //==============================================================================
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (Vibrato2AudioProcessorEditor)

@@ -20,7 +20,6 @@ public:
     
     double getEndValue() const;
     
-    void setSampleRate (double newSampleRate);
     void setRange (double start, double end);
     void setTime (double ms, double sampleRate);
     void updateInterval (double &currentValue);

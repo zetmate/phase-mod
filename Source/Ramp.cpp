@@ -16,8 +16,7 @@ Ramp::Ramp()  : startValue(0),
                 currentValue(0),
                 interval(0),
                 time(0),
-                numSamples(0),
-                sampleRate(10000)
+                numSamples(0)
 {
 }
 
@@ -28,11 +27,6 @@ Ramp::~Ramp()
 double Ramp::getEndValue() const
 {
     return endValue;
-}
-
-void Ramp::setSampleRate (double newSampleRate)
-{
-    sampleRate = newSampleRate;
 }
 
 void Ramp::setRange (double start, double end)
