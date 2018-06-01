@@ -18,9 +18,12 @@ public:
     Ramp();
     ~Ramp();
     
+    double getEndValue() const;
+    
+    void setSampleRate (double newSampleRate);
     void setRange (double start, double end);
     void setTime (double ms, double sampleRate);
-    void updateInterval();
+    void updateInterval (double &currentValue);
     double applyRamp (double &value);
     
 private:
@@ -31,4 +34,6 @@ private:
     double interval;
     double time;
     double numSamples;
+    
+    double sampleRate;
 };

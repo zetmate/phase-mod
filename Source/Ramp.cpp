@@ -16,12 +16,23 @@ Ramp::Ramp()  : startValue(0),
                 currentValue(0),
                 interval(0),
                 time(0),
-                numSamples(0)
+                numSamples(0),
+                sampleRate(10000)
 {
 }
 
 Ramp::~Ramp()
 {
+}
+
+double Ramp::getEndValue() const
+{
+    return endValue;
+}
+
+void Ramp::setSampleRate (double newSampleRate)
+{
+    sampleRate = newSampleRate;
 }
 
 void Ramp::setRange (double start, double end)
@@ -32,9 +43,10 @@ void Ramp::setRange (double start, double end)
     currentValue = start;
 }
 
-void Ramp::updateInterval()
+void Ramp::updateInterval (double &currentValue)
 {
-    setRange (startValue, endValue);
+    currentValue = endValue;
+    interval = 0;
 }
 
 void Ramp::setTime (double ms, double sampleRate)
@@ -48,8 +60,6 @@ void Ramp::setTime (double ms, double sampleRate)
 
 double Ramp::applyRamp (double &value)
 {
-    //double newValue = value;
-    
     if (roundToInt(value * 1000) != roundToInt(endValue * 1000))
     {
         value += interval;

@@ -66,8 +66,8 @@ public:
         
         //prepare ramps
         //set time & update interval
-        dryWetRamp.setTime (5, sampleRate);
-        dryWetRamp.updateInterval();
+        dryWetRamp.setTime (7, sampleRate);
+        dryWetRamp.updateInterval (dryWetPropotion);
         
         //prepare compressors & limiters
         limiterLeft.prepare (sampleRate);
