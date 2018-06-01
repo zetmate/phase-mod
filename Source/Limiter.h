@@ -48,6 +48,11 @@ public:
         alphaRelease = expf (-1 / (0.001 * sampleRate * releaseMs));
     }
     
+    void reset()
+    {
+        yg_prev = -122,
+        yl_prev = 0;
+    }
     
     float getGainReductionValueForSample (const float sampleLevel)
     {

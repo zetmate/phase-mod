@@ -26,6 +26,7 @@
 		9DD3AB451395C35B1EE4E3AB = {isa = PBXBuildFile; fileRef = 74B7FC690E97DD52AE63A1B9; };
 		3988E2A437747A60ABBD42B7 = {isa = PBXBuildFile; fileRef = 8CEF691248B28DDDF0B6634A; };
 		5CF6A05AD93F8B08DDE220E3 = {isa = PBXBuildFile; fileRef = 734C1D034168148173B27588; };
+		C743BE2ABEFD94AAA8D16450 = {isa = PBXBuildFile; fileRef = 8ACB710FEE9DE57C10AFAB3F; };
 		A163690EA130560DD3BF503C = {isa = PBXBuildFile; fileRef = 1D0CD2517A795A521CFD22B7; };
 		04A143407CFEAC69E652A31B = {isa = PBXBuildFile; fileRef = 493593716E87DDE75F6D2AE0; };
 		BE6B916C97F0334A04CD1637 = {isa = PBXBuildFile; fileRef = EA710C8B4CFA912A91F1511C; };
@@ -93,6 +94,7 @@
 		799185122AB2423F557D6FBF = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = Ramp.h; path = ../../Source/Ramp.h; sourceTree = "SOURCE_ROOT"; };
 		7B84781326ACADB5EF579400 = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; name = "include_juce_cryptography.mm"; path = "../../JuceLibraryCode/include_juce_cryptography.mm"; sourceTree = "SOURCE_ROOT"; };
 		7DBDD4DC58CC288A75DAA786 = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; name = "include_juce_core.mm"; path = "../../JuceLibraryCode/include_juce_core.mm"; sourceTree = "SOURCE_ROOT"; };
+		8ACB710FEE9DE57C10AFAB3F = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = Proc.cpp; path = ../../Source/Proc.cpp; sourceTree = "SOURCE_ROOT"; };
 		8CEF691248B28DDDF0B6634A = {isa = PBXFileReference; lastKnownFileType = file.nib; name = RecentFilesMenuTemplate.nib; path = RecentFilesMenuTemplate.nib; sourceTree = "SOURCE_ROOT"; };
 		8F2C4CA99D797A26D7B7560E = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = AppConfig.h; path = ../../JuceLibraryCode/AppConfig.h; sourceTree = "SOURCE_ROOT"; };
 		9656DB1F6AC2D8132479F1BE = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
@@ -127,6 +129,7 @@
 		BE087CAEAA792BAA2A5766D0 = {isa = PBXGroup; children = (
 					734C1D034168148173B27588,
 					676E1B4938591D668D5687A2,
+					8ACB710FEE9DE57C10AFAB3F,
 					DF12FD39480D62E5ACFD0C8D,
 					1D0CD2517A795A521CFD22B7,
 					E52798A0858C58C156C04497,
@@ -492,6 +495,7 @@
 					D7C588A6090D1A39002AA666, ); defaultConfigurationIsVisible = 0; defaultConfigurationName = Debug; };
 		B5E61E61CFB86A3014E73AA8 = {isa = PBXSourcesBuildPhase; buildActionMask = 2147483647; files = (
 					5CF6A05AD93F8B08DDE220E3,
+					C743BE2ABEFD94AAA8D16450,
 					A163690EA130560DD3BF503C,
 					04A143407CFEAC69E652A31B,
 					BE6B916C97F0334A04CD1637,

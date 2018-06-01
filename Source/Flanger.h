@@ -33,9 +33,7 @@ public:
         //set initial values
         setDryWetMix (1);
         delayRange.start = 6;
-        lpFilter.frequency = 20000;
         hpFilter.frequency = 70;
-        lpFilter.quality = 0.7;
         hpFilter.quality = 0.7;
         
         //set wt parameters
@@ -64,11 +62,6 @@ public:
         
         //prepare filters
         //count coefficients
-        aaFilter.frequency = floor (20000);
-        aaFilter1.frequency = floor (20000);
-        aaFilter.countCoefficients (sampleRate);
-        aaFilter1.countCoefficients (sampleRate);
-        lpFilter.countCoefficients (sampleRate);
         hpFilter.countCoefficients (sampleRate);
         
         //prepare ranges: set start, end, interval, skew
@@ -97,9 +90,6 @@ public:
             delayBuffer.clear();
             
             //clear filters' buffers
-            aaFilter.clearBuffers();
-            aaFilter1.clearBuffers();
-            lpFilter.clearBuffers();
             hpFilter.clearBuffers();
             
             //reset wavetables
@@ -200,23 +190,9 @@ public:
     }
     
     //filters' setters
-    void setHighCutFrequency (float newFrequency)
-    {
-        lpFilter.frequency = newFrequency;
-        lpFilter.countCoefficients (sampleRate);
-    }
-    
     void setLowCutFrequency (float newFrequency)
     {
         hpFilter.frequency = newFrequency;
-        hpFilter.countCoefficients (sampleRate);
-    }
-    
-    void setResonance (float resonance)
-    {
-        lpFilter.quality = resonance;
-        hpFilter.quality = resonance;
-        lpFilter.countCoefficients (sampleRate);
         hpFilter.countCoefficients (sampleRate);
     }
     
@@ -243,9 +219,6 @@ private:
     bool resourcesReleased;
     
     //filters
-    AntiAliasingFilter16 aaFilter;
-    AntiAliasingFilter16 aaFilter1;
-    LowPassFilter lpFilter;
     HighPassFilter hpFilter;
     
     NormalisableRange <float> delayRange;

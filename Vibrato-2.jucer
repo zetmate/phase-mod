@@ -14,6 +14,7 @@
             file="Source/PluginProcessor.cpp"/>
       <FILE id="rps4y6" name="PluginProcessor.h" compile="0" resource="0"
             file="Source/PluginProcessor.h"/>
+      <FILE id="VKudzV" name="Proc.cpp" compile="1" resource="0" file="Source/Proc.cpp"/>
       <FILE id="A3NXut" name="Proc.h" compile="0" resource="0" file="Source/Proc.h"/>
       <FILE id="NctTZz" name="Flanger.cpp" compile="1" resource="0" file="Source/Flanger.cpp"/>
       <FILE id="A40KWb" name="Flanger.h" compile="0" resource="0" file="Source/Flanger.h"/>

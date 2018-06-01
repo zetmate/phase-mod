@@ -114,23 +114,8 @@ void Flanger::processSampleStereo (const float inputLeft, const float inputRight
     //=========================================================================
     
     //filter interpolated samples
-    float delayedLeft = aaFilter.filterSignal (interpolatedLeft, 0);
-    float delayedRight = aaFilter.filterSignal (interpolatedRight, 1);
-    
-    float lpLeft = lpFilter.filterSignal (delayedLeft, 0);
-    float lpRight = lpFilter.filterSignal (delayedRight, 1);
-    
-    float hpLeft = hpFilter.filterSignal (lpLeft, 0);
-    float hpRight = hpFilter.filterSignal (lpRight, 1);
-    
-    float filteredLeft = aaFilter1.filterSignal (hpLeft, 0);
-    float filteredRight = aaFilter1.filterSignal (hpRight, 1);
-    
-    int delayIndex = 0;
-    if (delayCounter - floor(delayInSamples) >= 0)
-        delayIndex = delayCounter - floor(delayInSamples);
-    else
-        delayIndex = (circularBufferSize - 1) - (floor(delayInSamples) - delayCounter);
+    float filteredLeft = hpFilter.filterSignal (interpolatedLeft, 0);
+    float filteredRight = hpFilter.filterSignal (interpolatedRight, 1);
     
     //apply gain ramps
     dryWetRamp.applyRamp (dryWetPropotion);
