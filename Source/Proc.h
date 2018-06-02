@@ -36,14 +36,11 @@ public:
         //initialise smart pointers with objects
         
         //set initial values
-        voiceClose.setMaxDelayTime (25.0f);
-        voiceMid.setMaxDelayTime (39.0f);
-        voiceFar.setMaxDelayTime (50.0f);
-        voiceEcho.setMaxDelayTime (60.0f);
+        setMaxDelayTime (60);
         
         //set wt parameters
         
-        //function pointers' default values
+        //set default mono behaviour
         setToMono();
     }
     
@@ -71,6 +68,8 @@ public:
         //prepare compressors & limiters
         limiterLeft.prepare (sampleRate);
         limiterRight.prepare (sampleRate);
+        limiter1Left.prepare (sampleRate);
+        limiter1Right.prepare (sampleRate);
         
         //prepare filters
         //count coefficients
@@ -200,14 +199,14 @@ public:
     
     void setFreq1 (float frequency)
     {
-        voiceClose.wavetable->setFrequency (frequency);
-        voiceMid.wavetable->setFrequency (frequency);
+        voiceClose.setFrequency (frequency);
+        voiceMid.setFrequency (frequency);
     }
     
     void setFreq2 (float frequency)
     {
-        voiceFar.wavetable->setFrequency (frequency);
-        voiceEcho.wavetable->setFrequency (frequency);
+        voiceFar.setFrequency (frequency);
+        voiceEcho.setFrequency (frequency);
     }
     
     //PROCESSING FUNCTION

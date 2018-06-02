@@ -10,7 +10,6 @@
 
 #pragma once
 
-#include "Wavetable.h"
 #include "Ramp.h"
 #include "Filter.h"
 #include "Limiter.h"
@@ -18,23 +17,15 @@
 class Flanger
 {
 public:
-    
     enum ChannelSet
     {
         mono,
         stereo
     };
     
-    enum WtType
-    {
-        simpleWt,
-        complexWt
-    };
-    
-    Flanger()  : sampleRate (1), channelSet (mono), wtType (complexWt), pingPong (false), resourcesReleased(false), minDelayInMs(0), maxDelayInMs (39), delayBuffer (0, 0), circularBufferSize (0), delayCounter(0), delayInSamples(0), prevDelayedLeft(0), prevDelayedRight(0), feedbackGain(0), prevSampleGain(0), dryGain(0), wetGain(0), dryWetPropotion(1), lfoCounter(0)
+    Flanger()  : sampleRate (1), channelSet (mono), pingPong (false), resourcesReleased(false), minDelayInMs(0), maxDelayInMs (39), delayBuffer (0, 0), circularBufferSize (0), delayCounter(0), delayInSamples(0), prevDelayedLeft(0), prevDelayedRight(0), feedbackGain(0), prevSampleGain(0), dryGain(0), wetGain(0), dryWetPropotion(1), lfoCounter(0), lfoNumSamples(0), lfoFrequency(0)
     {
         //initialise smart pointers with objects
-        wavetable = new Oscilator (0.01);
         
         //set initial values
         setDryWetMix (1);
@@ -43,7 +34,7 @@ public:
         hpFilter.quality = 0.7;
         
         //set wt parameters
-        wavetable->setAllParameters (0.1, 1, 0);
+        lfoFrequency = 0.01;
         
         //function pointers' default values
         
@@ -76,8 +67,7 @@ public:
         
         //prepare wavetables
         //set sample rate, range, mono/stereo & count wtt
-        wavetable->setSampleRate (sampleRate);
-        wavetable->countWavetable();
+        lfoNumSamples = sampleRate / lfoFrequency;
         
         //prepare copy buffers
         //set size according to buffer size & clear the buffers
@@ -99,10 +89,10 @@ public:
             hpFilter.clearBuffers();
             
             //reset wavetables
-            wavetable->resetWavetable();
             
             //reset counters
             delayCounter = 0;
+            lfoCounter = 0;
             
             //set resourcesReleased to true
             resourcesReleased = true;
@@ -128,7 +118,6 @@ public:
         channelSet = mono;
         
         //set wavetavle to mono
-        wavetable->setStereoOrMono (false, 0);
     }
     
     void setToStereo()
@@ -136,20 +125,20 @@ public:
         //set channelSet
         channelSet = stereo;
         
-        //set wavetavle to mono
-        wavetable->setStereoOrMono (false, 0);
+        //set wavetavle to stereo
     }
     
     //setters
+    void setFrequency (float newFrequency)
+    {
+        lfoFrequency = newFrequency;
+        lfoNumSamples = sampleRate / newFrequency;
+    }
+    
     void setMaxDelayTime (float newMaxDelayMs)
     {
         maxDelayInMs = newMaxDelayMs;
         delayRange.end = Utility::msToSamples (maxDelayInMs, sampleRate);
-        
-        if (maxDelayInMs >= 15)
-            wtType = complexWt;
-        else
-            wtType = simpleWt;
     }
     
     void setMinDelayTime (float newMinDelayMs)
@@ -219,12 +208,9 @@ public:
         return delayBuffer.getWritePointer (channel);
     }
     
-    ScopedPointer<Oscilator> wavetable;
-    
 private:
     double sampleRate;
     ChannelSet channelSet;
-    WtType wtType;
     
     bool pingPong;
     
@@ -256,6 +242,8 @@ private:
     Ramp dryWetRamp;
     
     int lfoCounter;
+    int lfoNumSamples;
+    float lfoFrequency;
     
     //DAW transport state object
     AudioPlayHead::CurrentPositionInfo currentPositionInfo;

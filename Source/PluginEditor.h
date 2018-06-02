@@ -12,50 +12,35 @@
 
 #include "Utility.h"
 #include "PluginProcessor.h"
-#include "VoiceEditor.h"
+#include "EffectEditor.h"
+#include "ModEditor.h"
 #include "MasterEditor.h"
 
 
 //==============================================================================
 /**
 */
-class Vibrato2AudioProcessorEditor  :   public AudioProcessorEditor,
-                                        public Slider::Listener,
-                                        public Button::Listener
+class Vibrato2AudioProcessorEditor  :   public AudioProcessorEditor
+
 {
 public:
     Vibrato2AudioProcessorEditor (Vibrato2AudioProcessor&);
     ~Vibrato2AudioProcessorEditor();
     
     void paint (Graphics&) override;
-    void sliderValueChanged (Slider* slider) override;
-    void buttonClicked (Button*) override;
     void resized() override;
 
 private:
+    int editorWidth = 400;
+    int masterEditorWidth = 150;
+    int effectEditorHeight = 250;
+    int modEditorHeight = 265;
     
-    Proc& proc;
+    EffectEditor effectEditor;
+    ModEditor modEditor;
+    MasterEditor masterEditor;
 //==============================================================================
-    Slider lowCutSlider;
-    Label lowCutLabel;
-    
-    Slider freq1Slider;
-    Label freq1Label;
-    
-    Slider freq2Slider;
-    Label freq2Label;
-    
-    Slider depthSlider;
-    Label depthLabel;
-    
-    Slider feedbackSlider;
-    Label feedbackLabel;
-    
-    Slider dryWetSlider;
-    Label dryWetLabel;
-    
-    TextButton separateProcessingButton;
-    
+    Proc& proc;
 //==============================================================================
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (Vibrato2AudioProcessorEditor)
 };

@@ -22,13 +22,16 @@ void Flanger::processSampleMono (const float input,
     if (delayCounter >= circularBufferSize)
         delayCounter = 0;
     
+    if (lfoCounter >= lfoNumSamples)
+        lfoCounter = 0;
+    
     //get current delay time
     //========================================================================
     float delayInSamples;
     
     {
         //get current wt value
-        float wtValue = wavetable->applyWavetable (input, 0);
+        float wtValue = Utility::sinFrom0to1 (lfoCounter, lfoNumSamples, 1.0, 0.0, 0.0, sampleRate);
         
         //convert wt value
         delayInSamples = delayRange.convertFrom0to1 (wtValue);
@@ -65,6 +68,7 @@ void Flanger::processSampleMono (const float input,
     
     //increase counters
     delayCounter++;
+    lfoCounter++;
 }
 
 void Flanger::processSampleStereo (const float inputLeft, const float inputRight,
@@ -77,10 +81,8 @@ void Flanger::processSampleStereo (const float inputLeft, const float inputRight
     //check counter
     if (delayCounter >= circularBufferSize)
         delayCounter = 0;
-    
-    int lfoSize = sampleRate / 0.01;
    
-    if (lfoCounter >= lfoSize)
+    if (lfoCounter >= lfoNumSamples)
         lfoCounter = 0;
     
     //get current delay time
@@ -89,8 +91,8 @@ void Flanger::processSampleStereo (const float inputLeft, const float inputRight
     
     {
         //get current wt value
-        float wtValue = wavetable->applyWavetable (inputLeft, 0);
-        //float wtValue = Utility::sinFrom0to1 (lfoCounter, lfoSize, 1.0, 0.0, 0.0, sampleRate);
+        float wtValue = Utility::sinFrom0to1 (lfoCounter, lfoNumSamples,
+                                              1.0, 0.0, 0.0, sampleRate);
         
         //convert wt value
         delayInSamples = delayRange.convertFrom0to1 (wtValue);

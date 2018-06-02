@@ -18,8 +18,6 @@
       <FILE id="A3NXut" name="Proc.h" compile="0" resource="0" file="Source/Proc.h"/>
       <FILE id="NctTZz" name="Flanger.cpp" compile="1" resource="0" file="Source/Flanger.cpp"/>
       <FILE id="A40KWb" name="Flanger.h" compile="0" resource="0" file="Source/Flanger.h"/>
-      <FILE id="SuzrIt" name="Wavetable.cpp" compile="1" resource="0" file="Source/Wavetable.cpp"/>
-      <FILE id="QThQ9J" name="Wavetable.h" compile="0" resource="0" file="Source/Wavetable.h"/>
       <FILE id="ZWriDD" name="Limiter.h" compile="0" resource="0" file="Source/Limiter.h"/>
       <FILE id="MkFQMv" name="Filter.cpp" compile="1" resource="0" file="Source/Filter.cpp"/>
       <FILE id="GBlnDv" name="Filter.h" compile="0" resource="0" file="Source/Filter.h"/>
@@ -29,6 +27,8 @@
       <FILE id="eQJryR" name="PluginEditor.cpp" compile="1" resource="0"
             file="Source/PluginEditor.cpp"/>
       <FILE id="vgj6hr" name="PluginEditor.h" compile="0" resource="0" file="Source/PluginEditor.h"/>
+      <FILE id="aWL34v" name="EffectEditor.h" compile="0" resource="0" file="Source/EffectEditor.h"/>
+      <FILE id="gT8PKW" name="ModEditor.h" compile="0" resource="0" file="Source/ModEditor.h"/>
       <FILE id="XVp9bP" name="VoiceEditor.h" compile="0" resource="0" file="Source/VoiceEditor.h"/>
       <FILE id="uOYf1d" name="MasterEditor.h" compile="0" resource="0" file="Source/MasterEditor.h"/>
     </GROUP>
