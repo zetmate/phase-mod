@@ -25,6 +25,8 @@ void Flanger::processSampleMono (const float input,
     if (lfoCounter >= lfoNumSamples)
         lfoCounter = 0;
     
+    //get current values from ramps
+    
     //get current delay time
     //========================================================================
     float delayInSamples;

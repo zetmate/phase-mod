@@ -183,9 +183,14 @@ public:
     
     void setMaxDelayTime (float newMaxDelayMs)
     {
-        voiceClose.setMaxDelayTime (newMaxDelayMs * 0.25);
-        voiceMid.setMaxDelayTime (newMaxDelayMs * 0.5);
-        voiceFar.setMaxDelayTime (newMaxDelayMs * 0.75);
+//        voiceClose.setMaxDelayTime (newMaxDelayMs * 0.42);
+//        voiceMid.setMaxDelayTime (newMaxDelayMs * 0.65);
+//        voiceFar.setMaxDelayTime (newMaxDelayMs * 0.84);
+//        voiceEcho.setMaxDelayTime (newMaxDelayMs);
+        //voiceClose.setMaxDelayTime (newMaxDelayMs * 0.4375);
+        voiceClose.setMaxDelayTime (newMaxDelayMs * 0.5);
+        voiceMid.setMaxDelayTime (newMaxDelayMs * 0.625);
+        voiceFar.setMaxDelayTime (newMaxDelayMs * 0.875);
         voiceEcho.setMaxDelayTime (newMaxDelayMs);
     }
     

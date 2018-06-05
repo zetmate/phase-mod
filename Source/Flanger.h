@@ -55,7 +55,15 @@ public:
         //prepare ramps
         //set time & update interval
         dryWetRamp.setTime (7, sampleRate);
+        feedbackRamp.setTime (7, sampleRate);
+        maxDelayRamp.setTime (7, sampleRate);
+        sweepWidthRamp.setTime (7, sampleRate);
+        freqRamp.setTime (7, sampleRate);
         dryWetRamp.updateInterval (dryWetPropotion);
+        feedbackRamp.updateInterval (dryWetPropotion);
+        maxDelayRamp.updateInterval (dryWetPropotion);
+        sweepWidthRamp.updateInterval (dryWetPropotion);
+        freqRamp.updateInterval (dryWetPropotion);
         
         //prepare filters
         //count coefficients
@@ -84,6 +92,8 @@ public:
         {
             //clear copy buffers
             delayBuffer.clear();
+            prevDelayedLeft = 0;
+            prevDelayedRight = 0;
             
             //clear filters' buffers
             hpFilter.clearBuffers();
@@ -150,7 +160,7 @@ public:
     
     void setSweepWidth (float sweepWidthMs)
     {
-        sweepWidthMs = std::min (sweepWidthMs, maxDelayInMs);
+        sweepWidth = std::min ((float)sweepWidthMs, (float)maxDelayInMs);
         setMinDelayTime (maxDelayInMs - sweepWidthMs);
     }
     
@@ -219,8 +229,8 @@ private:
     //filters
     HighPassFilter hpFilter;
     
-    NormalisableRange <float> delayRange;
-    float minDelayInMs, maxDelayInMs;
+    NormalisableRange <double> delayRange;
+    double minDelayInMs, maxDelayInMs;
     
     AudioSampleBuffer delayBuffer;
     int circularBufferSize;
@@ -235,15 +245,19 @@ private:
     double dryGain;
     double wetGain;
     double dryWetPropotion;
-    
+    double sweepWidth;
     
     
     //ramps
     Ramp dryWetRamp;
+    Ramp feedbackRamp;
+    Ramp maxDelayRamp;
+    Ramp sweepWidthRamp;
+    Ramp freqRamp;
     
     int lfoCounter;
     int lfoNumSamples;
-    float lfoFrequency;
+    double lfoFrequency;
     
     //DAW transport state object
     AudioPlayHead::CurrentPositionInfo currentPositionInfo;
