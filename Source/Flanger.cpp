@@ -80,6 +80,9 @@ void Flanger::processSampleStereo (const float inputLeft, const float inputRight
                                    float* leftDelayW,
                                    float* rightDelayW)
 {
+    //get ramps values
+    feedbackRamp.applyRamp (feedbackGain);
+    
     //check counter
     if (delayCounter >= circularBufferSize)
         delayCounter = 0;

@@ -60,10 +60,7 @@ public:
         sweepWidthRamp.setTime (7, sampleRate);
         freqRamp.setTime (7, sampleRate);
         dryWetRamp.updateInterval (dryWetPropotion);
-        feedbackRamp.updateInterval (dryWetPropotion);
-        maxDelayRamp.updateInterval (dryWetPropotion);
-        sweepWidthRamp.updateInterval (dryWetPropotion);
-        freqRamp.updateInterval (dryWetPropotion);
+        feedbackRamp.updateInterval (feedbackGain);
         
         //prepare filters
         //count coefficients
@@ -171,7 +168,8 @@ public:
     
     void setFeedbackGain (float newFeedbackGain)
     {
-        feedbackGain = std::min (0.99f, newFeedbackGain);
+        //feedbackGain = std::min (0.99f, newFeedbackGain);
+        feedbackRamp.setRange (feedbackGain, newFeedbackGain);
     }
     
     void setFeedbackPolarity (bool isPositive)
