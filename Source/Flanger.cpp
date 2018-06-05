@@ -82,6 +82,7 @@ void Flanger::processSampleStereo (const float inputLeft, const float inputRight
 {
     //get ramps values
     feedbackRamp.applyRamp (feedbackGain);
+    freqRamp.applyRamp (lfoNumSamples);
     
     //check counter
     if (delayCounter >= circularBufferSize)
@@ -95,8 +96,9 @@ void Flanger::processSampleStereo (const float inputLeft, const float inputRight
     float delayInSamples;
     
     {
+        int numSamples = roundToInt (lfoNumSamples);
         //get current wt value
-        float wtValue = Utility::sinFrom0to1 (lfoCounter, lfoNumSamples,
+        float wtValue = Utility::sinFrom0to1 (lfoCounter, numSamples,
                                               1.0, 0.0, 0.0, sampleRate);
         
         //convert wt value

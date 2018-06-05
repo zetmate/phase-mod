@@ -53,14 +53,16 @@ public:
         sampleRate = newSampleRate;
         
         //prepare ramps
+        //convert values to double
         //set time & update interval
         dryWetRamp.setTime (7, sampleRate);
         feedbackRamp.setTime (7, sampleRate);
         maxDelayRamp.setTime (7, sampleRate);
         sweepWidthRamp.setTime (7, sampleRate);
-        freqRamp.setTime (7, sampleRate);
+        freqRamp.setTime (70, sampleRate);
         dryWetRamp.updateInterval (dryWetPropotion);
         feedbackRamp.updateInterval (feedbackGain);
+        freqRamp.updateInterval (lfoNumSamples);
         
         //prepare filters
         //count coefficients
@@ -139,7 +141,7 @@ public:
     void setFrequency (float newFrequency)
     {
         lfoFrequency = newFrequency;
-        lfoNumSamples = sampleRate / newFrequency;
+        freqRamp.setRange (lfoNumSamples, sampleRate / newFrequency);
     }
     
     void setMaxDelayTime (float newMaxDelayMs)
@@ -168,7 +170,6 @@ public:
     
     void setFeedbackGain (float newFeedbackGain)
     {
-        //feedbackGain = std::min (0.99f, newFeedbackGain);
         feedbackRamp.setRange (feedbackGain, newFeedbackGain);
     }
     
@@ -254,7 +255,7 @@ private:
     Ramp freqRamp;
     
     int lfoCounter;
-    int lfoNumSamples;
+    double lfoNumSamples;
     double lfoFrequency;
     
     //DAW transport state object
