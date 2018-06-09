@@ -23,7 +23,16 @@ public:
         stereo
     };
     
-    Flanger()  : sampleRate (1), channelSet (mono), pingPong (false), resourcesReleased(false), minDelayInMs(0), maxDelayInMs (39), delayBuffer (0, 0), circularBufferSize (0), delayCounter(0), delayInSamples(0), prevDelayedLeft(0), prevDelayedRight(0), feedbackGain(0), prevSampleGain(0), dryGain(0), wetGain(0), dryWetPropotion(1), lfoCounter(0), lfoNumSamples(0), lfoFrequency(0)
+    enum LfoShape
+    {
+        sin,
+        triangle,
+        saw,
+        square,
+        random
+    };
+    
+    Flanger()  : sampleRate (1), channelSet (mono), pingPong (false), resourcesReleased(false), minDelayMs(0), maxDelayMs (39), delayBuffer (0, 0), circularBufferSize (0), delayCounter(0), prevDelayedLeft(0), prevDelayedRight(0), feedbackGain(0), prevSampleGain(0), dryGain(0), wetGain(0), dryWetPropotion(1), depthFrom0to1(0.3), maxDelaySamp(0), minDelaySamp(4), lfoShape_delay(sin), lfoShape_feedback(sin), lfoCounter_delay(0), lfoCounter_feedback(0), lfoNumSamples_delay(0), lfoNumSamples_feedback(0), lfoFreq_delay(0.01), lfoFreq_feedback(1), lfoDelayOn(true), lfoFbOn(false)
     {
         //initialise smart pointers with objects
         
@@ -34,7 +43,6 @@ public:
         hpFilter.quality = 0.7;
         
         //set wt parameters
-        lfoFrequency = 0.01;
         
         //function pointers' default values
         
@@ -53,28 +61,31 @@ public:
         sampleRate = newSampleRate;
         
         //prepare ramps
-        //convert values to double
-        //set time & update interval
+        //set time
         dryWetRamp.setTime (7, sampleRate);
         feedbackRamp.setTime (7, sampleRate);
-        maxDelayRamp.setTime (7, sampleRate);
-        sweepWidthRamp.setTime (7, sampleRate);
-        freqRamp.setTime (70, sampleRate);
-        dryWetRamp.updateInterval (dryWetPropotion);
-        feedbackRamp.updateInterval (feedbackGain);
-        freqRamp.updateInterval (lfoNumSamples);
+        minDelayRamp.setTime (150, sampleRate);
+        maxDelayRamp.setTime (150, sampleRate);
+        lfoFreqRamp_delay.setTime (70, sampleRate);
+        lfoFreqRamp_feedback.setTime (70, sampleRate);
         
         //prepare filters
         //count coefficients
         hpFilter.countCoefficients (sampleRate);
         
         //prepare ranges: set start, end, interval, skew
-        setMinDelayTime (minDelayInMs);
-        delayRange.end = Utility::msToSamples ((double) maxDelayInMs, sampleRate);
+        setMinDelayTime (minDelayMs);
+        setMaxDelayTime (maxDelayMs);
+        minDelaySamp = minDelayRamp.getEndValue();
+        maxDelaySamp = maxDelayRamp.getEndValue();
         
-        //prepare wavetables
+        //prepare lfos
         //set sample rate, range, mono/stereo & count wtt
-        lfoNumSamples = sampleRate / lfoFrequency;
+        lfoNumSamples_delay = sampleRate / lfoFreq_delay;
+        lfoNumSamples_feedback = sampleRate / lfoFreq_feedback;
+        lfoFreqRamp_delay.setRange (lfoNumSamples_delay, lfoNumSamples_delay);
+        lfoFreqRamp_feedback.setRange (lfoNumSamples_feedback, lfoNumSamples_feedback);
+        randomLfo.reset();
         
         //prepare copy buffers
         //set size according to buffer size & clear the buffers
@@ -83,6 +94,14 @@ public:
         delayBuffer.clear();
         delayCounter = 0;
         
+        //prepare ramps
+        //update interval
+        dryWetRamp.updateInterval (dryWetPropotion);
+        feedbackRamp.updateInterval (feedbackGain);
+        minDelayRamp.updateInterval (minDelaySamp);
+        maxDelayRamp.updateInterval (maxDelaySamp);
+        lfoFreqRamp_delay.updateInterval (lfoNumSamples_delay);
+        lfoFreqRamp_feedback.updateInterval (lfoNumSamples_feedback);
     }
     
     void releaseResources()
@@ -98,10 +117,12 @@ public:
             hpFilter.clearBuffers();
             
             //reset wavetables
+            randomLfo.reset();
             
             //reset counters
             delayCounter = 0;
-            lfoCounter = 0;
+            lfoCounter_delay = 0;
+            lfoCounter_feedback = 0;
             
             //set resourcesReleased to true
             resourcesReleased = true;
@@ -138,34 +159,54 @@ public:
     }
     
     //setters
-    void setFrequency (float newFrequency)
+    void setFrequencyForDelayLfo (float newFrequency)
     {
-        lfoFrequency = newFrequency;
-        freqRamp.setRange (lfoNumSamples, sampleRate / newFrequency);
+        lfoFreq_delay = newFrequency;
+        lfoFreqRamp_delay.setRange (lfoNumSamples_delay, sampleRate / newFrequency);
+    }
+    
+    void setFrequencyForFeedbackLfo (float newFrequency)
+    {
+        lfoFreq_feedback = newFrequency;
+        lfoFreqRamp_feedback.setRange (lfoNumSamples_feedback, sampleRate / newFrequency);
+    }
+    
+    void setShapeForDelayLfo (LfoShape lfoShape)
+    {
+        lfoShape_delay = lfoShape;
+    }
+    
+    void setShapeForFeedbackLfo (LfoShape lfoShape)
+    {
+        lfoShape_feedback = lfoShape;
     }
     
     void setMaxDelayTime (float newMaxDelayMs)
     {
-        maxDelayInMs = newMaxDelayMs;
-        delayRange.end = Utility::msToSamples (maxDelayInMs, sampleRate);
+        maxDelayMs = newMaxDelayMs;
+        int targetMaxDelaySamp = Utility::msToSamples (maxDelayMs, sampleRate);
+        maxDelayRamp.setRange (maxDelaySamp, targetMaxDelaySamp);
+        setDepth (depthFrom0to1);
     }
     
     void setMinDelayTime (float newMinDelayMs)
     {
-        minDelayInMs = newMinDelayMs;
-        float minDelaySamp = std::max (4, Utility::msToSamples (newMinDelayMs, sampleRate));
-        delayRange.start = minDelaySamp;
+        minDelayMs = newMinDelayMs;
+        float minDelaySampTarget = std::max (4, Utility::msToSamples (newMinDelayMs,
+                                                                      sampleRate));
+        minDelayRamp.setRange (minDelaySamp, minDelaySampTarget);
     }
     
     void setSweepWidth (float sweepWidthMs)
     {
-        sweepWidth = std::min ((float)sweepWidthMs, (float)maxDelayInMs);
-        setMinDelayTime (maxDelayInMs - sweepWidthMs);
+        sweepWidth = std::min ((float)sweepWidthMs, (float)maxDelayMs);
+        setMinDelayTime (maxDelayMs - sweepWidthMs);
     }
     
-    void setDepth (float depthFrom0to1)
+    void setDepth (float newDepthFrom0to1)
     {
-        setSweepWidth (maxDelayInMs * depthFrom0to1);
+        depthFrom0to1 = newDepthFrom0to1;
+        setSweepWidth (maxDelayMs * newDepthFrom0to1);
     }
     
     void setFeedbackGain (float newFeedbackGain)
@@ -229,12 +270,11 @@ private:
     HighPassFilter hpFilter;
     
     NormalisableRange <double> delayRange;
-    double minDelayInMs, maxDelayInMs;
+    double minDelayMs, maxDelayMs;
     
     AudioSampleBuffer delayBuffer;
     int circularBufferSize;
     int delayCounter;
-    double delayInSamples;
     
     float prevDelayedLeft, prevDelayedRight;
     
@@ -245,21 +285,50 @@ private:
     double wetGain;
     double dryWetPropotion;
     double sweepWidth;
-    
+    double depthFrom0to1;
+    double maxDelaySamp, minDelaySamp;
     
     //ramps
     Ramp dryWetRamp;
     Ramp feedbackRamp;
     Ramp maxDelayRamp;
-    Ramp sweepWidthRamp;
-    Ramp freqRamp;
+    Ramp minDelayRamp;
+    Ramp lfoFreqRamp_delay;
+    Ramp lfoFreqRamp_feedback;
     
-    int lfoCounter;
-    double lfoNumSamples;
-    double lfoFrequency;
+    //lfo stuff
+    LfoShape lfoShape_delay;
+    LfoShape lfoShape_feedback;
+    int lfoCounter_delay, lfoCounter_feedback;
+    double lfoNumSamples_delay, lfoNumSamples_feedback;
+    double lfoFreq_delay, lfoFreq_feedback;
+    bool lfoDelayOn, lfoFbOn;
+    RandomLfo randomLfo;
     
     //DAW transport state object
     AudioPlayHead::CurrentPositionInfo currentPositionInfo;
+    
+    float getCurrentLfoValue (int counter, int numSamples, LfoShape shape)
+    {
+        float value = 0;
+        
+        if (shape == sin)
+            value = Utility::sinFrom0to1 (counter, numSamples,
+                                            1.0, 0.0, 0.0);
+        else if (shape == triangle)
+            value = Utility::triangleFrom0to1 (counter, numSamples,
+                                                 1.0, 0.0, 0.0);
+        else if (shape == saw)
+            value = Utility::sawFrom0to1 (counter, numSamples,
+                                            1.0, 0.0, 0.0);
+        else if (shape == square)
+            value = Utility::squareFrom0to1 (counter, numSamples,
+                                               1.0, 0.0, 0.0);
+        else if (shape == random)
+            value = randomLfo.randomFrom0to1 (numSamples, 1.0, 0.0, 0.0);
+        
+        return value;
+    }
 };
 
 

@@ -29,6 +29,11 @@ double Ramp::getEndValue() const
     return endValue;
 }
 
+double Ramp::getCurrentValue() const
+{
+    return currentValue;
+}
+
 void Ramp::setRange (double start, double end)
 {
     startValue = start;
@@ -54,10 +59,17 @@ void Ramp::setTime (double ms, double sampleRate)
 
 double Ramp::applyRamp (double &value)
 {
-    if (roundToInt(value * 1000) != roundToInt(endValue * 1000))
+    if (interval > 0)
     {
-        value += interval;
+        if (value < endValue)
+            value += interval;
     }
+    else
+    {
+        if (value > endValue)
+            value += interval;
+    }
+    currentValue = value;
     
     return value;
 }

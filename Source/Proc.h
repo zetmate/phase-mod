@@ -204,14 +204,42 @@ public:
     
     void setFreq1 (float frequency)
     {
-        voiceClose.setFrequency (frequency);
-        voiceMid.setFrequency (frequency);
+        voiceClose.setFrequencyForDelayLfo (frequency);
+        voiceMid.setFrequencyForDelayLfo (frequency);
     }
     
     void setFreq2 (float frequency)
     {
-        voiceFar.setFrequency (frequency);
-        voiceEcho.setFrequency (frequency);
+        voiceFar.setFrequencyForDelayLfo (frequency);
+        voiceEcho.setFrequencyForDelayLfo (frequency);
+    }
+    
+    void setFreq3 (float frequency)
+    {
+        voiceClose.setFrequencyForFeedbackLfo (frequency);
+        voiceMid.setFrequencyForFeedbackLfo (frequency);
+        voiceFar.setFrequencyForFeedbackLfo (frequency);
+        voiceEcho.setFrequencyForFeedbackLfo (frequency);
+    }
+    
+    void setlfoShape1 (Flanger::LfoShape lfoShape)
+    {
+        voiceClose.setShapeForDelayLfo (lfoShape);
+        voiceMid.setShapeForDelayLfo (lfoShape);
+    }
+    
+    void setlfoShape2 (Flanger::LfoShape lfoShape)
+    {
+        voiceFar.setShapeForDelayLfo (lfoShape);
+        voiceEcho.setShapeForDelayLfo (lfoShape);
+    }
+    
+    void setlfoShape3 (Flanger::LfoShape lfoShape)
+    {
+        voiceClose.setShapeForFeedbackLfo (lfoShape);
+        voiceMid.setShapeForFeedbackLfo (lfoShape);
+        voiceFar.setShapeForFeedbackLfo (lfoShape);
+        voiceEcho.setShapeForFeedbackLfo (lfoShape);
     }
     
     //PROCESSING FUNCTION
@@ -222,6 +250,7 @@ public:
         
         //process only if the transport state = is playing or not available
         if (currentPositionInfo.isPlaying || !(transportIsAvailable))
+        //if (true)
         {
             if (channelSet == stereo)
             {

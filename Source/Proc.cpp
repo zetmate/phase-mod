@@ -98,8 +98,9 @@ void Proc::processBlockMonoSeparate (AudioSampleBuffer& buffer)
         float output = 0.0;
         {
             float g = limiterLeft.getGainReductionValueForSample (processed);
-            
-            output = processed * g;
+            float limited = processed * g;
+            g = limiter1Left.getGainReductionValueForSample (limited);
+            output = limited * g;
         }
         
         //============================================
@@ -198,9 +199,13 @@ void Proc::processBlockMonoCascade (AudioSampleBuffer& buffer)
         //============================================
         
         float g = limiterLeft.getGainReductionValueForSample (voiceEcho_output);
-        
+
         //output signal
-        float output = g * voiceEcho_output;
+        float limited = g * voiceEcho_output;
+
+        g = limiter1Left.getGainReductionValueForSample (limited);
+        
+        float output = g * limited;
         
         bufferW [sample] = output * wetGain + input * dryGain;
     }
@@ -336,8 +341,14 @@ void Proc::processBlockStereoSeparate (AudioSampleBuffer& buffer)
             float gLeft = limiterLeft.getGainReductionValueForSample (processedLeft);
             float gRight = limiterRight.getGainReductionValueForSample (processedRight);
             
-            outputLeft = processedLeft * gLeft;
-            outputRight = processedRight * gRight;
+            float limitedLeft = processedLeft * gLeft;
+            float limitedRight = processedRight * gRight;
+            
+            gLeft = limiter1Left.getGainReductionValueForSample (limitedLeft);
+            gRight = limiter1Right.getGainReductionValueForSample (limitedRight);
+            
+            outputLeft = limitedLeft * gLeft;
+            outputRight = limitedRight * gRight;
         }
         
         //============================================
@@ -466,10 +477,14 @@ void Proc::processBlockStereoCascade (AudioSampleBuffer& buffer)
         float g = limiterLeft.getGainReductionValueForSample ((voiceEcho_outputLeft
                                                                + voiceEcho_outputRight)
                                                               * 0.5);
-        
         //output signal
-        float outputLeft = g * voiceEcho_outputLeft;
-        float outputRight = g * voiceEcho_outputRight;
+        float limitedLeft = g * voiceEcho_outputLeft;
+        float limitedRight = g * voiceEcho_outputRight;
+        
+        g = limiter1Left.getGainReductionValueForSample ((limitedLeft + limitedRight) * 0.5);
+        
+        float outputLeft = g * limitedLeft;
+        float outputRight = g * limitedRight;
         
         leftBufferW [sample] = outputLeft * wetGain + inputLeft * dryGain;
         rightBufferW [sample] = outputRight * wetGain + inputRight * dryGain;

@@ -39,26 +39,35 @@ public:
         
         //mod 1
         mod1ShapeMenu.addItem ("sin", 1);
-        mod1ShapeMenu.addItem ("sawtooth", 2);
-        mod1ShapeMenu.addItem ("square", 3);
-        mod1ShapeMenu.addItem ("random", 4);
+        mod1ShapeMenu.addItem ("triangle", 2);
+        mod1ShapeMenu.addItem ("saw", 3);
+        mod1ShapeMenu.addItem ("square", 4);
+        mod1ShapeMenu.addItem ("random", 5);
         mod1ShapeMenu.addListener (this);
+        mod1ShapeMenu.setJustificationType (Justification::centred);
+        mod1ShapeMenu.setSelectedId (1);
         addAndMakeVisible (mod1ShapeMenu);
         
         //mod 2
         mod2ShapeMenu.addItem ("sin", 1);
-        mod2ShapeMenu.addItem ("sawtooth", 2);
-        mod2ShapeMenu.addItem ("square", 3);
-        mod2ShapeMenu.addItem ("random", 4);
+        mod2ShapeMenu.addItem ("triangle", 2);
+        mod2ShapeMenu.addItem ("saw", 3);
+        mod2ShapeMenu.addItem ("square", 4);
+        mod2ShapeMenu.addItem ("random", 5);
         mod2ShapeMenu.addListener (this);
+        mod2ShapeMenu.setJustificationType (Justification::centred);
+        mod2ShapeMenu.setSelectedId (1);
         addAndMakeVisible (mod2ShapeMenu);
         
         //mod 3
         mod3ShapeMenu.addItem ("sin", 1);
-        mod3ShapeMenu.addItem ("sawtooth", 2);
-        mod3ShapeMenu.addItem ("square", 3);
-        mod3ShapeMenu.addItem ("random", 4);
+        mod3ShapeMenu.addItem ("triangle", 2);
+        mod3ShapeMenu.addItem ("saw", 3);
+        mod3ShapeMenu.addItem ("square", 4);
+        mod3ShapeMenu.addItem ("random", 5);
         mod3ShapeMenu.addListener (this);
+        mod3ShapeMenu.setJustificationType (Justification::centred);
+        mod3ShapeMenu.setSelectedId (1);
         addAndMakeVisible (mod3ShapeMenu);
         
         Utility::addTextButton (&sync1Button, "SYNC", false, true, this, this);
@@ -69,7 +78,6 @@ public:
     ~ModEditor()
     {
     }
-    
     //===================================================================================
     void sliderValueChanged (Slider* slider) override
     {
@@ -80,10 +88,96 @@ public:
         
         else if (slider == &freq2Slider)
             proc.setFreq2 (value);
+        
+        else if (slider == &freq3Slider)
+            proc.setFreq3 (value);
     }
     
     void comboBoxChanged (ComboBox* comboBoxThatHasChanged) override
     {
+        int i = comboBoxThatHasChanged->getSelectedId();
+        
+        if (comboBoxThatHasChanged == &mod1ShapeMenu)
+        {
+            switch (i)
+            {
+                case 1:
+                    proc.setlfoShape1 (Flanger::LfoShape::sin);
+                    break;
+                    
+                case 2:
+                    proc.setlfoShape1 (Flanger::LfoShape::triangle);
+                    break;
+                
+                case 3:
+                    proc.setlfoShape1 (Flanger::LfoShape::saw);
+                    break;
+                
+                case 4:
+                    proc.setlfoShape1 (Flanger::LfoShape::square);
+                    break;
+                
+                case 5:
+                    proc.setlfoShape1 (Flanger::LfoShape::random);
+                
+                default:
+                    break;
+            }
+        }
+        else if (comboBoxThatHasChanged == &mod2ShapeMenu)
+        {
+            switch (i)
+            {
+                case 1:
+                    proc.setlfoShape2 (Flanger::LfoShape::sin);
+                    break;
+                    
+                case 2:
+                    proc.setlfoShape2 (Flanger::LfoShape::triangle);
+                    break;
+                    
+                case 3:
+                    proc.setlfoShape2 (Flanger::LfoShape::saw);
+                    break;
+                    
+                case 4:
+                    proc.setlfoShape2 (Flanger::LfoShape::square);
+                    break;
+                    
+                case 5:
+                    proc.setlfoShape2 (Flanger::LfoShape::random);
+                    
+                default:
+                    break;
+            }
+        }
+        else if (comboBoxThatHasChanged == &mod3ShapeMenu)
+        {
+            switch (i)
+            {
+                case 1:
+                    proc.setlfoShape3 (Flanger::LfoShape::sin);
+                    break;
+                    
+                case 2:
+                    proc.setlfoShape3 (Flanger::LfoShape::triangle);
+                    break;
+                    
+                case 3:
+                    proc.setlfoShape3 (Flanger::LfoShape::saw);
+                    break;
+                    
+                case 4:
+                    proc.setlfoShape3 (Flanger::LfoShape::square);
+                    break;
+                    
+                case 5:
+                    proc.setlfoShape3 (Flanger::LfoShape::random);
+                    
+                default:
+                    break;
+            }
+        }
     }
     
     void buttonClicked (Button* button) override

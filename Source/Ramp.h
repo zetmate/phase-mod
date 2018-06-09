@@ -19,11 +19,13 @@ public:
     ~Ramp();
     
     double getEndValue() const;
+    double getCurrentValue() const;
     
     void setRange (double start, double end);
     void setTime (double ms, double sampleRate);
     void updateInterval (double &currentValue);
     double applyRamp (double &value);
+    
     
 private:
     double startValue;

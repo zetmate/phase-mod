@@ -44,7 +44,7 @@
       allowLocationSimulation = "YES">
       <PathRunnable
          runnableDebuggingMode = "0"
-         FilePath = "/Applications/Plugin Host.app">
+         FilePath = "/Applications/AudioPluginHost.app">
       </PathRunnable>
       <MacroExpansion>
          <BuildableReference

@@ -13,7 +13,7 @@
 #include "../JuceLibraryCode/JuceHeader.h"
 
 //==================================================================================
-// math utilities
+// my utilities
 
 class Utility
 {
@@ -98,15 +98,98 @@ public:
     //==================================================================================
     //wavetable oscilators
     static double sinFrom0to1 (double currentSample, double numSamples, double amplitude,
-                               double ampOffset, double phaseOffsetFrom0to1, double sampleRate)
+                               double ampOffset, double phaseOffsetFrom0to1)
     {
         double phaseOffsetInSamples = numSamples * phaseOffsetFrom0to1;
-        double x = currentSample / (numSamples + 1) + phaseOffsetInSamples;
+        currentSample += floor (phaseOffsetInSamples);
+        
+        if (currentSample >= numSamples)
+            currentSample = currentSample - numSamples;
+        else if (currentSample < 0)
+            currentSample = (numSamples - 1) + currentSample;
+        
+        numSamples += -1;
+        
+        double correctAmplitude = std::min (1 - ampOffset, amplitude);
+        
+        double x = currentSample / (numSamples + 1);
         double period = 2 * double_Pi;
         
-        double fixedAmplitude = min (1 - ampOffset, amplitude);
+        return sin (x * period) / (2 / correctAmplitude) + (correctAmplitude / 2) + ampOffset;
+    }
+    
+    static double triangleFrom0to1 (double currentSample, double numSamples,
+                                    double amplitude, double ampOffset,
+                                    double phaseOffsetFrom0to1)
+    {
+        double hip = numSamples / 2;
         
-        return sin (x * period) / (2 / fixedAmplitude) + (fixedAmplitude / 2) + ampOffset;
+        double phaseOffsetInSamples = numSamples * phaseOffsetFrom0to1;
+        currentSample += floor (phaseOffsetInSamples);
+        
+        if (currentSample >= numSamples)
+            currentSample = currentSample - numSamples;
+        else if (currentSample < 0)
+            currentSample = (numSamples - 1) + currentSample;
+        
+        numSamples += -1;
+        
+        double correctAmplitude = std::min (1 - ampOffset, amplitude);
+        
+        double x;
+        if (currentSample < hip)
+            x = currentSample - phaseOffsetInSamples;
+        else
+            x = (numSamples - currentSample) - phaseOffsetInSamples;
+        
+        return x / numSamples * correctAmplitude + ampOffset;
+    }
+    
+    static double sawFrom0to1 (double currentSample, double numSamples,
+                               double amplitude, double ampOffset,
+                               double phaseOffsetFrom0to1)
+    {
+        double phaseOffsetInSamples = numSamples * phaseOffsetFrom0to1;
+        currentSample += floor (phaseOffsetInSamples);
+        
+        if (currentSample >= numSamples)
+            currentSample = currentSample - numSamples;
+        else if (currentSample < 0)
+            currentSample = (numSamples - 1) + currentSample;
+        
+        numSamples += -1;
+        
+        double correctAmplitude = std::min (1 - ampOffset, amplitude);
+        
+        return currentSample / numSamples * correctAmplitude + ampOffset;
+    }
+    
+    static double squareFrom0to1 (double currentSample, double numSamples,
+                                  double amplitude, double ampOffset,
+                                  double phaseOffsetFrom0to1)
+    {
+        double hip = numSamples / 2;
+        
+        double phaseOffsetInSamples = numSamples * phaseOffsetFrom0to1;
+        currentSample += floor (phaseOffsetInSamples);
+        
+        if (currentSample >= numSamples)
+            currentSample = currentSample - numSamples;
+        else if (currentSample < 0)
+            currentSample = (numSamples - 1) + currentSample;
+        
+        numSamples += -1;
+        
+        double correctAmplitude = std::min (1 - ampOffset, amplitude);
+        
+        if (currentSample < hip)
+        {
+            return 1 * correctAmplitude + ampOffset;
+        }
+        else
+        {
+            return ampOffset;
+        }
     }
     
     //==================================================================================
@@ -401,9 +484,39 @@ public:
     }
 };
 
-class MyInterpolator  :  public LagrangeInterpolator
+class RandomLfo
 {
 public:
-    MyInterpolator() {};
-    ~MyInterpolator() {};
+    RandomLfo()  : value (random.nextDouble()), counter(0)
+    {
+    }
+    
+    ~RandomLfo()
+    {
+    }
+    
+    void reset()
+    {
+        counter = 0;
+    }
+
+    double randomFrom0to1 (double numSamples,
+                           double amplitude, double ampOffset,
+                           double phaseOffsetFrom0to1)
+    {
+        counter++;
+        
+        if (counter >= numSamples / numValues)
+            value = random.nextDouble();
+        
+        double correctAmplitude = std::min (1 - ampOffset, amplitude);
+        
+        return value * correctAmplitude + ampOffset;
+    }
+    
+private:
+    Random random;
+    double value;
+    int counter;
+    int numValues = 8;
 };

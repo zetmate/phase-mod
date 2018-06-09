@@ -22,21 +22,41 @@ void Flanger::processSampleMono (const float input,
     if (delayCounter >= circularBufferSize)
         delayCounter = 0;
     
-    if (lfoCounter >= lfoNumSamples)
-        lfoCounter = 0;
+    if (lfoCounter_delay >= lfoNumSamples_delay)
+        lfoCounter_delay = 0;
+    
+    if (lfoCounter_feedback >= lfoNumSamples_feedback)
+        lfoCounter_feedback = 0;
     
     //get current values from ramps
+    feedbackRamp.applyRamp (feedbackGain);
+    minDelayRamp.applyRamp (minDelaySamp);
+    maxDelayRamp.applyRamp (maxDelaySamp);
+    lfoFreqRamp_delay.applyRamp (lfoNumSamples_delay);
+    lfoFreqRamp_feedback.applyRamp (lfoNumSamples_feedback);
     
     //get current delay time
     //========================================================================
     float delayInSamples;
     
+    //update delay range
+    delayRange.start = floor (minDelaySamp);
+    delayRange.end = floor (maxDelaySamp);
+    
+    if (lfoDelayOn)
     {
-        //get current wt value
-        float wtValue = Utility::sinFrom0to1 (lfoCounter, lfoNumSamples, 1.0, 0.0, 0.0, sampleRate);
+        //round current lfoNumSamples to int
+        int lfoNumSamples_int = floor (lfoNumSamples_delay);
+        
+        //get current lfo value
+        float lfoValue = getCurrentLfoValue (lfoCounter_delay, lfoNumSamples_int, lfoShape_delay);
         
         //convert wt value
-        delayInSamples = delayRange.convertFrom0to1 (wtValue);
+        delayInSamples = delayRange.convertFrom0to1 (lfoValue);
+    }
+    else
+    {
+        delayInSamples = floor (maxDelaySamp);
     }
     //========================================================================
     
@@ -61,6 +81,14 @@ void Flanger::processSampleMono (const float input,
     //output signal
     output = dryGain * input + wetGain * filtered;
     
+    //get current feedbackGain from lfo
+    if (lfoFbOn)
+    {
+        float fbLfoValue = getCurrentLfoValue (lfoCounter_feedback, lfoNumSamples_feedback,
+                                               lfoShape_feedback);
+        feedbackRamp.setRange (feedbackGain, fbLfoValue * 2 - 1);
+    }
+    
     //store input signal in the delay buffer
     delayW [delayCounter] = (input + feedbackGain * filtered
                              + prevSampleGain * prevDelayedLeft);
@@ -70,7 +98,8 @@ void Flanger::processSampleMono (const float input,
     
     //increase counters
     delayCounter++;
-    lfoCounter++;
+    lfoCounter_delay++;
+    lfoCounter_feedback++;
 }
 
 void Flanger::processSampleStereo (const float inputLeft, const float inputRight,
@@ -82,27 +111,43 @@ void Flanger::processSampleStereo (const float inputLeft, const float inputRight
 {
     //get ramps values
     feedbackRamp.applyRamp (feedbackGain);
-    freqRamp.applyRamp (lfoNumSamples);
+    minDelayRamp.applyRamp (minDelaySamp);
+    maxDelayRamp.applyRamp (maxDelaySamp);
+    lfoFreqRamp_delay.applyRamp (lfoNumSamples_delay);
+    lfoFreqRamp_feedback.applyRamp (lfoNumSamples_feedback);
     
     //check counter
     if (delayCounter >= circularBufferSize)
         delayCounter = 0;
    
-    if (lfoCounter >= lfoNumSamples)
-        lfoCounter = 0;
+    if (lfoCounter_delay >= lfoNumSamples_delay)
+        lfoCounter_delay = 0;
+    
+    if (lfoCounter_feedback >= lfoNumSamples_feedback)
+        lfoCounter_feedback = 0;
     
     //get current delay time
     //========================================================================
     float delayInSamples;
     
+    //update delay range
+    delayRange.start = floor (minDelaySamp);
+    delayRange.end = floor (maxDelaySamp);
+    
+    if (lfoDelayOn)
     {
-        int numSamples = roundToInt (lfoNumSamples);
-        //get current wt value
-        float wtValue = Utility::sinFrom0to1 (lfoCounter, numSamples,
-                                              1.0, 0.0, 0.0, sampleRate);
+        //round current lfoNumSamples to int
+        int lfoNumSamples_int = floor (lfoNumSamples_delay);
+        
+        //get current lfo value
+        float lfoValue = getCurrentLfoValue (lfoCounter_delay, lfoNumSamples_int, lfoShape_delay);
         
         //convert wt value
-        delayInSamples = delayRange.convertFrom0to1 (wtValue);
+        delayInSamples = delayRange.convertFrom0to1 (lfoValue);
+    }
+    else
+    {
+        delayInSamples = floor (maxDelaySamp);
     }
     //========================================================================
     
@@ -135,8 +180,15 @@ void Flanger::processSampleStereo (const float inputLeft, const float inputRight
     
     outputRight = dryGain * inputRight + wetGain * filteredRight;
     
-    //store input signal in the delay buffer
+    //get current feedbackGain from lfo
+    if (lfoFbOn)
+    {
+        float fbLfoValue = getCurrentLfoValue (lfoCounter_feedback, lfoNumSamples_feedback,
+                                               lfoShape_feedback);
+        feedbackRamp.setRange (feedbackGain, fbLfoValue * 2 - 1);
+    }
     
+    //store input signal in the delay buffer
     leftDelayW [delayCounter] = (inputLeft + feedbackGain * filteredLeft
                                  + prevSampleGain * prevDelayedLeft);
     
@@ -149,5 +201,6 @@ void Flanger::processSampleStereo (const float inputLeft, const float inputRight
     
     //increase counters
     delayCounter++;
-    lfoCounter++;
+    lfoCounter_delay++;
+    lfoCounter_feedback++;
 }
