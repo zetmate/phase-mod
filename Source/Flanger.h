@@ -32,7 +32,7 @@ public:
         random
     };
     
-    Flanger()  : sampleRate (1), channelSet (mono), resourcesReleased(false), minDelayMs(0), maxDelayMs (39), delayBuffer (0, 0), circularBufferSize (0), delayCounter(0), prevDelayedLeft(0), prevDelayedRight(0), feedbackGain(0), prevSampleGain(0), dryGain(0), wetGain(0), dryWetPropotion(1), depthFrom0to1(0.3), maxDelaySamp(0), minDelaySamp(4), lfoShape_delay(sin), lfoShape_feedback(sin), lfoCounter_delay(0), lfoCounter_feedback(0), lfoNumSamples_delay(0), lfoNumSamples_feedback(0), lfoFreq_delay(0.01), lfoFreq_feedback(1), lfoDelayOn(true), lfoFbOn(true)
+    Flanger()  : sampleRate (1), channelSet (mono), resourcesReleased(false), minDelayMs(0), maxDelayMs (39), delayBuffer (0, 0), circularBufferSize (0), delayCounter(0), prevDelayedLeft(0), prevDelayedRight(0), feedbackGain(0), prevSampleGain(0), dryGain(0), wetGain(0), dryWetPropotion(1), depthFrom0to1(0.3), maxDelaySamp(0), minDelaySamp(4), lfoShape_delay(sin), lfoShape_feedback(sin), lfoCounter_delay(0), lfoCounter_feedback(0), lfoNumSamples_delay(0), lfoNumSamples_feedback(0), lfoFreq_delay(0.01), lfoFreq_feedback(1), prevLfoValue_delay(0), lfoDelayOn(true), lfoFbOn(true)
     {
         //initialise smart pointers with objects
         
@@ -68,7 +68,7 @@ public:
         maxDelayRamp.setTime (250, sampleRate);
         lfoFreqRamp_delay.setTime (70, sampleRate);
         lfoFreqRamp_feedback.setTime (70, sampleRate);
-        currentDelayRamp.setTime (5, sampleRate);
+        currentDelayRamp.setTime (15, sampleRate);
         
         //prepare filters
         //count coefficients
@@ -293,13 +293,52 @@ private:
     int lfoCounter_delay, lfoCounter_feedback;
     double lfoNumSamples_delay, lfoNumSamples_feedback;
     double lfoFreq_delay, lfoFreq_feedback;
+    double prevLfoValue_delay;
     bool lfoDelayOn, lfoFbOn;
     RandomLfo randomLfo;
     
     //DAW transport state object
     AudioPlayHead::CurrentPositionInfo currentPositionInfo;
     
-    float getCurrentLfoValue (int counter, int numSamples, LfoShape shape)
+    float getCurrentLfoValue_delay (int counter, int numSamples, LfoShape shape)
+    {
+        float value = 0;
+        float targetValue = 0;
+        
+        if (shape == sin)
+        {
+            value = Utility::sinFrom0to1 (counter, numSamples,
+                                          1.0, 0.0, 0.0);
+        }
+        else if (shape == triangle)
+        {
+            value = Utility::triangleFrom0to1 (counter, numSamples,
+                                               1.0, 0.0, 0.0);
+        }
+        else if (shape == saw)
+        {
+            targetValue = Utility::sawFrom0to1 (counter, numSamples,
+                                                1.0, 0.0, 0.0);
+            currentDelayRamp.setRange (prevLfoValue_delay, targetValue);
+            value = currentDelayRamp.applyRamp (prevLfoValue_delay);
+        }
+        else if (shape == square)
+        {
+            targetValue = Utility::squareFrom0to1 (counter, numSamples,
+                                             1.0, 0.0, 0.0);
+            currentDelayRamp.setRange (prevLfoValue_delay, targetValue);
+            value = currentDelayRamp.applyRamp (prevLfoValue_delay);
+        }
+        else if (shape == random)
+        {
+            targetValue = randomLfo.randomFrom0to1 (numSamples, 1.0, 0.0, 0.0);
+            currentDelayRamp.setRange (prevLfoValue_delay, targetValue);
+            value = currentDelayRamp.applyRamp (prevLfoValue_delay);
+        }
+        return value;
+    }
+    
+    float getCurrentLfoValue_fb (int counter, int numSamples, LfoShape shape)
     {
         float value = 0;
         

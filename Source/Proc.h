@@ -61,9 +61,8 @@ public:
         voiceEcho.prepare (sampleRate, bufferSize);
         
         //prepare ramps
-        //set time & update interval
+        //set time
         dryWetRamp.setTime (7, sampleRate);
-        dryWetRamp.updateInterval (dryWetPropotion);
         
         //prepare compressors & limiters
         limiterLeft.prepare (sampleRate);

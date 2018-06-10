@@ -43,13 +43,15 @@ void Flanger::processSampleMono (const float input,
     delayRange.start = floor (minDelaySamp);
     delayRange.end = floor (maxDelaySamp);
     
+    //get current delay time
     if (lfoDelayOn)
     {
         //round current lfoNumSamples to int
         int lfoNumSamples_int = floor (lfoNumSamples_delay);
         
         //get current lfo value
-        float lfoValue = getCurrentLfoValue (lfoCounter_delay, lfoNumSamples_int, lfoShape_delay);
+        float lfoValue = getCurrentLfoValue_delay (lfoCounter_delay, lfoNumSamples_int,
+                                                   lfoShape_delay);
         
         //convert wt value
         delayInSamples = delayRange.convertFrom0to1 (lfoValue);
@@ -84,8 +86,8 @@ void Flanger::processSampleMono (const float input,
     //get current feedbackGain from lfo
     if (lfoFbOn)
     {
-        float fbLfoValue = getCurrentLfoValue (lfoCounter_feedback, lfoNumSamples_feedback,
-                                               lfoShape_feedback);
+        float fbLfoValue = getCurrentLfoValue_fb (lfoCounter_feedback, lfoNumSamples_feedback,
+                                                  lfoShape_feedback);
         feedbackRamp.setRange (feedbackGain, fbLfoValue * 2 - 1);
     }
     
@@ -134,13 +136,15 @@ void Flanger::processSampleStereo (const float inputLeft, const float inputRight
     delayRange.start = floor (minDelaySamp);
     delayRange.end = floor (maxDelaySamp);
     
+    //get current delay time
     if (lfoDelayOn)
     {
         //round current lfoNumSamples to int
         int lfoNumSamples_int = floor (lfoNumSamples_delay);
         
         //get current lfo value
-        float lfoValue = getCurrentLfoValue (lfoCounter_delay, lfoNumSamples_int, lfoShape_delay);
+        float lfoValue = getCurrentLfoValue_delay (lfoCounter_delay, lfoNumSamples_int,
+                                                   lfoShape_delay);
         
         //convert wt value
         delayInSamples = delayRange.convertFrom0to1 (lfoValue);
@@ -183,8 +187,8 @@ void Flanger::processSampleStereo (const float inputLeft, const float inputRight
     //get current feedbackGain from lfo
     if (lfoFbOn)
     {
-        float fbLfoValue = getCurrentLfoValue (lfoCounter_feedback, lfoNumSamples_feedback,
-                                               lfoShape_feedback);
+        float fbLfoValue = getCurrentLfoValue_fb (lfoCounter_feedback, lfoNumSamples_feedback,
+                                                  lfoShape_feedback);
         feedbackRamp.setRange (feedbackGain, fbLfoValue * 2 - 1);
     }
     

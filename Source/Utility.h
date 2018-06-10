@@ -506,7 +506,7 @@ public:
     {
         counter++;
         
-        if (counter >= numSamples / 2)
+        if (counter >= numSamples / numValues)
         {
             value = random.nextDouble();
             counter = 0;
