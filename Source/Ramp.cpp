@@ -50,11 +50,8 @@ void Ramp::updateInterval (double &currentValue)
 
 void Ramp::setTime (double ms, double sampleRate)
 {
-    if (roundToInt(time) != roundToInt(ms))
-    {
-        time = ms;
-        numSamples = (sampleRate / 1000) * ms;
-    }
+    time = ms;
+    numSamples = (sampleRate / 1000) * ms;
 }
 
 double Ramp::applyRamp (double &value)

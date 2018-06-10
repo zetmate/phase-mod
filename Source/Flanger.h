@@ -32,7 +32,7 @@ public:
         random
     };
     
-    Flanger()  : sampleRate (1), channelSet (mono), pingPong (false), resourcesReleased(false), minDelayMs(0), maxDelayMs (39), delayBuffer (0, 0), circularBufferSize (0), delayCounter(0), prevDelayedLeft(0), prevDelayedRight(0), feedbackGain(0), prevSampleGain(0), dryGain(0), wetGain(0), dryWetPropotion(1), depthFrom0to1(0.3), maxDelaySamp(0), minDelaySamp(4), lfoShape_delay(sin), lfoShape_feedback(sin), lfoCounter_delay(0), lfoCounter_feedback(0), lfoNumSamples_delay(0), lfoNumSamples_feedback(0), lfoFreq_delay(0.01), lfoFreq_feedback(1), lfoDelayOn(true), lfoFbOn(false)
+    Flanger()  : sampleRate (1), channelSet (mono), resourcesReleased(false), minDelayMs(0), maxDelayMs (39), delayBuffer (0, 0), circularBufferSize (0), delayCounter(0), prevDelayedLeft(0), prevDelayedRight(0), feedbackGain(0), prevSampleGain(0), dryGain(0), wetGain(0), dryWetPropotion(1), depthFrom0to1(0.3), maxDelaySamp(0), minDelaySamp(4), lfoShape_delay(sin), lfoShape_feedback(sin), lfoCounter_delay(0), lfoCounter_feedback(0), lfoNumSamples_delay(0), lfoNumSamples_feedback(0), lfoFreq_delay(0.01), lfoFreq_feedback(1), lfoDelayOn(true), lfoFbOn(true)
     {
         //initialise smart pointers with objects
         
@@ -63,9 +63,9 @@ public:
         //prepare ramps
         //set time
         dryWetRamp.setTime (7, sampleRate);
-        feedbackRamp.setTime (7, sampleRate);
+        feedbackRamp.setTime (2, sampleRate);
         minDelayRamp.setTime (150, sampleRate);
-        maxDelayRamp.setTime (150, sampleRate);
+        maxDelayRamp.setTime (250, sampleRate);
         lfoFreqRamp_delay.setTime (70, sampleRate);
         lfoFreqRamp_feedback.setTime (70, sampleRate);
         
@@ -261,8 +261,6 @@ public:
 private:
     double sampleRate;
     ChannelSet channelSet;
-    
-    bool pingPong;
     
     bool resourcesReleased;
     

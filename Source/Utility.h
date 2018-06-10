@@ -506,8 +506,11 @@ public:
     {
         counter++;
         
-        if (counter >= numSamples / numValues)
+        if (counter >= numSamples / 2)
+        {
             value = random.nextDouble();
+            counter = 0;
+        }
         
         double correctAmplitude = std::min (1 - ampOffset, amplitude);
         
