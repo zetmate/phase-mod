@@ -42,12 +42,6 @@ void Ramp::setRange (double start, double end)
     currentValue = start;
 }
 
-void Ramp::updateInterval (double &currentValue)
-{
-    currentValue = endValue;
-    interval = 0;
-}
-
 void Ramp::setTime (double ms, double sampleRate)
 {
     time = ms;

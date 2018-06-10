@@ -23,7 +23,6 @@ public:
     
     void setRange (double start, double end);
     void setTime (double ms, double sampleRate);
-    void updateInterval (double &currentValue);
     double applyRamp (double &value);
     
     

@@ -62,12 +62,13 @@ public:
         
         //prepare ramps
         //set time
-        dryWetRamp.setTime (7, sampleRate);
+        dryWetRamp.setTime (5, sampleRate);
         feedbackRamp.setTime (2, sampleRate);
         minDelayRamp.setTime (150, sampleRate);
         maxDelayRamp.setTime (250, sampleRate);
         lfoFreqRamp_delay.setTime (70, sampleRate);
         lfoFreqRamp_feedback.setTime (70, sampleRate);
+        currentDelayRamp.setTime (5, sampleRate);
         
         //prepare filters
         //count coefficients
@@ -93,15 +94,6 @@ public:
         delayBuffer.setSize (2, circularBufferSize);
         delayBuffer.clear();
         delayCounter = 0;
-        
-        //prepare ramps
-        //update interval
-        dryWetRamp.updateInterval (dryWetPropotion);
-        feedbackRamp.updateInterval (feedbackGain);
-        minDelayRamp.updateInterval (minDelaySamp);
-        maxDelayRamp.updateInterval (maxDelaySamp);
-        lfoFreqRamp_delay.updateInterval (lfoNumSamples_delay);
-        lfoFreqRamp_feedback.updateInterval (lfoNumSamples_feedback);
     }
     
     void releaseResources()
@@ -293,6 +285,7 @@ private:
     Ramp minDelayRamp;
     Ramp lfoFreqRamp_delay;
     Ramp lfoFreqRamp_feedback;
+    Ramp currentDelayRamp;
     
     //lfo stuff
     LfoShape lfoShape_delay;
