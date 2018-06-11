@@ -29,10 +29,11 @@ public:
         triangle,
         saw,
         square,
-        random
+        random,
+        noise
     };
     
-    Flanger()  : sampleRate (1), channelSet (mono), resourcesReleased(false), minDelayMs(0), maxDelayMs (39), delayBuffer (0, 0), circularBufferSize (0), delayCounter(0), prevDelayedLeft(0), prevDelayedRight(0), feedbackGain(0), prevSampleGain(0), dryGain(0), wetGain(0), dryWetPropotion(1), depthFrom0to1(0.3), maxDelaySamp(0), minDelaySamp(4), lfoShape_delay(sin), lfoShape_feedback(sin), lfoCounter_delay(0), lfoCounter_feedback(0), lfoNumSamples_delay(0), lfoNumSamples_feedback(0), lfoFreq_delay(0.01), lfoFreq_feedback(1), prevLfoValue_delay(0), lfoDelayOn(true), lfoFbOn(true)
+    Flanger()  : sampleRate (1), channelSet (mono), resourcesReleased(false), minDelayMs(0), maxDelayMs (39), delayBuffer (0, 0), circularBufferSize (0), delayCounter(0), prevDelayedLeft(0), prevDelayedRight(0), feedbackGain(0), prevSampleGain(0), dryGain(0), wetGain(0), dryWetPropotion(1), depthFrom0to1(0.3), maxDelaySamp(0), minDelaySamp(4), lfoShape_delay(sin), lfoShape_feedback(sin), lfoCounter_delay(0), lfoCounter_feedback(0), lfoNumSamples_delay(0), lfoNumSamples_feedback(0), lfoFreq_delay(0.01), lfoFreq_feedback(1), prevLfoValue_delay(0), delayLfoOn(true), fbLfoOn(false)
     {
         //initialise smart pointers with objects
         
@@ -151,26 +152,36 @@ public:
     }
     
     //setters
+    //lfo freqs
     void setFrequencyForDelayLfo (float newFrequency)
     {
         lfoFreq_delay = newFrequency;
         lfoFreqRamp_delay.setRange (lfoNumSamples_delay, sampleRate / newFrequency);
     }
-    
     void setFrequencyForFeedbackLfo (float newFrequency)
     {
         lfoFreq_feedback = newFrequency;
         lfoFreqRamp_feedback.setRange (lfoNumSamples_feedback, sampleRate / newFrequency);
     }
     
+    //lfo shapes
     void setShapeForDelayLfo (LfoShape lfoShape)
     {
         lfoShape_delay = lfoShape;
     }
-    
     void setShapeForFeedbackLfo (LfoShape lfoShape)
     {
         lfoShape_feedback = lfoShape;
+    }
+    
+    //lfo on/off
+    void setDelayLfoOn (bool shouldBeOn)
+    {
+        delayLfoOn = shouldBeOn;
+    }
+    void setFbLfoOn (bool shouldBeOn)
+    {
+        fbLfoOn = shouldBeOn;
     }
     
     void setMaxDelayTime (float newMaxDelayMs)
@@ -294,7 +305,7 @@ private:
     double lfoNumSamples_delay, lfoNumSamples_feedback;
     double lfoFreq_delay, lfoFreq_feedback;
     double prevLfoValue_delay;
-    bool lfoDelayOn, lfoFbOn;
+    bool delayLfoOn, fbLfoOn;
     RandomLfo randomLfo;
     
     //DAW transport state object
@@ -334,6 +345,10 @@ private:
             targetValue = randomLfo.randomFrom0to1 (numSamples, 1.0, 0.0, 0.0);
             currentDelayRamp.setRange (prevLfoValue_delay, targetValue);
             value = currentDelayRamp.applyRamp (prevLfoValue_delay);
+        }
+        else if (shape == noise)
+        {
+            value = randomLfo.noiseFrom0to1 (numSamples, 1.0, 0.0, 0.0);
         }
         return value;
     }

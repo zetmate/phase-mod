@@ -206,13 +206,11 @@ public:
         voiceClose.setFrequencyForDelayLfo (frequency);
         voiceMid.setFrequencyForDelayLfo (frequency);
     }
-    
     void setFreq2 (float frequency)
     {
         voiceFar.setFrequencyForDelayLfo (frequency);
         voiceEcho.setFrequencyForDelayLfo (frequency);
     }
-    
     void setFreq3 (float frequency)
     {
         voiceClose.setFrequencyForFeedbackLfo (frequency);
@@ -226,19 +224,35 @@ public:
         voiceClose.setShapeForDelayLfo (lfoShape);
         voiceMid.setShapeForDelayLfo (lfoShape);
     }
-    
     void setlfoShape2 (Flanger::LfoShape lfoShape)
     {
         voiceFar.setShapeForDelayLfo (lfoShape);
         voiceEcho.setShapeForDelayLfo (lfoShape);
     }
-    
     void setlfoShape3 (Flanger::LfoShape lfoShape)
     {
         voiceClose.setShapeForFeedbackLfo (lfoShape);
         voiceMid.setShapeForFeedbackLfo (lfoShape);
         voiceFar.setShapeForFeedbackLfo (lfoShape);
         voiceEcho.setShapeForFeedbackLfo (lfoShape);
+    }
+    
+    void setLfo1on (bool shouldBeOn)
+    {
+        voiceClose.setDelayLfoOn (shouldBeOn);
+        voiceMid.setDelayLfoOn (shouldBeOn);
+    }
+    void setLfo2on (bool shouldBeOn)
+    {
+        voiceFar.setDelayLfoOn (shouldBeOn);
+        voiceEcho.setDelayLfoOn (shouldBeOn);
+    }
+    void setLfo3on (bool shouldBeOn)
+    {
+        voiceClose.setFbLfoOn (shouldBeOn);
+        voiceMid.setFbLfoOn (shouldBeOn);
+        voiceFar.setFbLfoOn (shouldBeOn);
+        voiceEcho.setFbLfoOn (shouldBeOn);
     }
     
     //PROCESSING FUNCTION

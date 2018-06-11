@@ -64,10 +64,10 @@ public:
     
     void buttonClicked (Button* button) override
     {
+        bool isOn = button->getToggleState();
+        
         if (button == &separateProcessingButton)
         {
-            bool isOn = button->getToggleState();
-            
             if (isOn)
             {
                 button->setToggleState (false, dontSendNotification);
@@ -125,7 +125,8 @@ public:
         separateProcessingButton.setBounds (25, 175, 225, 50);
         doubleFeedbackButton.setBounds (275, 175, 100, 50);
     }
-
+    friend class ModEditor;
+    
 private:
     Slider depthSlider;
     Label depthLabel;

@@ -16,7 +16,7 @@
 Vibrato2AudioProcessorEditor::Vibrato2AudioProcessorEditor (Vibrato2AudioProcessor& p)
     : AudioProcessorEditor (&p),
         effectEditor (p.proc, editorWidth, effectEditorHeight),
-        modEditor (p.proc, editorWidth, modEditorHeight),
+        modEditor (p.proc, effectEditor, editorWidth, modEditorHeight),
         masterEditor (p.proc, masterEditorWidth, effectEditorHeight + modEditorHeight),
         proc (p.proc)
 {

@@ -44,7 +44,7 @@ void Flanger::processSampleMono (const float input,
     delayRange.end = floor (maxDelaySamp);
     
     //get current delay time
-    if (lfoDelayOn)
+    if (delayLfoOn)
     {
         //round current lfoNumSamples to int
         int lfoNumSamples_int = floor (lfoNumSamples_delay);
@@ -84,7 +84,7 @@ void Flanger::processSampleMono (const float input,
     output = dryGain * input + wetGain * filtered;
     
     //get current feedbackGain from lfo
-    if (lfoFbOn)
+    if (fbLfoOn)
     {
         float fbLfoValue = getCurrentLfoValue_fb (lfoCounter_feedback, lfoNumSamples_feedback,
                                                   lfoShape_feedback);
@@ -137,7 +137,7 @@ void Flanger::processSampleStereo (const float inputLeft, const float inputRight
     delayRange.end = floor (maxDelaySamp);
     
     //get current delay time
-    if (lfoDelayOn)
+    if (delayLfoOn)
     {
         //round current lfoNumSamples to int
         int lfoNumSamples_int = floor (lfoNumSamples_delay);
@@ -185,7 +185,7 @@ void Flanger::processSampleStereo (const float inputLeft, const float inputRight
     outputRight = dryGain * inputRight + wetGain * filteredRight;
     
     //get current feedbackGain from lfo
-    if (lfoFbOn)
+    if (fbLfoOn)
     {
         float fbLfoValue = getCurrentLfoValue_fb (lfoCounter_feedback, lfoNumSamples_feedback,
                                                   lfoShape_feedback);

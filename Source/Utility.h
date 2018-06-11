@@ -138,9 +138,9 @@ public:
         
         double x;
         if (currentSample < hip)
-            x = currentSample - phaseOffsetInSamples;
+            x = currentSample;
         else
-            x = (numSamples - currentSample) - phaseOffsetInSamples;
+            x = numSamples - currentSample;
         
         return x / numSamples * correctAmplitude + ampOffset;
     }
@@ -161,7 +161,9 @@ public:
         
         double correctAmplitude = std::min (1 - ampOffset, amplitude);
         
-        return currentSample / numSamples * correctAmplitude + ampOffset;
+        double x = numSamples - currentSample;
+        
+        return x / numSamples * correctAmplitude + ampOffset;
     }
     
     static double squareFrom0to1 (double currentSample, double numSamples,
@@ -507,6 +509,23 @@ public:
         counter++;
         
         if (counter >= numSamples / numValues)
+        {
+            value = random.nextDouble();
+            counter = 0;
+        }
+        
+        double correctAmplitude = std::min (1 - ampOffset, amplitude);
+        
+        return value * correctAmplitude + ampOffset;
+    }
+    
+    double noiseFrom0to1 (double numSamples,
+                           double amplitude, double ampOffset,
+                           double phaseOffsetFrom0to1)
+    {
+        counter++;
+        
+        if (counter >= numSamples / 10000)
         {
             value = random.nextDouble();
             counter = 0;

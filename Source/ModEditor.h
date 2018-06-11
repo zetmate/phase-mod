@@ -21,7 +21,7 @@ class ModEditor    :    public Component,
                         public Button::Listener
 {
 public:
-    ModEditor (Proc& p, int width, int height)  : proc(p)
+    ModEditor (Proc& p, EffectEditor& ee, int width, int height)  : proc(p), effectEditor(ee)
     {
         setSize (width, height);
         
@@ -43,6 +43,7 @@ public:
         mod1ShapeMenu.addItem ("saw", 3);
         mod1ShapeMenu.addItem ("square", 4);
         mod1ShapeMenu.addItem ("random", 5);
+        mod1ShapeMenu.addItem ("noise", 6);
         mod1ShapeMenu.addListener (this);
         mod1ShapeMenu.setJustificationType (Justification::centred);
         mod1ShapeMenu.setSelectedId (1);
@@ -54,6 +55,7 @@ public:
         mod2ShapeMenu.addItem ("saw", 3);
         mod2ShapeMenu.addItem ("square", 4);
         mod2ShapeMenu.addItem ("random", 5);
+        mod2ShapeMenu.addItem ("noise", 6);
         mod2ShapeMenu.addListener (this);
         mod2ShapeMenu.setJustificationType (Justification::centred);
         mod2ShapeMenu.setSelectedId (1);
@@ -70,9 +72,13 @@ public:
         mod3ShapeMenu.setSelectedId (1);
         addAndMakeVisible (mod3ShapeMenu);
         
-        Utility::addTextButton (&sync1Button, "SYNC", false, true, this, this);
-        Utility::addTextButton (&sync2Button, "SYNC", false, true, this, this);
-        Utility::addTextButton (&sync3Button, "SYNC", false, true, this, this);
+        Utility::addTextButton (&sync1Button, "TEMPO SYNC", false, true, this, this);
+        Utility::addTextButton (&sync2Button, "TEMPO SYNC", false, true, this, this);
+        Utility::addTextButton (&sync3Button, "TEMPO SYNC", false, true, this, this);
+        
+        Utility::addTextButton (&lfo1onButton, "ON", true, true, this, this);
+        Utility::addTextButton (&lfo2onButton, "ON", true, true, this, this);
+        Utility::addTextButton (&lfo3onButton, "OFF", false, true, this, this);
     }
 
     ~ModEditor()
@@ -91,6 +97,58 @@ public:
         
         else if (slider == &freq3Slider)
             proc.setFreq3 (value);
+    }
+    
+    void buttonClicked (Button* button) override
+    {
+        bool isOn = button->getToggleState();
+        
+        if (button == &lfo1onButton)
+        {
+            if (isOn)
+            {
+                button->setToggleState (false, dontSendNotification);
+                button->setButtonText ("OFF");
+                proc.setLfo1on (false);
+            }
+            else
+            {
+                button->setToggleState (true, dontSendNotification);
+                button->setButtonText ("ON");
+                proc.setLfo1on (true);
+            }
+        }
+        else if (button == &lfo2onButton)
+        {
+            if (isOn)
+            {
+                button->setToggleState (false, dontSendNotification);
+                button->setButtonText ("OFF");
+                proc.setLfo2on (false);
+            }
+            else
+            {
+                button->setToggleState (true, dontSendNotification);
+                button->setButtonText ("ON");
+                proc.setLfo2on (true);
+            }
+        }
+        else if (button == &lfo3onButton)
+        {
+            if (isOn)
+            {
+                button->setToggleState (false, dontSendNotification);
+                button->setButtonText ("OFF");
+                proc.setLfo3on (false);
+                proc.setFeedbackGain (effectEditor.feedbackSlider.getValue() / 100.0);
+            }
+            else
+            {
+                button->setToggleState (true, dontSendNotification);
+                button->setButtonText ("ON");
+                proc.setLfo3on (true);
+            }
+        }
     }
     
     void comboBoxChanged (ComboBox* comboBoxThatHasChanged) override
@@ -119,7 +177,12 @@ public:
                 
                 case 5:
                     proc.setlfoShape1 (Flanger::LfoShape::random);
+                    break;
                 
+                case 6:
+                    proc.setlfoShape1 (Flanger::LfoShape::noise);
+                    break;
+                    
                 default:
                     break;
             }
@@ -146,6 +209,11 @@ public:
                     
                 case 5:
                     proc.setlfoShape2 (Flanger::LfoShape::random);
+                    break;
+                    
+                case 6:
+                    proc.setlfoShape2 (Flanger::LfoShape::noise);
+                    break;
                     
                 default:
                     break;
@@ -173,15 +241,12 @@ public:
                     
                 case 5:
                     proc.setlfoShape3 (Flanger::LfoShape::random);
+                    break;
                     
                 default:
                     break;
             }
         }
-    }
-    
-    void buttonClicked (Button* button) override
-    {
     }
     //===================================================================================
 
@@ -206,9 +271,13 @@ public:
         mod3ShapeMenu.setBounds (275, 175, 100, 25);
         
         //third row
-        sync1Button.setBounds (50, 210, 50, 30);
-        sync2Button.setBounds (175, 210, 50, 30);
-        sync3Button.setBounds (300, 210, 50, 30);
+        sync1Button.setBounds (25, 210, 100, 30);
+        sync2Button.setBounds (150, 210, 100, 30);
+        sync3Button.setBounds (275, 210, 100, 30);
+        
+        lfo1onButton.setBounds (50, 255, 50, 30);
+        lfo2onButton.setBounds (175, 255, 50, 30);
+        lfo3onButton.setBounds (300, 255, 50, 30);
     }
 
 private:
@@ -223,8 +292,10 @@ private:
     
     ComboBox mod1ShapeMenu, mod2ShapeMenu, mod3ShapeMenu;
     TextButton sync1Button, sync2Button, sync3Button;
+    TextButton lfo1onButton, lfo2onButton, lfo3onButton;
     //==============================================================
     Proc& proc;
+    EffectEditor& effectEditor;
     //==============================================================
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (ModEditor)
 };
