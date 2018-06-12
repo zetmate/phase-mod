@@ -28,6 +28,13 @@ public:
         cascade
     };
     
+    enum PhaseShift
+    {
+        deg0,
+        deg90,
+        deg180
+    };
+    
     Proc()  : sampleRate (1), resourcesReleased (false),
                 dryWetPropotion(1),
                 channelSet (mono),
@@ -255,6 +262,36 @@ public:
         voiceEcho.setFbLfoOn (shouldBeOn);
     }
     
+    //phaseShift
+    void setPhaseShift (PhaseShift phaseShift)
+    {
+        int phaseIndex = 1;
+        switch (phaseShift)
+        {
+            case deg90:
+                phaseIndex = 4;
+                break;
+                
+            case deg180:
+                phaseIndex = 2;
+                break;
+                
+            default:
+                break;
+        }
+        
+        int counter1 = voiceClose.lfoCounter_delay;
+        int numSamples2 = voiceFar.lfoNumSamples_delay;
+        int counter2 = counter1 + (numSamples2 / phaseIndex);
+        
+        if (counter2 >= numSamples2)
+            counter2 = counter2 - numSamples2;
+        
+        voiceFar.lfoCounter_delay = counter2;
+        voiceEcho.lfoCounter_delay = counter2;
+    }
+    
+    
     //PROCESSING FUNCTION
     void processBlock (AudioSampleBuffer& buffer, AudioPlayHead* playHead)
     {
@@ -310,6 +347,7 @@ protected:
     //processor info
     ChannelSet channelSet;
     ProcessorType processorType;
+    PhaseShift phaseShift = deg0;
 
     //limiter
     Compressor limiterLeft;

@@ -462,7 +462,7 @@ public:
                                bool shouldBeOn, bool makeVisible,
                                Component* parent, Button::Listener* listener)
     {
-        button->setToggleState (shouldBeOn, dontSendNotification);
+        button->setToggleState (shouldBeOn, sendNotification);
         button->setButtonText (buttonText);
         
         if (parent != nullptr)

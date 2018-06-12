@@ -25,15 +25,15 @@ public:
     {
         setSize (width, height);
         
-        Utility::addSlider (&freq1Slider, &freq1Label, "Frequency 1", 0.01, 17, 0.001, 3,
+        Utility::addSlider (&freq1Slider, &freq1Label, "Frequency 1", 0.01, 17, 0.01, 3,
                             "Hz", Slider::SliderStyle::RotaryVerticalDrag,
                             Slider::TextEntryBoxPosition::TextBoxBelow, 0.01, this, this, true);
         
-        Utility::addSlider (&freq2Slider, &freq2Label, "Frequency 2", 0.01, 17, 0.001, 3,
+        Utility::addSlider (&freq2Slider, &freq2Label, "Frequency 2", 0.01, 17, 0.01, 3,
                             "Hz", Slider::SliderStyle::RotaryVerticalDrag,
                             Slider::TextEntryBoxPosition::TextBoxBelow, 0.01, this, this, true);
         
-        Utility::addSlider (&freq3Slider, &freq3Label, "Frequency 3", 0.01, 17, 0.001, 3,
+        Utility::addSlider (&freq3Slider, &freq3Label, "Frequency 3", 0.01, 17, 0.01, 3,
                             "Hz", Slider::SliderStyle::RotaryVerticalDrag,
                             Slider::TextEntryBoxPosition::TextBoxBelow, 0.01, this, this, true);
         
@@ -79,6 +79,26 @@ public:
         Utility::addTextButton (&lfo1onButton, "ON", true, true, this, this);
         Utility::addTextButton (&lfo2onButton, "ON", true, true, this, this);
         Utility::addTextButton (&lfo3onButton, "OFF", false, true, this, this);
+        
+        Utility::addTextButton (&sync2to1Button, "sync 1&2", false, true, this, this);
+        Utility::addTextButton (&syncAllButton, "sync all", false, true, this, this);
+        sync2to1Button.setClickingTogglesState (true);
+        syncAllButton.setClickingTogglesState (true);
+        
+        phase0.setRadioGroupId (1);
+        phase90.setRadioGroupId (1);
+        phase180.setRadioGroupId (1);
+        phase0.addListener (this);
+        phase90.addListener (this);
+        phase180.addListener (this);
+        phase0.setButtonText ("0");
+        phase90.setButtonText ("90");
+        phase180.setButtonText ("180");
+        addChildComponent (phase0);
+        addChildComponent (phase90);
+        addChildComponent (phase180);
+        
+        setSliderEnabled (&freq3Slider, &freq3Label, false);
     }
 
     ~ModEditor()
@@ -90,13 +110,35 @@ public:
         double value = slider->getValue();
         
         if (slider == &freq1Slider)
+        {
             proc.setFreq1 (value);
+            if (synced2to1)
+            {
+                freq2Slider.setValue (value);
+                if (syncedAll)
+                    freq3Slider.setValue (value);
+            }
+        }
         
         else if (slider == &freq2Slider)
+        {
             proc.setFreq2 (value);
+            if (synced2to1)
+            {
+                freq1Slider.setValue (value);
+                if (syncedAll)
+                    proc.setFreq3 (value);
+            }
+        }
         
         else if (slider == &freq3Slider)
+        {
             proc.setFreq3 (value);
+            if (syncedAll)
+            {
+                freq1Slider.setValue (value);
+            }
+        }
     }
     
     void buttonClicked (Button* button) override
@@ -110,12 +152,15 @@ public:
                 button->setToggleState (false, dontSendNotification);
                 button->setButtonText ("OFF");
                 proc.setLfo1on (false);
+                setSliderEnabled (&freq1Slider, &freq1Label, false);
+                
             }
             else
             {
                 button->setToggleState (true, dontSendNotification);
                 button->setButtonText ("ON");
                 proc.setLfo1on (true);
+                setSliderEnabled (&freq1Slider, &freq1Label, true);
             }
         }
         else if (button == &lfo2onButton)
@@ -125,12 +170,14 @@ public:
                 button->setToggleState (false, dontSendNotification);
                 button->setButtonText ("OFF");
                 proc.setLfo2on (false);
+                setSliderEnabled (&freq2Slider, &freq2Label, false);
             }
             else
             {
                 button->setToggleState (true, dontSendNotification);
                 button->setButtonText ("ON");
                 proc.setLfo2on (true);
+                setSliderEnabled (&freq2Slider, &freq2Label, true);
             }
         }
         else if (button == &lfo3onButton)
@@ -141,13 +188,61 @@ public:
                 button->setButtonText ("OFF");
                 proc.setLfo3on (false);
                 proc.setFeedbackGain (effectEditor.feedbackSlider.getValue() / 100.0);
+                setSliderEnabled (&freq3Slider, &freq3Label, false);
             }
             else
             {
                 button->setToggleState (true, dontSendNotification);
                 button->setButtonText ("ON");
                 proc.setLfo3on (true);
+                setSliderEnabled (&freq3Slider, &freq3Label, true);
             }
+        }
+        else if (button == &sync2to1Button)
+        {
+            if (isOn)
+            {
+                synced2to1 = true;
+                freq2Slider.setValue (freq1Slider.getValue());
+                phase0.setVisible (true);
+                phase90.setVisible (true);
+                phase180.setVisible (true);
+                phase0.setToggleState (true, dontSendNotification);
+            }
+            else
+            {
+                synced2to1 = false;
+                phase0.setVisible (false);
+                phase90.setVisible (false);
+                phase180.setVisible (false);
+                proc.setPhaseShift (Proc::PhaseShift::deg0);
+            }
+        }
+        else if (button == &syncAllButton)
+        {
+            if (isOn)
+            {
+                syncedAll = true;
+                freq3Slider.setValue (freq1Slider.getValue());
+                freq2Slider.setValue (freq1Slider.getValue());
+                sync2to1Button.setToggleState (true, sendNotification);
+            }
+            else
+            {
+                syncedAll = false;
+            }
+        }
+        else if (button == &phase0 && isOn)
+        {
+            proc.setPhaseShift (Proc::PhaseShift::deg0);
+        }
+        else if (button == &phase90 && isOn)
+        {
+            proc.setPhaseShift (Proc::PhaseShift::deg90);
+        }
+        else if (button == &phase180 && isOn)
+        {
+            proc.setPhaseShift (Proc::PhaseShift::deg180);
         }
     }
     
@@ -248,6 +343,23 @@ public:
             }
         }
     }
+    
+    //===================================================================================
+    void setSliderEnabled (Slider* slider, Label* label, bool shouldBeEnabled)
+    {
+        if (shouldBeEnabled)
+        {
+            slider->setEnabled (true);
+            label->setColour (Label::textColourId,
+                              Colour::fromFloatRGBA (250, 250, 250, 0.95));
+        }
+        else
+        {
+            slider->setEnabled (false);
+            label->setColour (Label::textColourId,
+                              Colour::fromFloatRGBA (250, 250, 250, 0.5));
+        }
+    }
     //===================================================================================
 
     void paint (Graphics& g) override
@@ -260,24 +372,43 @@ public:
 
     void resized() override
     {
+        int row1y = 50 + 50;
+        int row2y = 175 + 50;
+        int row3y = 210 + 50;
+        int row4y = 255 + 50;
+        
+        int cell1x = 25;
+        int cell2x = 150;
+        int cell3x = 275;
+        
+        //addrow
+        lfo1onButton.setBounds (50, 25, 50, 30);
+        lfo2onButton.setBounds (175, 25, 50, 30);
+        lfo3onButton.setBounds (300, 25, 50, 30);
+        
+        
         //first row
-        freq1Slider.setBounds (25, 50, 100, 100);
-        freq2Slider.setBounds (150, 50, 100, 100);
-        freq3Slider.setBounds (275, 50, 100, 100);
+        freq1Slider.setBounds (cell1x, row1y, 100, 100);
+        freq2Slider.setBounds (cell2x, row1y, 100, 100);
+        freq3Slider.setBounds (cell3x, row1y, 100, 100);
         
         //second row
-        mod1ShapeMenu.setBounds (25, 175, 100, 25);
-        mod2ShapeMenu.setBounds (150, 175, 100, 25);
-        mod3ShapeMenu.setBounds (275, 175, 100, 25);
+        mod1ShapeMenu.setBounds (cell1x, row2y, 100, 25);
+        mod2ShapeMenu.setBounds (cell2x, row2y, 100, 25);
+        mod3ShapeMenu.setBounds (cell3x, row2y, 100, 25);
         
         //third row
-        sync1Button.setBounds (25, 210, 100, 30);
-        sync2Button.setBounds (150, 210, 100, 30);
-        sync3Button.setBounds (275, 210, 100, 30);
+        sync1Button.setBounds (cell1x, row3y, 100, 30);
+        sync2Button.setBounds (cell2x, row3y, 100, 30);
+        sync3Button.setBounds (cell3x, row3y, 100, 30);
         
-        lfo1onButton.setBounds (50, 255, 50, 30);
-        lfo2onButton.setBounds (175, 255, 50, 30);
-        lfo3onButton.setBounds (300, 255, 50, 30);
+        //foutrh row
+        sync2to1Button.setBounds (cell1x + 15, row4y, 70, 25);
+        phase0.setBounds (cell2x, row4y, 25, 25);
+        phase90.setBounds (cell2x + 37, row4y, 25, 25);
+        phase180.setBounds (cell2x + 75, row4y, 25, 25);
+        syncAllButton.setBounds (cell3x + 15, row4y, 70, 25);
+        
     }
 
 private:
@@ -292,7 +423,11 @@ private:
     
     ComboBox mod1ShapeMenu, mod2ShapeMenu, mod3ShapeMenu;
     TextButton sync1Button, sync2Button, sync3Button;
+    
+    bool synced2to1 = false, syncedAll = false;
+    TextButton sync2to1Button, syncAllButton;
     TextButton lfo1onButton, lfo2onButton, lfo3onButton;
+    ToggleButton phase0, phase90, phase180;
     //==============================================================
     Proc& proc;
     EffectEditor& effectEditor;

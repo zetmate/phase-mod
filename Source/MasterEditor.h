@@ -24,10 +24,6 @@ public:
     {
         setSize (width, height);
         
-        Utility::addSlider (&lowCutSlider, &lowCutLabel, "Low cut", 20, 20000, 1, 3000,
-                            "Hz", Slider::SliderStyle::RotaryVerticalDrag,
-                            Slider::TextEntryBoxPosition::TextBoxBelow, 70, this, this, true);
-        
         Utility::addSlider (&dryWetSlider, &dryWetLabel, "Mix", 0, 100, 1, 50,
                             "%", Slider::SliderStyle::RotaryVerticalDrag,
                             Slider::TextEntryBoxPosition::TextBoxBelow, 50, this, this, true);
@@ -42,10 +38,7 @@ public:
     {
         double value = slider->getValue();
         
-        if (slider == &lowCutSlider)
-            proc.setLowCut (value);
-        
-        else if (slider == &dryWetSlider)
+        if (slider == &dryWetSlider)
             proc.setDryWet (value / 100.0);
     }
     
@@ -65,15 +58,12 @@ public:
     void resized() override
     {
         dryWetSlider.setBounds (25, 50, 100, 100);
-        lowCutSlider.setBounds (25, getHeight() - 125, 100, 100);
+        //lowCutSlider.setBounds (25, getHeight() - 125, 100, 100);
     }
 
 private:
     Slider doubleFbSlider;
     Label doubleFbLabel;
-    
-    Slider lowCutSlider;
-    Label lowCutLabel;
     
     Slider dryWetSlider;
     Label dryWetLabel;

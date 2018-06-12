@@ -34,7 +34,7 @@ public:
         
         Utility::addSlider (&feedbackSlider, &feedbackLabel, "Feedback", -99, 99, 1, 0,
                             "%", Slider::SliderStyle::RotaryVerticalDrag,
-                            Slider::TextEntryBoxPosition::TextBoxBelow, 30, this, this, true);
+                            Slider::TextEntryBoxPosition::TextBoxBelow, -70, this, this, true);
         
         Utility::addTextButton (&separateProcessingButton, "separate processing",
                                 true, true, this, this);

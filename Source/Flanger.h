@@ -40,7 +40,7 @@ public:
         //set initial values
         setDryWetMix (1);
         delayRange.start = 6;
-        hpFilter.frequency = 70;
+        hpFilter.frequency = 20;
         hpFilter.quality = 0.7;
         
         //set wt parameters
@@ -178,6 +178,7 @@ public:
     void setDelayLfoOn (bool shouldBeOn)
     {
         delayLfoOn = shouldBeOn;
+        //lfoCounter_delay = lfoNumSamples_delay / 4;
     }
     void setFbLfoOn (bool shouldBeOn)
     {
@@ -261,6 +262,7 @@ public:
         return delayBuffer.getWritePointer (channel);
     }
     
+    friend class Proc;
 private:
     double sampleRate;
     ChannelSet channelSet;
