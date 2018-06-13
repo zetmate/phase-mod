@@ -86,11 +86,10 @@ void Proc::processBlockMonoSeparate (AudioSampleBuffer& buffer)
         //============================================
         //  COMPUTE RESULTS
         //============================================
+        float processed1 = (voiceClose_output + voiceMid_output) * gain1;
+        float processed2 = (voiceClose_output + voiceMid_output) * gain1;
         
-        float processed = (voiceClose_output
-                           + voiceMid_output
-                           + voiceFar_output
-                           + voiceEcho_output) * 0.5;
+        float processed = (processed1 + processed2) * 0.5;
         
         //============================================
         //  LIMIT PROCESSED SIGNAL
@@ -112,7 +111,7 @@ void Proc::processBlockMonoSeparate (AudioSampleBuffer& buffer)
         float wetGain = dryWetPropotion;
         float dryGain = 1 - wetGain;
         
-        bufferW [sample] = output * wetGain + input * dryGain;
+        bufferW [sample] = output * wetGain * effectGain + input * dryGain;
     }
 }
 

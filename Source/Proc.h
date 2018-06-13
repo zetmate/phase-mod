@@ -70,6 +70,10 @@ public:
         //prepare ramps
         //set time
         dryWetRamp.setTime (7, sampleRate);
+        inputGainRamp.setTime (5, sampleRate);
+        effectGainRamp.setTime (5, sampleRate);
+        gain1Ramp.setTime (5, sampleRate);
+        gain2Ramp.setTime (5, sampleRate);
         
         //prepare compressors & limiters
         limiterLeft.prepare (sampleRate);
@@ -163,6 +167,26 @@ public:
         dryWetRamp.setRange (dryWetPropotion, newDryWetPropotion);
     }
     
+    void setInputGain (double newInputGain)
+    {
+        setInputGain (newInputGain);
+    }
+    
+    void setEffectGain (double newEffectGain)
+    {
+        effectGainRamp.setRange (effectGain, newEffectGain);
+    }
+    
+    void setGain1 (double newGain1)
+    {
+        gain1Ramp.setRange (gain1, newGain1);
+    }
+    
+    void setGain2 (double newGain2)
+    {
+        gain2Ramp.setRange (gain2, newGain2);
+    }
+    
     void setFeedbackGain (float feedbackGain)
     {
         voiceClose.setFeedbackGain (feedbackGain);
@@ -242,6 +266,15 @@ public:
         voiceMid.setShapeForFeedbackLfo (lfoShape);
         voiceFar.setShapeForFeedbackLfo (lfoShape);
         voiceEcho.setShapeForFeedbackLfo (lfoShape);
+    }
+    
+    void setLfo3Amp (double newAmp)
+    {
+        newAmp = std::max (0.02, newAmp);
+        voiceClose.setAmplitudeForFeedbackLfo (newAmp);
+        voiceMid.setAmplitudeForFeedbackLfo (newAmp);
+        voiceFar.setAmplitudeForFeedbackLfo (newAmp);
+        voiceEcho.setAmplitudeForFeedbackLfo (newAmp);
     }
     
     void setLfo1on (bool shouldBeOn)
@@ -341,8 +374,17 @@ protected:
     double sampleRate;
     bool resourcesReleased;
 
+    //dry wet stuff
     double dryWetPropotion;
     Ramp dryWetRamp;
+    
+    //gains
+    double inputGain = 1.0f;
+    double effectGain = 1.0f;
+    double gain1 = 1.0f;
+    double gain2 = 1.0f;
+    //gains' ramps
+    Ramp inputGainRamp, effectGainRamp, gain1Ramp, gain2Ramp;
 
     //processor info
     ChannelSet channelSet;

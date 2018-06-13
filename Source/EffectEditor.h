@@ -36,11 +36,15 @@ public:
                             "%", Slider::SliderStyle::RotaryVerticalDrag,
                             Slider::TextEntryBoxPosition::TextBoxBelow, -70, this, this, true);
         
+        Utility::addSlider (&lfo3AmpSlider, &lfo3AmpLabel, "Feedback LFO depth", 5, 99, 1, 50,
+                            "%", Slider::SliderStyle::RotaryVerticalDrag,
+                            Slider::TextEntryBoxPosition::TextBoxBelow, 80, this, this, false);
+        
         Utility::addTextButton (&separateProcessingButton, "separate processing",
-                                true, true, this, this);
+                                true, true, true, this, this);
         
         Utility::addTextButton (&doubleFeedbackButton, "single feedback",
-                                false, true, this, this);
+                                false, true, true, this, this);
     }
 
     ~EffectEditor()
@@ -53,13 +57,24 @@ public:
         double value = slider->getValue();
         
         if (slider == &depthSlider)
+        {
             proc.setDepth (value / 100.0);
-        
+        }
         else if (slider == &delaySlider)
+        {
             proc.setMaxDelayTime (value);
-        
+        }
         else if (slider == &feedbackSlider)
+        {
             proc.setFeedbackGain (value / 100.0);
+            
+            if (value < 5 && value > -5)
+                proc.setPrevSampleGain (0);
+        }
+        else if (slider == &lfo3AmpSlider)
+        {
+            proc.setLfo3Amp (value / 100.0);
+        }
     }
     
     void buttonClicked (Button* button) override
@@ -70,38 +85,44 @@ public:
         {
             if (isOn)
             {
-                button->setToggleState (false, dontSendNotification);
-                button->setButtonText ("cascade processing");
-                proc.setCascadeProcessing();
+                button->setButtonText ("separate processing");
+                proc.setSeparateProcessing();
+                feedbackSlider.setRange (-99, 99, 1);
             }
             else
             {
-                button->setToggleState (true, dontSendNotification);
-                button->setButtonText ("separate processing");
-                proc.setSeparateProcessing();
+                button->setButtonText ("cascade processing");
+                proc.setCascadeProcessing();
+                feedbackSlider.setRange (-65, 65, 1);
             }
         }
-        //    else if (button == &doubleFeedbackButton)
-        //    {
-        //        bool isOn = button->getToggleState();
-        //
-        //        if (isOn)
-        //        {
-        //            button->setToggleState (false, dontSendNotification);
-        //            button->setButtonText ("single feedback");
-        //            proc.setPrevSampleGain (0);
-        //            proc.setFeedbackGain (feedbackSlider.getValue() / 100);
-        //            feedbackSlider.setEnabled (true);
-        //        }
-        //        else
-        //        {
-        //            button->setToggleState (true, dontSendNotification);
-        //            button->setButtonText ("double feedback");
-        //            proc.setFeedbackGain (0.7);
-        //            proc.setPrevSampleGain (0.3);
-        //            feedbackSlider.setEnabled (false);
-        //        }
-        //    }
+        else if (button == &doubleFeedbackButton)
+        {
+            if (isOn)
+            {
+                float currentFbGain = feedbackSlider.getValue() / 100.0;
+                if (currentFbGain > 0)
+                {
+                    proc.setFeedbackGain (0.7);
+                    proc.setPrevSampleGain (0.25);
+                }
+                else
+                {
+                    proc.setFeedbackGain (-0.7);
+                    proc.setPrevSampleGain (-0.25);
+                }
+                Utility::setSliderEnabled (&feedbackSlider, &feedbackLabel, false);
+                doubleFeedbackButton.setButtonText ("double feedback");
+            }
+            else
+            {
+                Utility::setSliderEnabled (&feedbackSlider, &feedbackLabel, true);
+                proc.setPrevSampleGain (0);
+                proc.setFeedbackGain (feedbackSlider.getValue() / 100.0);
+                doubleFeedbackButton.setButtonText ("single feedback");
+            }
+        }
+       
     }
     //===================================================================================
 
@@ -120,13 +141,13 @@ public:
         depthSlider.setBounds (25, 50, 100, 100);
         delaySlider.setBounds (150, 50, 100, 100);
         feedbackSlider.setBounds (275, 50, 100, 100);
+        lfo3AmpSlider.setBounds (275, 50, 100, 100);
         
         //second row
         separateProcessingButton.setBounds (25, 175, 225, 50);
         doubleFeedbackButton.setBounds (275, 175, 100, 50);
     }
     friend class ModEditor;
-    
 private:
     Slider depthSlider;
     Label depthLabel;
@@ -136,6 +157,9 @@ private:
     
     Slider feedbackSlider;
     Label feedbackLabel;
+    
+    Slider lfo3AmpSlider;
+    Label lfo3AmpLabel;
     
     TextButton separateProcessingButton, doubleFeedbackButton;
     //==============================================================

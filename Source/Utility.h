@@ -459,11 +459,12 @@ public:
     }
     
     static void addTextButton (TextButton* button, const String& buttonText,
-                               bool shouldBeOn, bool makeVisible,
+                               bool shouldBeOn, bool makeVisible, bool toggleOnClick,
                                Component* parent, Button::Listener* listener)
     {
         button->setToggleState (shouldBeOn, sendNotification);
         button->setButtonText (buttonText);
+        button->setClickingTogglesState (toggleOnClick);
         
         if (parent != nullptr)
         {
@@ -482,6 +483,22 @@ public:
         else
         {
             parent->addChildComponent (button);
+        }
+    }
+    
+    static void setSliderEnabled (Slider* slider, Label* label, bool shouldBeEnabled)
+    {
+        if (shouldBeEnabled)
+        {
+            slider->setEnabled (true);
+            label->setColour (Label::textColourId,
+                              Colour::fromFloatRGBA (250, 250, 250, 0.95));
+        }
+        else
+        {
+            slider->setEnabled (false);
+            label->setColour (Label::textColourId,
+                              Colour::fromFloatRGBA (250, 250, 250, 0.5));
         }
     }
 };

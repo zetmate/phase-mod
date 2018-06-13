@@ -25,15 +25,15 @@ public:
     {
         setSize (width, height);
         
-        Utility::addSlider (&freq1Slider, &freq1Label, "Frequency 1", 0.01, 17, 0.01, 3,
+        Utility::addSlider (&freq1Slider, &freq1Label, "Voice 1 LFO", 0.01, 17, 0.01, 3,
                             "Hz", Slider::SliderStyle::RotaryVerticalDrag,
                             Slider::TextEntryBoxPosition::TextBoxBelow, 0.01, this, this, true);
         
-        Utility::addSlider (&freq2Slider, &freq2Label, "Frequency 2", 0.01, 17, 0.01, 3,
+        Utility::addSlider (&freq2Slider, &freq2Label, "Voice 2 LFO", 0.01, 17, 0.01, 3,
                             "Hz", Slider::SliderStyle::RotaryVerticalDrag,
                             Slider::TextEntryBoxPosition::TextBoxBelow, 0.01, this, this, true);
         
-        Utility::addSlider (&freq3Slider, &freq3Label, "Frequency 3", 0.01, 17, 0.01, 3,
+        Utility::addSlider (&freq3Slider, &freq3Label, "Feedback LFO", 0.01, 17, 0.01, 3,
                             "Hz", Slider::SliderStyle::RotaryVerticalDrag,
                             Slider::TextEntryBoxPosition::TextBoxBelow, 0.01, this, this, true);
         
@@ -72,18 +72,16 @@ public:
         mod3ShapeMenu.setSelectedId (1);
         addAndMakeVisible (mod3ShapeMenu);
         
-        Utility::addTextButton (&sync1Button, "TEMPO SYNC", false, true, this, this);
-        Utility::addTextButton (&sync2Button, "TEMPO SYNC", false, true, this, this);
-        Utility::addTextButton (&sync3Button, "TEMPO SYNC", false, true, this, this);
+        Utility::addTextButton (&sync1Button, "TEMPO SYNC", false, true, true, this, this);
+        Utility::addTextButton (&sync2Button, "TEMPO SYNC", false, true, true, this, this);
+        Utility::addTextButton (&sync3Button, "TEMPO SYNC", false, true, true, this, this);
         
-        Utility::addTextButton (&lfo1onButton, "ON", true, true, this, this);
-        Utility::addTextButton (&lfo2onButton, "ON", true, true, this, this);
-        Utility::addTextButton (&lfo3onButton, "OFF", false, true, this, this);
+        Utility::addTextButton (&lfo1onButton, "ON", true, true, true, this, this);
+        Utility::addTextButton (&lfo2onButton, "ON", true, true, true, this, this);
+        Utility::addTextButton (&lfo3onButton, "OFF", false, true, true, this, this);
         
-        Utility::addTextButton (&sync2to1Button, "sync 1&2", false, true, this, this);
-        Utility::addTextButton (&syncAllButton, "sync all", false, true, this, this);
-        sync2to1Button.setClickingTogglesState (true);
-        syncAllButton.setClickingTogglesState (true);
+        Utility::addTextButton (&sync2to1Button, "sync 1&2", false, true, true, this, this);
+        Utility::addTextButton (&syncAllButton, "sync all", false, true, true, this, this);
         
         phase0.setRadioGroupId (1);
         phase90.setRadioGroupId (1);
@@ -98,7 +96,7 @@ public:
         addChildComponent (phase90);
         addChildComponent (phase180);
         
-        setSliderEnabled (&freq3Slider, &freq3Label, false);
+        Utility::setSliderEnabled (&freq3Slider, &freq3Label, false);
     }
 
     ~ModEditor()
@@ -149,53 +147,59 @@ public:
         {
             if (isOn)
             {
-                button->setToggleState (false, dontSendNotification);
-                button->setButtonText ("OFF");
-                proc.setLfo1on (false);
-                setSliderEnabled (&freq1Slider, &freq1Label, false);
-                
+                button->setButtonText ("ON");
+                proc.setLfo1on (true);
+                Utility::setSliderEnabled (&freq1Slider, &freq1Label, true);
             }
             else
             {
-                button->setToggleState (true, dontSendNotification);
-                button->setButtonText ("ON");
-                proc.setLfo1on (true);
-                setSliderEnabled (&freq1Slider, &freq1Label, true);
+                button->setButtonText ("OFF");
+                proc.setLfo1on (false);
+                Utility::setSliderEnabled (&freq1Slider, &freq1Label, false);
             }
         }
         else if (button == &lfo2onButton)
         {
             if (isOn)
             {
-                button->setToggleState (false, dontSendNotification);
-                button->setButtonText ("OFF");
-                proc.setLfo2on (false);
-                setSliderEnabled (&freq2Slider, &freq2Label, false);
+                button->setButtonText ("ON");
+                proc.setLfo2on (true);
+                Utility::setSliderEnabled (&freq2Slider, &freq2Label, true);
             }
             else
             {
-                button->setToggleState (true, dontSendNotification);
-                button->setButtonText ("ON");
-                proc.setLfo2on (true);
-                setSliderEnabled (&freq2Slider, &freq2Label, true);
+                button->setButtonText ("OFF");
+                proc.setLfo2on (false);
+                Utility::setSliderEnabled (&freq2Slider, &freq2Label, false);
             }
         }
         else if (button == &lfo3onButton)
         {
             if (isOn)
             {
-                button->setToggleState (false, dontSendNotification);
-                button->setButtonText ("OFF");
-                proc.setLfo3on (false);
-                proc.setFeedbackGain (effectEditor.feedbackSlider.getValue() / 100.0);
-                setSliderEnabled (&freq3Slider, &freq3Label, false);
+                button->setButtonText ("ON");
+                proc.setLfo3on (true);
+                Utility::setSliderEnabled (&freq3Slider, &freq3Label, true);
+                Utility::setSliderEnabled (&effectEditor.feedbackSlider,
+                                           &effectEditor.feedbackLabel, false);
+                //effectEditor.feedbackSlider.setVisible (false);
+                //effectEditor.lfo3AmpSlider.setVisible (true);
+                effectEditor.doubleFeedbackButton.setToggleState (false, sendNotification);
+                effectEditor.doubleFeedbackButton.setEnabled (false);
+                //proc.setLfo3Amp (effectEditor.lfo3AmpSlider.getValue() / 100.0);
             }
             else
             {
-                button->setToggleState (true, dontSendNotification);
-                button->setButtonText ("ON");
-                proc.setLfo3on (true);
-                setSliderEnabled (&freq3Slider, &freq3Label, true);
+                button->setButtonText ("OFF");
+                proc.setLfo3on (false);
+                proc.setFeedbackGain (effectEditor.feedbackSlider.getValue() / 100.0);
+                Utility::setSliderEnabled (&freq3Slider, &freq3Label, false);
+                Utility::setSliderEnabled (&effectEditor.feedbackSlider,
+                                           &effectEditor.feedbackLabel, true);
+//                effectEditor.lfo3AmpSlider.setVisible (false);
+//                effectEditor.feedbackSlider.setVisible (true);
+                effectEditor.doubleFeedbackButton.setEnabled (true);
+                proc.setFeedbackGain (effectEditor.feedbackSlider.getValue() / 100.0);
             }
         }
         else if (button == &sync2to1Button)
@@ -343,24 +347,6 @@ public:
             }
         }
     }
-    
-    //===================================================================================
-    void setSliderEnabled (Slider* slider, Label* label, bool shouldBeEnabled)
-    {
-        if (shouldBeEnabled)
-        {
-            slider->setEnabled (true);
-            label->setColour (Label::textColourId,
-                              Colour::fromFloatRGBA (250, 250, 250, 0.95));
-        }
-        else
-        {
-            slider->setEnabled (false);
-            label->setColour (Label::textColourId,
-                              Colour::fromFloatRGBA (250, 250, 250, 0.5));
-        }
-    }
-    //===================================================================================
 
     void paint (Graphics& g) override
     {
@@ -410,7 +396,6 @@ public:
         syncAllButton.setBounds (cell3x + 15, row4y, 70, 25);
         
     }
-
 private:
     Slider freq1Slider;
     Label freq1Label;

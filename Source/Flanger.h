@@ -65,11 +65,13 @@ public:
         //set time
         dryWetRamp.setTime (5, sampleRate);
         feedbackRamp.setTime (2, sampleRate);
+        prevSampleGainRamp.setTime (5, sampleRate);
         minDelayRamp.setTime (150, sampleRate);
         maxDelayRamp.setTime (250, sampleRate);
         lfoFreqRamp_delay.setTime (70, sampleRate);
         lfoFreqRamp_feedback.setTime (70, sampleRate);
         currentDelayRamp.setTime (15, sampleRate);
+        lfoAmpRamp_feedback.setTime (5, sampleRate);
         
         //prepare filters
         //count coefficients
@@ -174,6 +176,12 @@ public:
         lfoShape_feedback = lfoShape;
     }
     
+    //lfo amp
+    void setAmplitudeForFeedbackLfo (double newAmplitude)
+    {
+        lfoAmpRamp_feedback.setRange (lfoAmp_feedback, newAmplitude);
+    }
+    
     //lfo on/off
     void setDelayLfoOn (bool shouldBeOn)
     {
@@ -235,7 +243,7 @@ public:
     
     void setPrevSampleGain (float newPrevSampGain)
     {
-        prevSampleGain = newPrevSampGain;
+        prevSampleGainRamp.setRange (prevSampleGain, newPrevSampGain);
     }
     
     void setDryWetMix (float newDryWetPropotion)
@@ -279,6 +287,7 @@ private:
     int circularBufferSize;
     int delayCounter;
     
+    //samples for double feedback
     float prevDelayedLeft, prevDelayedRight;
     
     //gain values
@@ -287,6 +296,8 @@ private:
     double dryGain;
     double wetGain;
     double dryWetPropotion;
+    
+    //delay values
     double sweepWidth;
     double depthFrom0to1;
     double maxDelaySamp, minDelaySamp;
@@ -294,18 +305,32 @@ private:
     //ramps
     Ramp dryWetRamp;
     Ramp feedbackRamp;
+    Ramp prevSampleGainRamp;
     Ramp maxDelayRamp;
     Ramp minDelayRamp;
     Ramp lfoFreqRamp_delay;
     Ramp lfoFreqRamp_feedback;
     Ramp currentDelayRamp;
+    Ramp lfoAmpRamp_feedback;
     
-    //lfo stuff
+    //lfo stuff===============
+    //shapes
     LfoShape lfoShape_delay;
     LfoShape lfoShape_feedback;
+    
+    //counters
     int lfoCounter_delay, lfoCounter_feedback;
+    
+    //numSamples
     double lfoNumSamples_delay, lfoNumSamples_feedback;
+    
+    //freqs
     double lfoFreq_delay, lfoFreq_feedback;
+    
+    //amps
+    double lfoAmp_feedback = 1;
+    
+    //other stuff
     double prevLfoValue_delay;
     bool delayLfoOn, fbLfoOn;
     RandomLfo randomLfo;
@@ -361,18 +386,18 @@ private:
         
         if (shape == sin)
             value = Utility::sinFrom0to1 (counter, numSamples,
-                                            1.0, 0.0, 0.0);
+                                          0.99, 0.0, 0.25);
         else if (shape == triangle)
             value = Utility::triangleFrom0to1 (counter, numSamples,
-                                                 1.0, 0.0, 0.0);
+                                               0.99, 0.0, 0.0);
         else if (shape == saw)
             value = Utility::sawFrom0to1 (counter, numSamples,
-                                            1.0, 0.0, 0.0);
+                                          0.99, 0.0, 0.0);
         else if (shape == square)
             value = Utility::squareFrom0to1 (counter, numSamples,
-                                               1.0, 0.0, 0.0);
+                                             0.99, 0.0, 0.0);
         else if (shape == random)
-            value = randomLfo.randomFrom0to1 (numSamples, 1.0, 0.0, 0.0);
+            value = randomLfo.randomFrom0to1 (numSamples, 0.99, 0.0, 0.0);
         
         return value;
     }

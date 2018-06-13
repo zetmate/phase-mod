@@ -30,10 +30,12 @@ void Flanger::processSampleMono (const float input,
     
     //get current values from ramps
     feedbackRamp.applyRamp (feedbackGain);
+    prevSampleGainRamp.applyRamp (prevSampleGain);
     minDelayRamp.applyRamp (minDelaySamp);
     maxDelayRamp.applyRamp (maxDelaySamp);
     lfoFreqRamp_delay.applyRamp (lfoNumSamples_delay);
     lfoFreqRamp_feedback.applyRamp (lfoNumSamples_feedback);
+    lfoAmpRamp_feedback.applyRamp (lfoAmp_feedback);
     
     //get current delay time
     //========================================================================
@@ -113,10 +115,12 @@ void Flanger::processSampleStereo (const float inputLeft, const float inputRight
 {
     //get ramps values
     feedbackRamp.applyRamp (feedbackGain);
+    prevSampleGainRamp.applyRamp (prevSampleGain);
     minDelayRamp.applyRamp (minDelaySamp);
     maxDelayRamp.applyRamp (maxDelaySamp);
     lfoFreqRamp_delay.applyRamp (lfoNumSamples_delay);
     lfoFreqRamp_feedback.applyRamp (lfoNumSamples_feedback);
+    lfoAmpRamp_feedback.applyRamp (lfoAmp_feedback);
     
     //check counter
     if (delayCounter >= circularBufferSize)
