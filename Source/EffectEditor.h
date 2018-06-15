@@ -10,7 +10,6 @@
 
 #pragma once
 
-#include "../JuceLibraryCode/JuceHeader.h"
 //==============================================================================
 /*
 */
@@ -23,15 +22,15 @@ public:
     {
         setSize (width, height);
         
-        Utility::addSlider (&depthSlider, &depthLabel, "Depth", 0, 100, 1, 50,
+        Utility::addSlider (&depthSlider, &depthLabel, "DEPTH", 0, 100, 1, 50,
                             "%", Slider::SliderStyle::RotaryVerticalDrag,
                             Slider::TextEntryBoxPosition::TextBoxBelow, 30, this, this, true);
         
-        Utility::addSlider (&delaySlider, &delayLabel, "Delay", 2, 500, 0.1, 40,
+        Utility::addSlider (&delaySlider, &delayLabel, "DELAY", 2, 500, 0.1, 40,
                             " ms", Slider::SliderStyle::RotaryVerticalDrag,
                             Slider::TextEntryBoxPosition::TextBoxBelow, 60, this, this, true);
         
-        Utility::addSlider (&feedbackSlider, &feedbackLabel, "Feedback", -99, 99, 1, 0,
+        Utility::addSlider (&feedbackSlider, &feedbackLabel, "FEEDBACK", -99, 99, 1, 0,
                             "%", Slider::SliderStyle::RotaryVerticalDrag,
                             Slider::TextEntryBoxPosition::TextBoxBelow, -70, this, this, true);
         

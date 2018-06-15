@@ -24,6 +24,7 @@
       <FILE id="DoitoU" name="Ramp.cpp" compile="1" resource="0" file="Source/Ramp.cpp"/>
       <FILE id="CbKq8p" name="Ramp.h" compile="0" resource="0" file="Source/Ramp.h"/>
       <FILE id="vtJt3j" name="Utility.h" compile="0" resource="0" file="Source/Utility.h"/>
+      <FILE id="QhxcCk" name="Tempo.h" compile="0" resource="0" file="Source/Tempo.h"/>
       <FILE id="eQJryR" name="PluginEditor.cpp" compile="1" resource="0"
             file="Source/PluginEditor.cpp"/>
       <FILE id="vgj6hr" name="PluginEditor.h" compile="0" resource="0" file="Source/PluginEditor.h"/>

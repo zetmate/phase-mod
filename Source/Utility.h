@@ -11,6 +11,7 @@
 #pragma once
 
 #include "../JuceLibraryCode/JuceHeader.h"
+#include "Tempo.h"
 
 //==================================================================================
 // my utilities
@@ -501,7 +502,91 @@ public:
                               Colour::fromFloatRGBA (250, 250, 250, 0.5));
         }
     }
+    
+    static double tempoToHz (int tempoIndex, double bpm)
+    {
+        double one4Hz = bpm / 60;
+        double hz;
+        
+        switch (tempoIndex)
+        {
+            case 4:
+                hz = one4Hz * 2;
+                break;
+                
+            case 5:
+                hz = one4Hz;
+                break;
+                
+            case 3:
+                hz = one4Hz * 4;
+                break;
+                
+            case 6:
+                hz = one4Hz / 2;
+                break;
+                
+            case 2:
+                hz = one4Hz * 8;
+                break;
+                
+            case 1:
+                hz = one4Hz * 16;
+                break;
+                
+            case 7:
+                hz = one4Hz / 4;
+                break;
+                
+            case 8:
+                hz = one4Hz / 8;
+                break;
+                
+            case 9:
+                hz = one4Hz / 16;
+                break;
+                
+            case 10:
+                hz = one4Hz / 32;
+                break;
+                
+            default:
+                hz = 1;
+                break;
+        }
+        return hz;
+    }
+    
+    static int freqToTempoIndex (double freq, double bpm)
+    {
+        float a = freq / (bpm / 60);
+        
+        if (a <= 1 / 32)
+            return 10;
+        else if (a <= 1 / 16)
+            return 9;
+        else if (a <= 1 / 8)
+            return 8;
+        else if (a <= 1 / 4)
+            return 7;
+        else if (a <= 1 / 2)
+            return 6;
+        else if (a <= 1)
+            return 5;
+        else if (a <= 2)
+            return 4;
+        else if (a <= 4)
+            return 3;
+        else if (a <= 8)
+            return 2;
+        else if (a <= 16)
+            return 1;
+        
+        return 1;
+    }
+
 };
+
 
 class RandomLfo
 {

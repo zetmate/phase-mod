@@ -324,13 +324,18 @@ public:
         voiceEcho.lfoCounter_delay = counter2;
     }
     
+    //getters
+    double getCurrentBpm() const
+    {
+        return currentBpm;
+    }
     
     //PROCESSING FUNCTION
     void processBlock (AudioSampleBuffer& buffer, AudioPlayHead* playHead)
     {
         //prepare transport state info
-        bool transportIsAvailable = playHead->getCurrentPosition(currentPositionInfo);
-        
+        transportIsAvailable = playHead->getCurrentPosition(currentPositionInfo);
+       
         //process only if the transport state = is playing or not available
         if (currentPositionInfo.isPlaying || !(transportIsAvailable))
         //if (true)
@@ -399,5 +404,7 @@ protected:
 
     //DAW transport state object
     AudioPlayHead::CurrentPositionInfo currentPositionInfo;
+    double currentBpm = 120;
+    bool transportIsAvailable = false;
     
 };

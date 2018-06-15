@@ -56,6 +56,9 @@ void Proc::processBlockMonoSeparate (AudioSampleBuffer& buffer)
         gain1Ramp.applyRamp (gain1);
         gain2Ramp.applyRamp (gain2);
         
+        //get currentBpm
+        currentBpm = currentPositionInfo.bpm;
+        
         //get input signal
         const float input = bufferR[sample] * inputGain;
         
@@ -162,6 +165,9 @@ void Proc::processBlockMonoCascade (AudioSampleBuffer& buffer)
         effectGainRamp.applyRamp (effectGain);
         gain1Ramp.applyRamp (gain1);
         gain2Ramp.applyRamp (gain2);
+        
+        //get currentBpm
+        currentBpm = currentPositionInfo.bpm;
         
         //get input signal
         const float input = bufferR[sample] * inputGain;
@@ -277,6 +283,9 @@ void Proc::processBlockStereoSeparate (AudioSampleBuffer& buffer)
         effectGainRamp.applyRamp (effectGain);
         gain1Ramp.applyRamp (gain1);
         gain2Ramp.applyRamp (gain2);
+        
+        //get currentBpm
+        currentBpm = currentPositionInfo.bpm;
         
         //get input signal
         const float inputLeft = leftBufferR[sample] * inputGain;
@@ -434,6 +443,9 @@ void Proc::processBlockStereoCascade (AudioSampleBuffer& buffer)
         effectGainRamp.applyRamp (effectGain);
         gain1Ramp.applyRamp (gain1);
         gain2Ramp.applyRamp (gain2);
+        
+        //get currentBpm
+        currentBpm = currentPositionInfo.bpm;
         
         //get input signal
         const float inputLeft = leftBufferR[sample] * inputGain;

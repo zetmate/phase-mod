@@ -386,7 +386,7 @@ private:
         
         if (shape == sin)
             value = Utility::sinFrom0to1 (counter, numSamples,
-                                          0.99, 0.0, 0.25);
+                                          0.99, 0.0, 0.0);
         else if (shape == triangle)
             value = Utility::triangleFrom0to1 (counter, numSamples,
                                                0.99, 0.0, 0.0);
@@ -395,7 +395,7 @@ private:
                                           0.99, 0.0, 0.0);
         else if (shape == square)
             value = Utility::squareFrom0to1 (counter, numSamples,
-                                             0.99, 0.0, 0.0);
+                                             0.99, 0.0, 0.5);
         else if (shape == random)
             value = randomLfo.randomFrom0to1 (numSamples, 0.99, 0.0, 0.0);
         

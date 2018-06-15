@@ -103,6 +103,7 @@
 		A2FBE01356E2700EE436EA01 = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; name = "include_juce_gui_extra.mm"; path = "../../JuceLibraryCode/include_juce_gui_extra.mm"; sourceTree = "SOURCE_ROOT"; };
 		A5ED10F64F6C27762227E705 = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; name = "include_juce_video.mm"; path = "../../JuceLibraryCode/include_juce_video.mm"; sourceTree = "SOURCE_ROOT"; };
 		A66E83CF227D1110FF339644 = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreMIDI.framework; path = System/Library/Frameworks/CoreMIDI.framework; sourceTree = SDKROOT; };
+		ABD058E52F2AD00C2550B1D9 = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = Tempo.h; path = ../../Source/Tempo.h; sourceTree = "SOURCE_ROOT"; };
 		B5725FD3FDCAF6687B076849 = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreAudioKit.framework; path = System/Library/Frameworks/CoreAudioKit.framework; sourceTree = SDKROOT; };
 		B95C3DB759EE289876BED893 = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = Filter.h; path = ../../Source/Filter.h; sourceTree = "SOURCE_ROOT"; };
 		C04DE880A41ABA41642C7F67 = {isa = PBXFileReference; lastKnownFileType = file; name = "juce_gui_extra"; path = "../../../../../../JUCE/modules/juce_gui_extra"; sourceTree = "SOURCE_ROOT"; };
@@ -138,6 +139,7 @@
 					16416A94611F51E6C9D13A7C,
 					799185122AB2423F557D6FBF,
 					10AA896B227DE9B52751949C,
+					ABD058E52F2AD00C2550B1D9,
 					2163E81B33FC139F0921E51A,
 					1BB0F5213D22C857A72BC86F,
 					EE1CE7DFF1CA469571B15F01,
