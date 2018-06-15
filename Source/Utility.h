@@ -98,7 +98,7 @@ public:
     
     //==================================================================================
     //wavetable oscilators
-    static double sinFrom0to1 (double currentSample, double numSamples, double amplitude,
+    static double sinFromMinus1toPlus1 (double currentSample, double numSamples, double amplitude,
                                double ampOffset, double phaseOffsetFrom0to1)
     {
         double phaseOffsetInSamples = numSamples * phaseOffsetFrom0to1;

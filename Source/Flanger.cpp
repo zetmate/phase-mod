@@ -89,8 +89,8 @@ void Flanger::processSampleMono (const float input,
     if (fbLfoOn)
     {
         float fbLfoValue = getCurrentLfoValue_fb (lfoCounter_feedback, lfoNumSamples_feedback,
-                                                  lfoShape_feedback);
-        feedbackRamp.setRange (feedbackGain, fbLfoValue * 2 - 1);
+                                                  lfoShape_feedback) * lfoAmp_feedback;
+        feedbackRamp.setRange (feedbackGain, fbLfoValue);
     }
     
     //store input signal in the delay buffer
@@ -192,8 +192,8 @@ void Flanger::processSampleStereo (const float inputLeft, const float inputRight
     if (fbLfoOn)
     {
         float fbLfoValue = getCurrentLfoValue_fb (lfoCounter_feedback, lfoNumSamples_feedback,
-                                                  lfoShape_feedback);
-        feedbackRamp.setRange (feedbackGain, fbLfoValue * 2 - 1);
+                                                  lfoShape_feedback) * lfoAmp_feedback;
+        feedbackRamp.setRange (feedbackGain, fbLfoValue);
     }
     
     //store input signal in the delay buffer

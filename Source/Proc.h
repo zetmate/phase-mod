@@ -45,8 +45,6 @@ public:
         //set initial values
         setMaxDelayTime (60);
         
-        //set wt parameters
-        
         //set default mono behaviour
         setToMono();
     }

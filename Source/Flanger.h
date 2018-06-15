@@ -66,7 +66,7 @@ public:
         dryWetRamp.setTime (5, sampleRate);
         feedbackRamp.setTime (2, sampleRate);
         prevSampleGainRamp.setTime (5, sampleRate);
-        minDelayRamp.setTime (150, sampleRate);
+        minDelayRamp.setTime (250, sampleRate);
         maxDelayRamp.setTime (250, sampleRate);
         lfoFreqRamp_delay.setTime (70, sampleRate);
         lfoFreqRamp_feedback.setTime (70, sampleRate);
@@ -345,8 +345,8 @@ private:
         
         if (shape == sin)
         {
-            value = Utility::sinFrom0to1 (counter, numSamples,
-                                          1.0, 0.0, 0.0);
+            value = Utility::sinFromMinus1toPlus1 (counter, numSamples,
+                                          1.0, 0.0, 0.0) / 2.0 + 0.5;
         }
         else if (shape == triangle)
         {
@@ -385,19 +385,19 @@ private:
         float value = 0;
         
         if (shape == sin)
-            value = Utility::sinFrom0to1 (counter, numSamples,
-                                          0.99, 0.0, 0.0);
+            value = Utility::sinFromMinus1toPlus1 (counter, numSamples,
+                                          1.0, 0.0, 0.0);
         else if (shape == triangle)
             value = Utility::triangleFrom0to1 (counter, numSamples,
-                                               0.99, 0.0, 0.0);
+                                               1.0, 0.0, 0.0);
         else if (shape == saw)
             value = Utility::sawFrom0to1 (counter, numSamples,
-                                          0.99, 0.0, 0.0);
+                                          1.0, 0.0, 0.0);
         else if (shape == square)
             value = Utility::squareFrom0to1 (counter, numSamples,
-                                             0.99, 0.0, 0.5);
+                                             1.0, 0.0, 0.0);
         else if (shape == random)
-            value = randomLfo.randomFrom0to1 (numSamples, 0.99, 0.0, 0.0);
+            value = randomLfo.randomFrom0to1 (numSamples, 1.0, 0.0, 0.0) * 2 - 1;
         
         return value;
     }

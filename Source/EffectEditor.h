@@ -34,7 +34,7 @@ public:
                             "%", Slider::SliderStyle::RotaryVerticalDrag,
                             Slider::TextEntryBoxPosition::TextBoxBelow, -70, this, this, true);
         
-        Utility::addSlider (&lfo3AmpSlider, &lfo3AmpLabel, "Feedback LFO depth", 5, 99, 1, 50,
+        Utility::addSlider (&lfo3AmpSlider, &lfo3AmpLabel, "Feedback LFO depth", 15, 99, 1, 50,
                             "%", Slider::SliderStyle::RotaryVerticalDrag,
                             Slider::TextEntryBoxPosition::TextBoxBelow, 80, this, this, false);
         
@@ -86,13 +86,16 @@ public:
                 button->setButtonText ("separate processing");
                 proc.setSeparateProcessing();
                 feedbackSlider.setRange (-99, 99, 1);
+                lfo3AmpSlider.setRange (-99, 99, 1);
             }
             else
             {
                 button->setButtonText ("cascade processing");
                 proc.setCascadeProcessing();
                 feedbackSlider.setRange (-65, 65, 1);
-                
+                lfo3AmpSlider.setRange (-65, 65, 1);
+                doubleFeedbackButton.setToggleState (false, sendNotification);
+                doubleFeedbackButton.setEnabled (false);
             }
         }
         else if (button == &doubleFeedbackButton)
@@ -122,6 +125,27 @@ public:
             }
         }
        
+    }
+    
+    void setLfo3AmpMode (bool lfo3AmpMode)
+    {
+        if (lfo3AmpMode)
+        {
+            double value = lfo3AmpSlider.getValue();
+            feedbackSlider.setVisible (false);
+            lfo3AmpSlider.setVisible (true);
+            lfo3AmpSlider.setValue (value);
+            
+            doubleFeedbackButton.setToggleState (false, sendNotification);
+            doubleFeedbackButton.setEnabled (false);
+        }
+        else
+        {
+            lfo3AmpSlider.setVisible (false);
+            feedbackSlider.setVisible (true);
+            doubleFeedbackButton.setEnabled (true);
+            proc.setFeedbackGain (feedbackSlider.getValue() / 100);
+        }
     }
     //===================================================================================
 

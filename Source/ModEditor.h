@@ -45,7 +45,7 @@ public:
                             "", Slider::SliderStyle::LinearHorizontal,
                             Slider::TextEntryBoxPosition::NoTextBox, -9, this, this, false);
         
-        Utility::addSlider (&tempo3Slider, &tempo3Label, "Voice 3 LFO", -10, -1, 1, -5,
+        Utility::addSlider (&tempo3Slider, &tempo3Label, "Feedback LFO", -10, -1, 1, -5,
                             "", Slider::SliderStyle::LinearHorizontal,
                             Slider::TextEntryBoxPosition::NoTextBox, -4, this, this, false);
         
@@ -300,10 +300,7 @@ public:
                 dotted3Button.setEnabled (true);
                 tempo3TextBox.setEnabled (true);
                 
-                Utility::setSliderEnabled (&effectEditor.feedbackSlider,
-                                           &effectEditor.feedbackLabel, false);
-                effectEditor.doubleFeedbackButton.setToggleState (false, sendNotification);
-                effectEditor.doubleFeedbackButton.setEnabled (false);
+                effectEditor.setLfo3AmpMode (true);
             }
             else
             {
@@ -316,9 +313,8 @@ public:
                 dotted3Button.setEnabled (false);
                 tempo3TextBox.setEnabled (false);
                 
-                Utility::setSliderEnabled (&effectEditor.feedbackSlider,
-                                           &effectEditor.feedbackLabel, true);
-                effectEditor.doubleFeedbackButton.setEnabled (true);
+                effectEditor.setLfo3AmpMode (false);
+                
                 proc.setFeedbackGain (effectEditor.feedbackSlider.getValue() / 100.0);
             }
         }
