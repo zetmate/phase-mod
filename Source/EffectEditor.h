@@ -11,7 +11,6 @@
 #pragma once
 
 #include "../JuceLibraryCode/JuceHeader.h"
-
 //==============================================================================
 /*
 */
@@ -20,7 +19,7 @@ class EffectEditor    : public Component,
                         public Button::Listener
 {
 public:
-    EffectEditor (Proc& p, int width, int height)  : proc (p)
+    EffectEditor (Proc& p, int width, int height) : proc (p)
     {
         setSize (width, height);
         
@@ -94,6 +93,7 @@ public:
                 button->setButtonText ("cascade processing");
                 proc.setCascadeProcessing();
                 feedbackSlider.setRange (-65, 65, 1);
+                
             }
         }
         else if (button == &doubleFeedbackButton)

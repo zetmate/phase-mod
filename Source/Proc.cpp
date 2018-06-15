@@ -50,8 +50,14 @@ void Proc::processBlockMonoSeparate (AudioSampleBuffer& buffer)
     
     for (int sample = 0; sample < numSamples; ++sample)
     {
+        //get current values from Ramps
+        inputGainRamp.applyRamp (inputGain);
+        effectGainRamp.applyRamp (effectGain);
+        gain1Ramp.applyRamp (gain1);
+        gain2Ramp.applyRamp (gain2);
+        
         //get input signal
-        const float input = bufferR[sample];
+        const float input = bufferR[sample] * inputGain;
         
         //============================================
         //  DECLARE VARIABLES
@@ -86,8 +92,8 @@ void Proc::processBlockMonoSeparate (AudioSampleBuffer& buffer)
         //============================================
         //  COMPUTE RESULTS
         //============================================
-        float processed1 = (voiceClose_output + voiceMid_output) * gain1;
-        float processed2 = (voiceClose_output + voiceMid_output) * gain1;
+        float processed1 = voiceClose_output + voiceMid_output;
+        float processed2 = voiceMid_output + voiceFar_output;
         
         float processed = (processed1 + processed2) * 0.5;
         
@@ -99,7 +105,7 @@ void Proc::processBlockMonoSeparate (AudioSampleBuffer& buffer)
             float g = limiterLeft.getGainReductionValueForSample (processed);
             float limited = processed * g;
             g = limiter1Left.getGainReductionValueForSample (limited);
-            output = limited * g;
+            output = (limited * g) * effectGain;
         }
         
         //============================================
@@ -111,7 +117,7 @@ void Proc::processBlockMonoSeparate (AudioSampleBuffer& buffer)
         float wetGain = dryWetPropotion;
         float dryGain = 1 - wetGain;
         
-        bufferW [sample] = output * wetGain * effectGain + input * dryGain;
+        bufferW [sample] = output * wetGain + input * dryGain;
     }
 }
 
@@ -151,8 +157,14 @@ void Proc::processBlockMonoCascade (AudioSampleBuffer& buffer)
     
     for (int sample = 0; sample < numSamples; ++sample)
     {
+        //get current values from Ramps
+        inputGainRamp.applyRamp (inputGain);
+        effectGainRamp.applyRamp (effectGain);
+        gain1Ramp.applyRamp (gain1);
+        gain2Ramp.applyRamp (gain2);
+        
         //get input signal
-        const float input = bufferR[sample];
+        const float input = bufferR[sample] * inputGain;
         
         //============================================
         //  DECLARE VARIABLES
@@ -173,15 +185,15 @@ void Proc::processBlockMonoCascade (AudioSampleBuffer& buffer)
                                       voiceClose_DelayR, voiceClose_DelayW);
         
         //voice Mid
-        voiceMid.processSampleMono (input, voiceMid_output,
+        voiceMid.processSampleMono (voiceClose_output, voiceMid_output,
                                     voiceMid_DelayR, voiceMid_DelayW);
         
         //voice Far
-        voiceFar.processSampleMono (input, voiceFar_output,
+        voiceFar.processSampleMono (voiceMid_output, voiceFar_output,
                                     voiceFar_DelayR, voiceFar_DelayW);
         
         //voice Echo
-        voiceEcho.processSampleMono (input, voiceEcho_output,
+        voiceEcho.processSampleMono (voiceFar_output, voiceEcho_output,
                                      voiceEcho_DelayR, voiceEcho_DelayW);
         
         //============================================
@@ -204,7 +216,7 @@ void Proc::processBlockMonoCascade (AudioSampleBuffer& buffer)
 
         g = limiter1Left.getGainReductionValueForSample (limited);
         
-        float output = g * limited;
+        float output = (g * limited) * effectGain;
         
         bufferW [sample] = output * wetGain + input * dryGain;
     }
@@ -260,12 +272,18 @@ void Proc::processBlockStereoSeparate (AudioSampleBuffer& buffer)
     
     for (int sample = 0; sample < numSamples; ++sample)
     {
+        //get current values from Ramps
+        inputGainRamp.applyRamp (inputGain);
+        effectGainRamp.applyRamp (effectGain);
+        gain1Ramp.applyRamp (gain1);
+        gain2Ramp.applyRamp (gain2);
+        
         //get input signal
-        const float inputLeft = leftBufferR[sample];
+        const float inputLeft = leftBufferR[sample] * inputGain;
         float inputRight;
         
         if (channelSet == stereo)
-            inputRight = rightBufferR[sample];
+            inputRight = rightBufferR[sample] * inputGain;
         else
             inputRight = inputLeft;
         
@@ -327,8 +345,8 @@ void Proc::processBlockStereoSeparate (AudioSampleBuffer& buffer)
             float voiceFar = voiceFar_outputLeft + voiceFar_outputRight;
             float voiceEcho = voiceEcho_outputLeft + voiceEcho_outputRight;
             
-            processedLeft = (voiceClose + voiceFar) * 0.5;
-            processedRight = (voiceMid + voiceEcho) * 0.5;
+            processedLeft = (voiceClose * gain1 + voiceFar * gain2) * 0.5;
+            processedRight = (voiceMid * gain1 + voiceEcho * gain2) * 0.5;
         }
         
         //============================================
@@ -346,8 +364,8 @@ void Proc::processBlockStereoSeparate (AudioSampleBuffer& buffer)
             gLeft = limiter1Left.getGainReductionValueForSample (limitedLeft);
             gRight = limiter1Right.getGainReductionValueForSample (limitedRight);
             
-            outputLeft = limitedLeft * gLeft;
-            outputRight = limitedRight * gRight;
+            outputLeft = (limitedLeft * gLeft) * effectGain;
+            outputRight = (limitedRight * gRight) * effectGain;
         }
         
         //============================================
@@ -411,9 +429,15 @@ void Proc::processBlockStereoCascade (AudioSampleBuffer& buffer)
     
     for (int sample = 0; sample < numSamples; ++sample)
     {
+        //get current values from Ramps
+        inputGainRamp.applyRamp (inputGain);
+        effectGainRamp.applyRamp (effectGain);
+        gain1Ramp.applyRamp (gain1);
+        gain2Ramp.applyRamp (gain2);
+        
         //get input signal
-        const float inputLeft = leftBufferR[sample];
-        const float inputRight = rightBufferR[sample];
+        const float inputLeft = leftBufferR[sample] * inputGain;
+        const float inputRight = rightBufferR[sample] * inputGain;
         
         //============================================
         //  DECLARE VARIABLES
@@ -482,8 +506,8 @@ void Proc::processBlockStereoCascade (AudioSampleBuffer& buffer)
         
         g = limiter1Left.getGainReductionValueForSample ((limitedLeft + limitedRight) * 0.5);
         
-        float outputLeft = g * limitedLeft;
-        float outputRight = g * limitedRight;
+        float outputLeft = (g * limitedLeft) * effectGain;
+        float outputRight = (g * limitedRight) * effectGain;
         
         leftBufferW [sample] = outputLeft * wetGain + inputLeft * dryGain;
         rightBufferW [sample] = outputRight * wetGain + inputRight * dryGain;

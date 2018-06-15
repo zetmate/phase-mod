@@ -169,7 +169,7 @@ public:
     
     void setInputGain (double newInputGain)
     {
-        setInputGain (newInputGain);
+        inputGainRamp.setRange (inputGain, newInputGain);
     }
     
     void setEffectGain (double newEffectGain)

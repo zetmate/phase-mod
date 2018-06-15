@@ -36,9 +36,9 @@ private:
     int effectEditorHeight = 250;
     int modEditorHeight = 310 + 50;
     
+    MasterEditor masterEditor;
     EffectEditor effectEditor;
     ModEditor modEditor;
-    MasterEditor masterEditor;
 //==============================================================================
     Proc& proc;
 //==============================================================================
