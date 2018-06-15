@@ -331,6 +331,11 @@ public:
                 {
                     tempoSync2Button.setToggleState (true, sendNotification);
                     tempo2Slider.setValue (tempo1Slider.getValue());
+                    
+                    bool triplet = triplet1Button.getToggleState();
+                    bool dotted = dotted1Button.getToggleState();
+                    triplet2Button.setToggleState (triplet, sendNotification);
+                    dotted2Button.setToggleState (dotted, sendNotification);
                 }
                 else
                 {
@@ -365,6 +370,13 @@ public:
                     tempoSync2Button.setToggleState (true, sendNotification);
                     tempoSync3Button.setToggleState (true, sendNotification);
                     
+                    bool triplet = triplet1Button.getToggleState();
+                    bool dotted = dotted1Button.getToggleState();
+                    triplet2Button.setToggleState (triplet, sendNotification);
+                    triplet3Button.setToggleState (triplet, sendNotification);
+                    dotted2Button.setToggleState (dotted, sendNotification);
+                    dotted3Button.setToggleState (dotted, sendNotification);
+                    
                     double value = tempo1Slider.getValue();
                     tempo2Slider.setValue (value);
                     tempo3Slider.setValue (value);
@@ -398,10 +410,16 @@ public:
                 triplet1Button.setVisible (true);
                 dotted1Button.setVisible (true);
                 
-                if (syncedAll)
-                    tempoSync3Button.setToggleState (true, sendNotification);
                 if (synced2to1)
+                {
+                    bool triplet = triplet1Button.getToggleState();
+                    bool dotted = dotted1Button.getToggleState();
+                    triplet2Button.setToggleState (triplet, sendNotification);
+                    dotted2Button.setToggleState (dotted, sendNotification);
                     tempoSync2Button.setToggleState (true, sendNotification);
+                    if (syncedAll)
+                        tempoSync3Button.setToggleState (true, sendNotification);
+                }
                 
                 double bpm = proc.getCurrentBpm();
                 tempo1Slider.setValue (Utility::freqToTempoIndex (freq1, bpm) * -1);
@@ -436,10 +454,17 @@ public:
                 triplet2Button.setVisible (true);
                 dotted2Button.setVisible (true);
                 
-                if (syncedAll)
-                    tempoSync3Button.setToggleState (true, sendNotification);
                 if (synced2to1)
+                {
+                    bool triplet = triplet1Button.getToggleState();
+                    bool dotted = dotted1Button.getToggleState();
+                    triplet2Button.setToggleState (triplet, sendNotification);
+                    dotted2Button.setToggleState (dotted, sendNotification);
                     tempoSync1Button.setToggleState (true, sendNotification);
+                    
+                    if (syncedAll)
+                        tempoSync3Button.setToggleState (true, sendNotification);
+                }
                 
                 double bpm = proc.getCurrentBpm();
                 tempo2Slider.setValue (Utility::freqToTempoIndex (freq2, bpm) * -1);
