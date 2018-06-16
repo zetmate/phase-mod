@@ -38,6 +38,12 @@ public:
                             "%", Slider::SliderStyle::RotaryVerticalDrag,
                             Slider::TextEntryBoxPosition::TextBoxBelow, 80, this, this, false);
         
+        //set feedback range
+        feedbackSeparateRange.start = -99;
+        feedbackSeparateRange.end = 99;
+        feedbackCascadeRange.start = -65;
+        feedbackCascadeRange.end = 65;
+        
         Utility::addTextButton (&processingTypeButton, "separate processing",
                                 true, true, true, this, this);
         
@@ -68,11 +74,11 @@ public:
         //cascade processing sliders
         Utility::addSlider (&voice1MixSlider, &voice1MixLabel, "VOICE 1 MIX", 0, 200, 1, 100,
                             "%", Slider::SliderStyle::RotaryVerticalDrag,
-                            Slider::TextEntryBoxPosition::TextBoxBelow, 70, this, this, false);
+                            Slider::TextEntryBoxPosition::TextBoxBelow, 100, this, this, false);
         
         Utility::addSlider (&voice2MixSlider, &voice2MixLabel, "VOICE 2 MIX", 0, 200, 1, 100,
                             "%", Slider::SliderStyle::RotaryVerticalDrag,
-                            Slider::TextEntryBoxPosition::TextBoxBelow, 70, this, this, false);
+                            Slider::TextEntryBoxPosition::TextBoxBelow, 100, this, this, false);
         
         voice1MixSlider.setDoubleClickReturnValue (true, 100);
         voice2MixSlider.setDoubleClickReturnValue (true, 100);
@@ -81,6 +87,7 @@ public:
         Utility::addSlider (&dryWetSlider, &dryWetLabel, "MIX", 0, 100, 1, 50,
                             "%", Slider::SliderStyle::RotaryVerticalDrag,
                             Slider::TextEntryBoxPosition::TextBoxBelow, 50, this, this, true);
+        
     }
 
     ~EffectEditor()
@@ -149,8 +156,18 @@ public:
             {
                 button->setButtonText ("separate processing");
                 proc.setSeparateProcessing();
+                
+                //set feedback ranges
                 feedbackSlider.setRange (-99, 99, 1);
                 lfo3AmpSlider.setRange (-99, 99, 1);
+                
+                //set appropriate feedback value
+                double cascadeFbValue = feedbackCascadeRange.convertTo0to1 (feedbackSlider.getValue());
+                double separateFbValue = feedbackSeparateRange.convertFrom0to1 (cascadeFbValue);
+                feedbackSlider.setValue (separateFbValue);
+                
+                //enable double feedback
+                feedbackTypeButton.setEnabled (true);
                 
                 //show voice gain sliders, hide voice mix ones
                 voice1MixSlider.setVisible (false);
@@ -161,13 +178,26 @@ public:
                 //update voice gain sliders' values
                 voice1GainSlider.setValue (voice1MixSlider.getValue());
                 voice2GainSlider.setValue (voice2MixSlider.getValue());
+                
+                //set dry wet of voices to 100%
+                proc.setVoice1Mix (1.0);
+                proc.setVoice2Mix (1.0);
             }
             else
             {
                 button->setButtonText ("cascade processing");
                 proc.setCascadeProcessing();
+                
+                //set feedback ranges
                 feedbackSlider.setRange (-65, 65, 1);
                 lfo3AmpSlider.setRange (-65, 65, 1);
+                
+                //set aproptiate feedback value
+                double separateFbValue = feedbackSeparateRange.convertTo0to1 (feedbackSlider.getValue());
+                double cascadeFbValue = feedbackCascadeRange.convertFrom0to1 (separateFbValue);
+                feedbackSlider.setValue (cascadeFbValue);
+                
+                //disable double feedback
                 feedbackTypeButton.setToggleState (false, sendNotification);
                 feedbackTypeButton.setEnabled (false);
                 
@@ -178,8 +208,12 @@ public:
                 voice2MixSlider.setVisible (true);
                 
                 //update voice mix sliders' values
-                voice1MixSlider.setValue (voice1GainSlider.getValue());
-                voice2MixSlider.setValue (voice2GainSlider.getValue());
+                double value1 = voice1GainSlider.getValue();
+                double value2 = voice2GainSlider.getValue();
+                voice1MixSlider.setValue (value1);
+                voice2MixSlider.setValue (value2);
+                proc.setVoice1Mix (value1 / 100.0);
+                proc.setVoice2Mix (value2 / 100.0);
             }
         }
         else if (button == &feedbackTypeButton)
@@ -276,6 +310,8 @@ private:
     
     Slider lfo3AmpSlider;
     Label lfo3AmpLabel;
+    
+    NormalisableRange<double> feedbackSeparateRange, feedbackCascadeRange;
     
     TextButton processingTypeButton, feedbackTypeButton;
     

@@ -95,8 +95,8 @@ void Proc::processBlockMonoSeparate (AudioSampleBuffer& buffer)
         //============================================
         //  COMPUTE RESULTS
         //============================================
-        float processed1 = voiceClose_output + voiceMid_output;
-        float processed2 = voiceMid_output + voiceFar_output;
+        float processed1 = (voiceClose_output + voiceMid_output) * gain1;
+        float processed2 = (voiceMid_output + voiceFar_output) * gain2;
         
         float processed = (processed1 + processed2) * 0.5;
         
