@@ -32,6 +32,7 @@
       <FILE id="gT8PKW" name="ModEditor.h" compile="0" resource="0" file="Source/ModEditor.h"/>
       <FILE id="XVp9bP" name="VoiceEditor.h" compile="0" resource="0" file="Source/VoiceEditor.h"/>
       <FILE id="uOYf1d" name="MasterEditor.h" compile="0" resource="0" file="Source/MasterEditor.h"/>
+      <FILE id="Ea1wHg" name="MyLookAndFeel.h" compile="0" resource="0" file="Source/MyLookAndFeel.h"/>
     </GROUP>
   </MAINGROUP>
   <EXPORTFORMATS>

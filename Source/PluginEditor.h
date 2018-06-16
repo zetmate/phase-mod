@@ -15,7 +15,7 @@
 #include "EffectEditor.h"
 #include "ModEditor.h"
 #include "MasterEditor.h"
-
+#include "MyLookAndFeel.h"
 
 //==============================================================================
 /**
@@ -39,6 +39,8 @@ private:
     MasterEditor masterEditor;
     EffectEditor effectEditor;
     ModEditor modEditor;
+    
+    MyLookAndFeel myLookAndFeel;
 //==============================================================================
     Proc& proc;
 //==============================================================================

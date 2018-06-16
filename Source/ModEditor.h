@@ -11,7 +11,7 @@
 #pragma once
 
 #include "../JuceLibraryCode/JuceHeader.h"
-
+#include "MyLookAndFeel.h"
 //==============================================================================
 /*
 */
@@ -74,12 +74,6 @@ public:
         dotted1Button.setVisible (false);
         dotted2Button.setVisible (false);
         dotted3Button.setVisible (false);
-        triplet1Button.setColour (0x1000101, Colour::fromFloatRGBA (11, 95, 192, 0.6));
-        triplet2Button.setColour (0x1000101, Colour::fromFloatRGBA (11, 95, 192, 0.6));
-        triplet3Button.setColour (0x1000101, Colour::fromFloatRGBA (11, 95, 192, 0.6));
-        dotted1Button.setColour (0x1000101, Colour::fromFloatRGBA (11, 95, 192, 0.6));
-        dotted2Button.setColour (0x1000101, Colour::fromFloatRGBA (11, 95, 192, 0.6));
-        dotted3Button.setColour (0x1000101, Colour::fromFloatRGBA (11, 95, 192, 0.6));
         
         //mod 1
         mod1ShapeMenu.addItem ("sin", 1);
@@ -142,6 +136,8 @@ public:
         addChildComponent (phase0);
         addChildComponent (phase90);
         addChildComponent (phase180);
+        
+        setAllButtonsLookAndFeel (&myLookAndFeel);
         
         Utility::setSliderEnabled (&freq3Slider, &freq3Label, false);
         Utility::setSliderEnabled (&tempo3Slider, &tempo3Label, false);
@@ -789,7 +785,30 @@ public:
                 break;
         }
     }
-
+//================================================================================================
+    void setAllButtonsLookAndFeel (LookAndFeel* newLookAndFeel)
+    {
+        lfo1onButton.setLookAndFeel (newLookAndFeel);
+        lfo2onButton.setLookAndFeel (newLookAndFeel);
+        lfo3onButton.setLookAndFeel (newLookAndFeel);
+        
+        tempoSync1Button.setLookAndFeel (newLookAndFeel);
+        tempoSync2Button.setLookAndFeel (newLookAndFeel);
+        tempoSync3Button.setLookAndFeel (newLookAndFeel);
+        
+        phase0.setLookAndFeel (newLookAndFeel);
+        phase90.setLookAndFeel (newLookAndFeel);
+        phase180.setLookAndFeel (newLookAndFeel);
+        
+        triplet1Button.setLookAndFeel (newLookAndFeel);
+        triplet2Button.setLookAndFeel (newLookAndFeel);
+        triplet3Button.setLookAndFeel (newLookAndFeel);
+        
+        dotted1Button.setLookAndFeel (newLookAndFeel);
+        dotted2Button.setLookAndFeel (newLookAndFeel);
+        dotted3Button.setLookAndFeel (newLookAndFeel);
+    }
+//================================================================================================
     void paint (Graphics& g) override
     {
         g.fillAll (Colours::black);
@@ -891,6 +910,8 @@ private:
     //for tempo sync (tempo multiplication index used for counting tripplets and dotted)
     double tmi1 = 1, tmi2 = 1, tmi3 = 1;
     double freq1, freq2, freq3;
+    
+    MyLookAndFeel myLookAndFeel;
     //==============================================================
     Proc& proc;
     EffectEditor& effectEditor;

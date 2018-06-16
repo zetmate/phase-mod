@@ -99,6 +99,7 @@
 		9A588B3060657EC08845EF0F = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; name = "include_juce_audio_formats.mm"; path = "../../JuceLibraryCode/include_juce_audio_formats.mm"; sourceTree = "SOURCE_ROOT"; };
 		9B6D9902EF9003754351D64F = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = System/Library/Frameworks/OpenGL.framework; sourceTree = SDKROOT; };
 		9D823EC255C5C1E330330953 = {isa = PBXFileReference; lastKnownFileType = file; name = "juce_graphics"; path = "../../../../../../JUCE/modules/juce_graphics"; sourceTree = "SOURCE_ROOT"; };
+		9DBB39B472CFD594C97D0727 = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = MyLookAndFeel.h; path = ../../Source/MyLookAndFeel.h; sourceTree = "SOURCE_ROOT"; };
 		A108D8FB5DC196B6862BF17E = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; name = "include_juce_audio_processors.mm"; path = "../../JuceLibraryCode/include_juce_audio_processors.mm"; sourceTree = "SOURCE_ROOT"; };
 		A2FBE01356E2700EE436EA01 = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; name = "include_juce_gui_extra.mm"; path = "../../JuceLibraryCode/include_juce_gui_extra.mm"; sourceTree = "SOURCE_ROOT"; };
 		A5ED10F64F6C27762227E705 = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; name = "include_juce_video.mm"; path = "../../JuceLibraryCode/include_juce_video.mm"; sourceTree = "SOURCE_ROOT"; };
@@ -145,7 +146,8 @@
 					EE1CE7DFF1CA469571B15F01,
 					EFD32AE8798835BBBF5AEF13,
 					5B46C354F73726270B26772F,
-					475430036726660B0A7CE2D7, ); name = Source; sourceTree = "<group>"; };
+					475430036726660B0A7CE2D7,
+					9DBB39B472CFD594C97D0727, ); name = Source; sourceTree = "<group>"; };
 		F4B9D6314534DC3332C6A2EB = {isa = PBXGroup; children = (
 					BE087CAEAA792BAA2A5766D0, ); name = "Vibrato-2"; sourceTree = "<group>"; };
 		FFBFB4969A1B18D690CC3144 = {isa = PBXGroup; children = (
