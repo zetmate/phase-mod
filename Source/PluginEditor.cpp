@@ -15,8 +15,9 @@
 //==============================================================================
 Vibrato2AudioProcessorEditor::Vibrato2AudioProcessorEditor (Vibrato2AudioProcessor& p)
     : AudioProcessorEditor (&p),
-    masterEditor (p.proc, masterEditorWidth, effectEditorHeight + modEditorHeight),
-        effectEditor (p.proc, editorWidth, effectEditorHeight),
+        masterEditor (p.proc, masterEditorWidth, effectEditorHeight + modEditorHeight),
+        effectEditor (p.proc, editorWidth + masterEditorWidth,
+                      effectEditorHeight + modEditorHeight),
         modEditor (p.proc, effectEditor, editorWidth, modEditorHeight),
         proc (p.proc)
 {
@@ -24,7 +25,7 @@ Vibrato2AudioProcessorEditor::Vibrato2AudioProcessorEditor (Vibrato2AudioProcess
     
     addAndMakeVisible (effectEditor);
     addAndMakeVisible (modEditor);
-    addAndMakeVisible (masterEditor);
+    //addAndMakeVisible (masterEditor);
 }
 
 Vibrato2AudioProcessorEditor::~Vibrato2AudioProcessorEditor()

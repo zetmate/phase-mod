@@ -28,25 +28,7 @@ public:
 //                            "", Slider::SliderStyle::RotaryVerticalDrag,
 //                            Slider::TextEntryBoxPosition::TextBoxBelow, 0, this, this, true);
         
-        Utility::addSlider (&inputGainSlider, &inputGainLabel, "MASTER", -24, 16, 0.1, 0,
-                            "dB", Slider::SliderStyle::RotaryVerticalDrag,
-                            Slider::TextEntryBoxPosition::TextBoxBelow, 0, this, this, true);
         
-        Utility::addSlider (&effectGainSlider, &effectGainLabel, "Effect gain", -16, 16, 0.1, 0,
-                            "dB", Slider::SliderStyle::RotaryVerticalDrag,
-                            Slider::TextEntryBoxPosition::TextBoxBelow, 0, this, this, true);
-        
-        Utility::addSlider (&voice1GainSlider, &voice1GainLabel, "VOICE 1 MIX", 0, 200, 1, 100,
-                            "%", Slider::SliderStyle::RotaryVerticalDrag,
-                            Slider::TextEntryBoxPosition::TextBoxBelow, 100, this, this, true);
-        
-        Utility::addSlider (&voice2GainSlider, &voice2GainLabel, "VOICE 2 MIX", 0, 200, 1, 100,
-                            "%", Slider::SliderStyle::RotaryVerticalDrag,
-                            Slider::TextEntryBoxPosition::TextBoxBelow, 100, this, this, true);
-        
-        Utility::addSlider (&dryWetSlider, &dryWetLabel, "MIX", 0, 100, 1, 50,
-                            "%", Slider::SliderStyle::RotaryVerticalDrag,
-                            Slider::TextEntryBoxPosition::TextBoxBelow, 50, this, this, true);
     }
 
     ~MasterEditor()
@@ -58,20 +40,7 @@ public:
     {
         double value = slider->getValue();
         
-        if (slider == &dryWetSlider)
-            proc.setDryWet (value / 100.0);
         
-        else if (slider == &doubleFbSlider)
-            proc.setPrevSampleGain (value);
-        
-        else if (slider == &inputGainSlider)
-            proc.setInputGain (Utility::fromDb (value));
-        
-        else if (slider == &voice1GainSlider)
-            proc.setGain1 (value / 100.0);
-        
-        else if (slider == &voice2GainSlider)
-            proc.setGain2 (value / 100.0);
     }
     
     void buttonClicked (Button* button) override
@@ -89,21 +58,10 @@ public:
 
     void resized() override
     {
-        dryWetSlider.setBounds (25, 50, 100, 100);
-        inputGainSlider.setBounds (25, 195, 100, 100);
-        voice1GainSlider.setBounds (25, 340, 100, 100);
-        voice2GainSlider.setBounds (25, 485, 100, 100);
+        
     }
 
 private:
-    Slider doubleFbSlider;
-    Label doubleFbLabel;
-    
-    Slider inputGainSlider, voice1GainSlider, voice2GainSlider, effectGainSlider;
-    Label inputGainLabel, voice1GainLabel, voice2GainLabel, effectGainLabel;
-    
-    Slider dryWetSlider;
-    Label dryWetLabel;
 //==============================================================
     Proc& proc;
 //==============================================================

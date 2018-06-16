@@ -165,6 +165,17 @@ public:
         dryWetRamp.setRange (dryWetPropotion, newDryWetPropotion);
     }
     
+    void setVoice1Mix (float newDryWetPropotion)
+    {
+        voiceClose.setDryWetMix (newDryWetPropotion);
+        voiceMid.setDryWetMix (newDryWetPropotion);
+    }
+    void setVoice2Mix (float newDryWetPropotion)
+    {
+        voiceFar.setDryWetMix (newDryWetPropotion);
+        voiceEcho.setDryWetMix (newDryWetPropotion);
+    }
+    
     void setInputGain (double newInputGain)
     {
         inputGainRamp.setRange (inputGain, newInputGain);

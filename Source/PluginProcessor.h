@@ -59,6 +59,21 @@ public:
     Proc proc;
     
 private:
+    //some gui related stuff
+    //AudioProcessorValueTreeState treeState;
+    UndoManager undoManager;
+    
+    //Ranges
+    NormalisableRange<double> depthRange,
+                              delayRange,
+                              feedbackRange,
+                              fbLfoRange,
+                              processingTypeRange,
+                              feedbackTypeRange;
+    
+    
+    
+    
     //==============================================================================
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (Vibrato2AudioProcessor)
 };

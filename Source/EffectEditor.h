@@ -38,11 +38,49 @@ public:
                             "%", Slider::SliderStyle::RotaryVerticalDrag,
                             Slider::TextEntryBoxPosition::TextBoxBelow, 80, this, this, false);
         
-        Utility::addTextButton (&separateProcessingButton, "separate processing",
+        Utility::addTextButton (&processingTypeButton, "separate processing",
                                 true, true, true, this, this);
         
-        Utility::addTextButton (&doubleFeedbackButton, "single feedback",
+        Utility::addTextButton (&feedbackTypeButton, "single feedback",
                                 false, true, true, this, this);
+        
+        
+        //======================================================================================
+        //                                  MASTER EDITOR
+        Utility::addSlider (&inputGainSlider, &inputGainLabel, "MASTER", -24, 16, 0.1, 0,
+                            "dB", Slider::SliderStyle::RotaryVerticalDrag,
+                            Slider::TextEntryBoxPosition::TextBoxBelow, 0, this, this, true);
+        
+        inputGainSlider.setDoubleClickReturnValue (true, 0.0);
+        
+        //separate processing sliders
+        Utility::addSlider (&voice1GainSlider, &voice1GainLabel, "VOICE 1 MIX", 0, 200, 1, 100,
+                            "%", Slider::SliderStyle::RotaryVerticalDrag,
+                            Slider::TextEntryBoxPosition::TextBoxBelow, 100, this, this, true);
+        
+        Utility::addSlider (&voice2GainSlider, &voice2GainLabel, "VOICE 2 MIX", 0, 200, 1, 100,
+                            "%", Slider::SliderStyle::RotaryVerticalDrag,
+                            Slider::TextEntryBoxPosition::TextBoxBelow, 100, this, this, true);
+        
+        voice1GainSlider.setDoubleClickReturnValue (true, 100);
+        voice2GainSlider.setDoubleClickReturnValue (true, 100);
+        
+        //cascade processing sliders
+        Utility::addSlider (&voice1MixSlider, &voice1MixLabel, "VOICE 1 MIX", 0, 200, 1, 100,
+                            "%", Slider::SliderStyle::RotaryVerticalDrag,
+                            Slider::TextEntryBoxPosition::TextBoxBelow, 70, this, this, false);
+        
+        Utility::addSlider (&voice2MixSlider, &voice2MixLabel, "VOICE 2 MIX", 0, 200, 1, 100,
+                            "%", Slider::SliderStyle::RotaryVerticalDrag,
+                            Slider::TextEntryBoxPosition::TextBoxBelow, 70, this, this, false);
+        
+        voice1MixSlider.setDoubleClickReturnValue (true, 100);
+        voice2MixSlider.setDoubleClickReturnValue (true, 100);
+        
+        //global dryWet
+        Utility::addSlider (&dryWetSlider, &dryWetLabel, "MIX", 0, 100, 1, 50,
+                            "%", Slider::SliderStyle::RotaryVerticalDrag,
+                            Slider::TextEntryBoxPosition::TextBoxBelow, 50, this, this, true);
     }
 
     ~EffectEditor()
@@ -73,13 +111,39 @@ public:
         {
             proc.setLfo3Amp (value / 100.0);
         }
+        //=====================================
+        //MASTER
+        else if (slider == &dryWetSlider)
+        {
+            proc.setDryWet (value / 100.0);
+        }
+        else if (slider == &inputGainSlider)
+        {
+            proc.setInputGain (Utility::fromDb (value));
+        }
+        else if (slider == &voice1GainSlider)
+        {
+            proc.setGain1 (value / 100.0);
+        }
+        else if (slider == &voice2GainSlider)
+        {
+            proc.setGain2 (value / 100.0);
+        }
+        else if (slider == &voice1MixSlider)
+        {
+            proc.setVoice1Mix (value / 100.0);
+        }
+        else if (slider == &voice2MixSlider)
+        {
+            proc.setVoice2Mix (value / 100.0);
+        }
     }
     
     void buttonClicked (Button* button) override
     {
         bool isOn = button->getToggleState();
         
-        if (button == &separateProcessingButton)
+        if (button == &processingTypeButton)
         {
             if (isOn)
             {
@@ -87,6 +151,16 @@ public:
                 proc.setSeparateProcessing();
                 feedbackSlider.setRange (-99, 99, 1);
                 lfo3AmpSlider.setRange (-99, 99, 1);
+                
+                //show voice gain sliders, hide voice mix ones
+                voice1MixSlider.setVisible (false);
+                voice2MixSlider.setVisible (false);
+                voice1GainSlider.setVisible (true);
+                voice2GainSlider.setVisible (true);
+                
+                //update voice gain sliders' values
+                voice1GainSlider.setValue (voice1MixSlider.getValue());
+                voice2GainSlider.setValue (voice2MixSlider.getValue());
             }
             else
             {
@@ -94,11 +168,21 @@ public:
                 proc.setCascadeProcessing();
                 feedbackSlider.setRange (-65, 65, 1);
                 lfo3AmpSlider.setRange (-65, 65, 1);
-                doubleFeedbackButton.setToggleState (false, sendNotification);
-                doubleFeedbackButton.setEnabled (false);
+                feedbackTypeButton.setToggleState (false, sendNotification);
+                feedbackTypeButton.setEnabled (false);
+                
+                //show voice mix sliders, hide voice gain ones
+                voice1GainSlider.setVisible (false);
+                voice2GainSlider.setVisible (false);
+                voice1MixSlider.setVisible (true);
+                voice2MixSlider.setVisible (true);
+                
+                //update voice mix sliders' values
+                voice1MixSlider.setValue (voice1GainSlider.getValue());
+                voice2MixSlider.setValue (voice2GainSlider.getValue());
             }
         }
-        else if (button == &doubleFeedbackButton)
+        else if (button == &feedbackTypeButton)
         {
             if (isOn)
             {
@@ -114,14 +198,14 @@ public:
                     proc.setPrevSampleGain (-0.25);
                 }
                 Utility::setSliderEnabled (&feedbackSlider, &feedbackLabel, false);
-                doubleFeedbackButton.setButtonText ("double feedback");
+                feedbackTypeButton.setButtonText ("double feedback");
             }
             else
             {
                 Utility::setSliderEnabled (&feedbackSlider, &feedbackLabel, true);
                 proc.setPrevSampleGain (0);
                 proc.setFeedbackGain (feedbackSlider.getValue() / 100.0);
-                doubleFeedbackButton.setButtonText ("single feedback");
+                feedbackTypeButton.setButtonText ("single feedback");
             }
         }
        
@@ -136,14 +220,14 @@ public:
             lfo3AmpSlider.setVisible (true);
             lfo3AmpSlider.setValue (value);
             
-            doubleFeedbackButton.setToggleState (false, sendNotification);
-            doubleFeedbackButton.setEnabled (false);
+            feedbackTypeButton.setToggleState (false, sendNotification);
+            feedbackTypeButton.setEnabled (false);
         }
         else
         {
             lfo3AmpSlider.setVisible (false);
             feedbackSlider.setVisible (true);
-            doubleFeedbackButton.setEnabled (true);
+            feedbackTypeButton.setEnabled (true);
             proc.setFeedbackGain (feedbackSlider.getValue() / 100);
         }
     }
@@ -167,8 +251,17 @@ public:
         lfo3AmpSlider.setBounds (275, 50, 100, 100);
         
         //second row
-        separateProcessingButton.setBounds (25, 175, 225, 50);
-        doubleFeedbackButton.setBounds (275, 175, 100, 50);
+        processingTypeButton.setBounds (25, 175, 225, 50);
+        feedbackTypeButton.setBounds (275, 175, 100, 50);
+        
+        //================================================
+        //MASTER EDITOR
+        dryWetSlider.setBounds (425, 50, 100, 100);
+        inputGainSlider.setBounds (425, 195, 100, 100);
+        voice1GainSlider.setBounds (425, 340, 100, 100);
+        voice2GainSlider.setBounds (425, 485, 100, 100);
+        voice1MixSlider.setBounds (425, 340, 100, 100);
+        voice2MixSlider.setBounds (425, 485, 100, 100);
     }
     friend class ModEditor;
 private:
@@ -184,7 +277,18 @@ private:
     Slider lfo3AmpSlider;
     Label lfo3AmpLabel;
     
-    TextButton separateProcessingButton, doubleFeedbackButton;
+    TextButton processingTypeButton, feedbackTypeButton;
+    
+    //================================================
+    //MASTER EDITOR
+    Slider inputGainSlider, voice1GainSlider, voice2GainSlider;
+    Label inputGainLabel, voice1GainLabel, voice2GainLabel;
+    
+    Slider voice1MixSlider, voice2MixSlider;
+    Label voice1MixLabel, voice2MixLabel;
+    
+    Slider dryWetSlider;
+    Label dryWetLabel;
     //==============================================================
     Proc& proc;
     //==============================================================
