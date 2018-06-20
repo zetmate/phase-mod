@@ -38,9 +38,10 @@
   <EXPORTFORMATS>
     <XCODE_MAC targetFolder="Builds/MacOSX">
       <CONFIGURATIONS>
-        <CONFIGURATION isDebug="1" name="Debug" osxSDK="10.13 SDK" osxCompatibility="10.7 SDK"/>
+        <CONFIGURATION isDebug="1" name="Debug" osxSDK="10.13 SDK" osxCompatibility="10.7 SDK"
+                       targetName="Whalor"/>
         <CONFIGURATION isDebug="0" name="Release" osxCompatibility="10.7 SDK" osxSDK="10.13 SDK"
-                       osxArchitecture="64BitIntel"/>
+                       osxArchitecture="64BitIntel" targetName="Whalor"/>
       </CONFIGURATIONS>
       <MODULEPATHS>
         <MODULEPATH id="juce_core" path="../../../../JUCE/modules"/>

@@ -13,7 +13,43 @@
 
 
 //==============================================================================
-Vibrato2AudioProcessor::Vibrato2AudioProcessor()
+Vibrato2AudioProcessor::Vibrato2AudioProcessor()  : treeState (*this, &undoManager),
+                                                    depthRange (0, 100, 1, 1),
+                                                    delayRange (2, 500, 0.1, 1),
+                                                    feedbackRange (-99, 99, 1, 1),
+                                                    fbLfoAmpRange (15, 99, 1, 1),
+                                                    procTypeRange (0, 1, 1, 1),
+                                                    fbTypeRange (0, 1, 1, 1),
+                                                    mixRange (0, 100, 1, 1),
+                                                    voice1MixRange (0, 200, 1, 1),
+                                                    voice2MixRange (0, 200, 1, 1),
+                                                    masterRange (-24, 16, 0.1, 1),
+                                                    lfo1onRange (0, 1, 1, 1),
+                                                    lfo2onRange (0, 1, 1, 1),
+                                                    lfo3onRange (0, 1, 1, 1),
+                                                    lfo1FreqRange (0.01, 17.00, 0.01, 1),
+                                                    lfo2FreqRange (0.01, 17.00, 0.01, 1),
+                                                    lfo3FreqRange (0.01, 17.00, 0.01, 1),
+                                                    lfo1TFreqRange (-10, -1, 1, 1),
+                                                    lfo2TFreqRange (-10, -1, 1, 1),
+                                                    lfo3TFreqRange (-10, -1, 1, 1),
+                                                    triplet1Range (0, 1, 1, 1),
+                                                    triplet2Range (0, 1, 1, 1),
+                                                    triplet3Range (0, 1, 1, 1),
+                                                    dotted1Range (0, 1, 1, 1),
+                                                    dotted2Range (0, 1, 1, 1),
+                                                    dotted3Range (0, 1, 1, 1),
+                                                    lfo1TypeRange (0, 5, 1, 1),
+                                                    lfo2TypeRange (0, 5, 1, 1),
+                                                    lfo3TypeRange (0, 4, 1, 1),
+                                                    tempoSync1Range (0, 1, 1, 1),
+                                                    tempoSync2Range (0, 1, 1, 1),
+                                                    tempoSync3Range (0, 1, 1, 1),
+                                                    sync2to1Range (0, 1, 1, 1),
+                                                    syncAllRange (0, 1, 1, 1),
+                                                    phase0Range (0, 1, 1, 1),
+                                                    phase90Range (0, 1, 1, 1),
+                                                    phase180Range (0, 1, 1, 1)
 #ifndef JucePlugin_PreferredChannelConfigurations
      : AudioProcessor (BusesProperties()
                      #if ! JucePlugin_IsMidiEffect
@@ -23,8 +59,133 @@ Vibrato2AudioProcessor::Vibrato2AudioProcessor()
                        .withOutput ("Output", AudioChannelSet::stereo(), true)
                      #endif
                        )
+
 #endif
 {
+    depthRange.setSkewForCentre (50);
+    delayRange.setSkewForCentre (40);
+    feedbackRange.setSkewForCentre (0);
+    fbLfoAmpRange.setSkewForCentre (50);
+    
+    mixRange.setSkewForCentre (50);
+    voice1MixRange.setSkewForCentre (100);
+    voice2MixRange.setSkewForCentre (100);
+    masterRange.setSkewForCentre (0);
+    
+    lfo1FreqRange.setSkewForCentre (3);
+    lfo2FreqRange.setSkewForCentre (3);
+    lfo3FreqRange.setSkewForCentre (3);
+    lfo1TFreqRange.setSkewForCentre (-5);
+    lfo2TFreqRange.setSkewForCentre (-5);
+    lfo3TFreqRange.setSkewForCentre (-5);
+    
+    treeState.createAndAddParameter (depthId, depthName, depthLabelText, depthRange,
+                                     depthDefault, nullptr, nullptr);
+    
+    treeState.createAndAddParameter (delayId, delayName, delayLabelText, delayRange,
+                                     delayDefault, nullptr, nullptr);
+    
+    treeState.createAndAddParameter (feedbackId, feedbackName, feedbackLabelText, feedbackRange,
+                                     feedbackDefault, nullptr, nullptr);
+    
+    treeState.createAndAddParameter (fbLfoAmpId, fbLfoAmpName, fbLfoAmpLabelText, fbLfoAmpRange,
+                                     fbLfoAmpDefault, nullptr, nullptr);
+    
+    treeState.createAndAddParameter (procTypeId, procTypeName, procTypeLabelText, procTypeRange,
+                                     procTypeDefault, nullptr, nullptr);
+    
+    treeState.createAndAddParameter (fbTypeId, fbTypeName, fbTypeLabelText, fbTypeRange,
+                                     fbTypeDefault, nullptr, nullptr);
+    
+    treeState.createAndAddParameter (mixId, mixName, mixLabelText, mixRange,
+                                     mixDefault, nullptr, nullptr);
+    
+    treeState.createAndAddParameter (voice1MixId, voice1MixName, voice1MixLabelText, voice1MixRange,
+                                     voice1MixDefault, nullptr, nullptr);
+    
+    treeState.createAndAddParameter (voice2MixId, voice2MixName, voice2MixLabelText, voice2MixRange,
+                                     voice2MixDefault, nullptr, nullptr);
+    
+    treeState.createAndAddParameter (masterId, masterName, masterLabelText, masterRange,
+                                     masterDefault, nullptr, nullptr);
+    
+    treeState.createAndAddParameter (lfo1onId, lfo1onName, lfo1onLabelText, lfo1onRange,
+                                     lfo1onDefault, nullptr, nullptr);
+    
+    treeState.createAndAddParameter (lfo2onId, lfo2onName, lfo2onLabelText, lfo2onRange,
+                                     lfo2onDefault, nullptr, nullptr);
+    
+    treeState.createAndAddParameter (lfo3onId, lfo3onName, lfo3onLabelText, lfo3onRange,
+                                     lfo3onDefault, nullptr, nullptr);
+    
+    treeState.createAndAddParameter (lfo1FreqId, lfo1FreqName, lfo1FreqLabelText, lfo1FreqRange,
+                                     lfo1FreqDefault, nullptr, nullptr);
+    
+    treeState.createAndAddParameter (lfo2FreqId, lfo2FreqName, lfo2FreqLabelText, lfo2FreqRange,
+                                     lfo2FreqDefault, nullptr, nullptr);
+    
+    treeState.createAndAddParameter (lfo3FreqId, lfo3FreqName, lfo3FreqLabelText, lfo3FreqRange,
+                                     lfo3FreqDefault, nullptr, nullptr);
+    
+    treeState.createAndAddParameter (lfo1TFreqId, lfo1TFreqName, lfo1TFreqLabelText, lfo1TFreqRange,
+                                     lfo1TFreqDefault, nullptr, nullptr);
+    
+    treeState.createAndAddParameter (lfo2TFreqId, lfo2TFreqName, lfo2TFreqLabelText, lfo2TFreqRange,
+                                     lfo2TFreqDefault, nullptr, nullptr);
+    
+    treeState.createAndAddParameter (lfo3TFreqId, lfo3TFreqName, lfo3TFreqLabelText, lfo3TFreqRange,
+                                     lfo3TFreqDefault, nullptr, nullptr);
+    
+    treeState.createAndAddParameter (triplet1Id, triplet1Name, triplet1LabelText, triplet1Range,
+                                     triplet1Default, nullptr, nullptr);
+    
+    treeState.createAndAddParameter (triplet2Id, triplet2Name, triplet2LabelText, triplet2Range,
+                                     triplet2Default, nullptr, nullptr);
+    
+    treeState.createAndAddParameter (triplet3Id, triplet3Name, triplet3LabelText, triplet3Range,
+                                     triplet3Default, nullptr, nullptr);
+    
+    treeState.createAndAddParameter (dotted1Id, dotted1Name, dotted1LabelText, dotted1Range,
+                                     dotted1Default, nullptr, nullptr);
+    
+    treeState.createAndAddParameter (dotted2Id, dotted2Name, dotted2LabelText, dotted2Range,
+                                     dotted2Default, nullptr, nullptr);
+    
+    treeState.createAndAddParameter (dotted3Id, dotted3Name, dotted3LabelText, dotted3Range,
+                                     dotted3Default, nullptr, nullptr);
+    
+    treeState.createAndAddParameter (lfo1TypeId, lfo1TypeName, lfo1TypeLabelText, lfo1TypeRange,
+                                     lfo1TypeDefault, nullptr, nullptr);
+    
+    treeState.createAndAddParameter (lfo2TypeId, lfo2TypeName, lfo2TypeLabelText, lfo2TypeRange,
+                                     lfo2TypeDefault, nullptr, nullptr);
+    
+    treeState.createAndAddParameter (lfo3TypeId, lfo3TypeName, lfo3TypeLabelText, lfo3TypeRange,
+                                     lfo3TypeDefault, nullptr, nullptr);
+    
+    treeState.createAndAddParameter (tempoSync1Id, tempoSync1Name, tempoSync1LabelText, tempoSync1Range,
+                                     tempoSync1Default, nullptr, nullptr);
+    
+    treeState.createAndAddParameter (tempoSync2Id, tempoSync2Name, tempoSync2LabelText, tempoSync2Range,
+                                     tempoSync2Default, nullptr, nullptr);
+    
+    treeState.createAndAddParameter (tempoSync3Id, tempoSync3Name, tempoSync3LabelText, tempoSync3Range,
+                                     tempoSync3Default, nullptr, nullptr);
+    
+    treeState.createAndAddParameter (sync2to1Id, sync2to1Name, sync2to1LabelText, sync2to1Range,
+                                     sync2to1Default, nullptr, nullptr);
+    
+    treeState.createAndAddParameter (syncAllId, syncAllName, syncAllLabelText, syncAllRange,
+                                     syncAllDefault, nullptr, nullptr);
+    
+    treeState.createAndAddParameter (phase0Id, phase0Name, phase0LabelText, phase0Range,
+                                     phase0Default, nullptr, nullptr);
+    
+    treeState.createAndAddParameter (phase90Id, phase90Name, phase90LabelText, phase90Range,
+                                     phase90Default, nullptr, nullptr);
+    
+    treeState.createAndAddParameter (phase180Id, phase180Name, phase180LabelText, phase180Range,
+                                     phase180Default, nullptr, nullptr);
 }
 
 Vibrato2AudioProcessor::~Vibrato2AudioProcessor()

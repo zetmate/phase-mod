@@ -15,7 +15,7 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "93F84B065BF6ADF9FD3FC842"
-               BuildableName = "libVibrato-2.a"
+               BuildableName = "libWhalor.a"
                BlueprintName = "Vibrato-2 - Shared Code"
                ReferencedContainer = "container:Vibrato-2.xcodeproj">
             </BuildableReference>
@@ -46,7 +46,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "93F84B065BF6ADF9FD3FC842"
-            BuildableName = "libVibrato-2.a"
+            BuildableName = "libWhalor.a"
             BlueprintName = "Vibrato-2 - Shared Code"
             ReferencedContainer = "container:Vibrato-2.xcodeproj">
          </BuildableReference>
@@ -64,7 +64,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "93F84B065BF6ADF9FD3FC842"
-            BuildableName = "libVibrato-2.a"
+            BuildableName = "libWhalor.a"
             BlueprintName = "Vibrato-2 - Shared Code"
             ReferencedContainer = "container:Vibrato-2.xcodeproj">
          </BuildableReference>

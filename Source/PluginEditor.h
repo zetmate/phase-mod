@@ -43,6 +43,7 @@ private:
     MyLookAndFeel myLookAndFeel;
 //==============================================================================
     Proc& proc;
+    Vibrato2AudioProcessor& p;
 //==============================================================================
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (Vibrato2AudioProcessorEditor)
 };

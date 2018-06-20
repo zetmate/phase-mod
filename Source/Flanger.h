@@ -389,13 +389,13 @@ private:
                                           1.0, 0.0, 0.0);
         else if (shape == triangle)
             value = Utility::triangleFrom0to1 (counter, numSamples,
-                                               1.0, 0.0, 0.0);
+                                               1.0, 0.0, 0.0) * 2 - 1;
         else if (shape == saw)
             value = Utility::sawFrom0to1 (counter, numSamples,
-                                          1.0, 0.0, 0.0);
+                                          1.0, 0.0, 0.0) * 2 - 1;
         else if (shape == square)
             value = Utility::squareFrom0to1 (counter, numSamples,
-                                             1.0, 0.0, 0.0);
+                                             1.0, 0.0, 0.0) * 2 - 1;
         else if (shape == random)
             value = randomLfo.randomFrom0to1 (numSamples, 1.0, 0.0, 0.0) * 2 - 1;
         

@@ -18,7 +18,7 @@ class EffectEditor    : public Component,
                         public Button::Listener
 {
 public:
-    EffectEditor (Proc& p, int width, int height) : proc (p)
+    EffectEditor (Vibrato2AudioProcessor& p, int width, int height) : proc (p.proc), p (p)
     {
         setSize (width, height);
         
@@ -62,26 +62,13 @@ public:
         
         inputGainSlider.setDoubleClickReturnValue (true, 0.0);
         
-        //separate processing sliders
-        Utility::addSlider (&voice1GainSlider, &voice1GainLabel, "VOICE 1 MIX", 0, 200, 1, 100,
-                            "%", Slider::SliderStyle::RotaryVerticalDrag,
-                            Slider::TextEntryBoxPosition::TextBoxBelow, 100, this, this, true);
-        
-        Utility::addSlider (&voice2GainSlider, &voice2GainLabel, "VOICE 2 MIX", 0, 200, 1, 100,
-                            "%", Slider::SliderStyle::RotaryVerticalDrag,
-                            Slider::TextEntryBoxPosition::TextBoxBelow, 100, this, this, true);
-        
-        voice1GainSlider.setDoubleClickReturnValue (true, 100);
-        voice2GainSlider.setDoubleClickReturnValue (true, 100);
-        
-        //cascade processing sliders
         Utility::addSlider (&voice1MixSlider, &voice1MixLabel, "VOICE 1 MIX", 0, 200, 1, 100,
                             "%", Slider::SliderStyle::RotaryVerticalDrag,
-                            Slider::TextEntryBoxPosition::TextBoxBelow, 100, this, this, false);
+                            Slider::TextEntryBoxPosition::TextBoxBelow, 100, this, this, true);
         
         Utility::addSlider (&voice2MixSlider, &voice2MixLabel, "VOICE 2 MIX", 0, 200, 1, 100,
                             "%", Slider::SliderStyle::RotaryVerticalDrag,
-                            Slider::TextEntryBoxPosition::TextBoxBelow, 100, this, this, false);
+                            Slider::TextEntryBoxPosition::TextBoxBelow, 100, this, this, true);
         
         voice1MixSlider.setDoubleClickReturnValue (true, 100);
         voice2MixSlider.setDoubleClickReturnValue (true, 100);
@@ -91,6 +78,46 @@ public:
                             "%", Slider::SliderStyle::RotaryVerticalDrag,
                             Slider::TextEntryBoxPosition::TextBoxBelow, 50, this, this, true);
         
+        //slider attachments
+        depthSliderAttach = new AudioProcessorValueTreeState::SliderAttachment (p.treeState,
+                                                                                p.depthId,
+                                                                                depthSlider);
+        
+        delaySliderAttach = new AudioProcessorValueTreeState::SliderAttachment (p.treeState,
+                                                                                p.delayId,
+                                                                                delaySlider);
+        
+        feedbackSliderAttach = new AudioProcessorValueTreeState::SliderAttachment (p.treeState,
+                                                                                   p.feedbackId,
+                                                                                   feedbackSlider);
+        
+        fbLfoAmpSliderAttach = new AudioProcessorValueTreeState::SliderAttachment (p.treeState,
+                                                                                   p.fbLfoAmpId,
+                                                                                   lfo3AmpSlider);
+        
+        mixSliderAttach = new AudioProcessorValueTreeState::SliderAttachment (p.treeState,
+                                                                              p.mixId,
+                                                                              dryWetSlider);
+        
+        voice1MixSliderAttach = new AudioProcessorValueTreeState::SliderAttachment (p.treeState,
+                                                                                    p.voice1MixId,
+                                                                                    voice1MixSlider);
+        
+        voice2MixSliderAttach = new AudioProcessorValueTreeState::SliderAttachment (p.treeState,
+                                                                                    p.voice2MixId,
+                                                                                    voice2MixSlider);
+        
+        masterSliderAttach = new AudioProcessorValueTreeState::SliderAttachment (p.treeState,
+                                                                                 p.masterId,
+                                                                                 inputGainSlider);
+        
+        procTypeButtonAttach = new AudioProcessorValueTreeState::ButtonAttachment (p.treeState,
+                                                                                   p.procTypeId,
+                                                                                   processingTypeButton);
+        
+        fbTypeButtonAttach = new AudioProcessorValueTreeState::ButtonAttachment (p.treeState,
+                                                                                 p.fbTypeId,
+                                                                                 feedbackTypeButton);
     }
 
     ~EffectEditor()
@@ -112,10 +139,15 @@ public:
         }
         else if (slider == &feedbackSlider)
         {
-            proc.setFeedbackGain (value / 100.0);
-            
-            if (value < 5 && value > -5)
-                proc.setPrevSampleGain (0);
+            if (feedbackTypeButton.getToggleState())
+            {
+                if (value < 5 && value > -5)
+                    proc.setPrevSampleGain (0);
+            }
+            else
+            {
+                proc.setFeedbackGain (value / 100.0);
+            }
         }
         else if (slider == &lfo3AmpSlider)
         {
@@ -131,21 +163,19 @@ public:
         {
             proc.setInputGain (Utility::fromDb (value));
         }
-        else if (slider == &voice1GainSlider)
-        {
-            proc.setGain1 (value / 100.0);
-        }
-        else if (slider == &voice2GainSlider)
-        {
-            proc.setGain2 (value / 100.0);
-        }
         else if (slider == &voice1MixSlider)
         {
-            proc.setVoice1Mix (value / 100.0);
+            if (processingTypeButton.getToggleState())
+                proc.setGain1 (value / 100.0);
+            else
+                proc.setVoice1Mix (value / 100.0);
         }
         else if (slider == &voice2MixSlider)
         {
-            proc.setVoice2Mix (value / 100.0);
+            if (processingTypeButton.getToggleState())
+                proc.setGain2 (value / 100.0);
+            else
+                proc.setVoice2Mix (value / 100.0);
         }
     }
     
@@ -172,15 +202,9 @@ public:
                 //enable double feedback
                 feedbackTypeButton.setEnabled (true);
                 
-                //show voice gain sliders, hide voice mix ones
-                voice1MixSlider.setVisible (false);
-                voice2MixSlider.setVisible (false);
-                voice1GainSlider.setVisible (true);
-                voice2GainSlider.setVisible (true);
-                
                 //update voice gain sliders' values
-                voice1GainSlider.setValue (voice1MixSlider.getValue());
-                voice2GainSlider.setValue (voice2MixSlider.getValue());
+                proc.setGain1 (voice1MixSlider.getValue() / 100.0);
+                proc.setGain2 (voice2MixSlider.getValue() / 100.0);
                 
                 //set dry wet of voices to 100%
                 proc.setVoice1Mix (1.0);
@@ -204,17 +228,9 @@ public:
                 feedbackTypeButton.setToggleState (false, sendNotification);
                 feedbackTypeButton.setEnabled (false);
                 
-                //show voice mix sliders, hide voice gain ones
-                voice1GainSlider.setVisible (false);
-                voice2GainSlider.setVisible (false);
-                voice1MixSlider.setVisible (true);
-                voice2MixSlider.setVisible (true);
-                
                 //update voice mix sliders' values
-                double value1 = voice1GainSlider.getValue();
-                double value2 = voice2GainSlider.getValue();
-                voice1MixSlider.setValue (value1);
-                voice2MixSlider.setValue (value2);
+                double value1 = voice1MixSlider.getValue();
+                double value2 = voice2MixSlider.getValue();
                 proc.setVoice1Mix (value1 / 100.0);
                 proc.setVoice2Mix (value2 / 100.0);
             }
@@ -295,8 +311,6 @@ public:
         //MASTER EDITOR
         dryWetSlider.setBounds (425, 50, 100, 100);
         inputGainSlider.setBounds (425, 195, 100, 100);
-        voice1GainSlider.setBounds (425, 340, 100, 100);
-        voice2GainSlider.setBounds (425, 485, 100, 100);
         voice1MixSlider.setBounds (425, 340, 100, 100);
         voice2MixSlider.setBounds (425, 485, 100, 100);
     }
@@ -320,8 +334,8 @@ private:
     
     //================================================
     //MASTER EDITOR
-    Slider inputGainSlider, voice1GainSlider, voice2GainSlider;
-    Label inputGainLabel, voice1GainLabel, voice2GainLabel;
+    Slider inputGainSlider;
+    Label inputGainLabel;
     
     Slider voice1MixSlider, voice2MixSlider;
     Label voice1MixLabel, voice2MixLabel;
@@ -331,7 +345,20 @@ private:
     
     MyLookAndFeel myLookAndFeel;
     //==============================================================
+    ScopedPointer<AudioProcessorValueTreeState::SliderAttachment>   depthSliderAttach,
+                                                                    delaySliderAttach,
+                                                                    feedbackSliderAttach,
+                                                                    fbLfoAmpSliderAttach,
+                                                                    mixSliderAttach,
+                                                                    voice1MixSliderAttach,
+                                                                    voice2MixSliderAttach,
+                                                                    masterSliderAttach;
+    
+    ScopedPointer<AudioProcessorValueTreeState::ButtonAttachment>   procTypeButtonAttach,
+                                                                    fbTypeButtonAttach;
+    
     Proc& proc;
+    Vibrato2AudioProcessor& p;
     //==============================================================
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (EffectEditor)
 };

@@ -21,7 +21,7 @@ class ModEditor    :    public Component,
                         public Button::Listener
 {
 public:
-    ModEditor (Proc& p, EffectEditor& ee, int width, int height)  : proc(p), effectEditor(ee)
+    ModEditor (Vibrato2AudioProcessor& p, EffectEditor& ee, int width, int height)  : proc (p.proc), p (p), effectEditor(ee)
     {
         setSize (width, height);
         
@@ -148,6 +148,115 @@ public:
         freq1 = freq1Slider.getValue();
         freq2 = freq2Slider.getValue();
         freq3 = freq3Slider.getValue();
+        
+        //ATTACHEMENTS
+        //Sliders
+        lfo1FreqSliderAttach = new AudioProcessorValueTreeState::SliderAttachment (p.treeState,
+                                                                                   p.lfo1FreqId,
+                                                                                   freq1Slider);
+        
+        lfo2FreqSliderAttach = new AudioProcessorValueTreeState::SliderAttachment (p.treeState,
+                                                                                   p.lfo2FreqId,
+                                                                                   freq2Slider);
+        
+        lfo3FreqSliderAttach = new AudioProcessorValueTreeState::SliderAttachment (p.treeState,
+                                                                                   p.lfo3FreqId,
+                                                                                   freq3Slider);
+        
+        lfo1TFreqSliderAttach = new AudioProcessorValueTreeState::SliderAttachment (p.treeState,
+                                                                                    p.lfo1TFreqId,
+                                                                                    tempo1Slider);
+        
+        lfo2TFreqSliderAttach = new AudioProcessorValueTreeState::SliderAttachment (p.treeState,
+                                                                                    p.lfo2TFreqId,
+                                                                                    tempo2Slider);
+        
+        lfo3TFreqSliderAttach = new AudioProcessorValueTreeState::SliderAttachment (p.treeState,
+                                                                                    p.lfo3TFreqId,
+                                                                                    tempo3Slider);
+        //Buttons
+        lfo1onButtonAttach = new AudioProcessorValueTreeState::ButtonAttachment (p.treeState,
+                                                                                 p.lfo1onId,
+                                                                                 lfo1onButton);
+        
+        lfo2onButtonAttach = new AudioProcessorValueTreeState::ButtonAttachment (p.treeState,
+                                                                                 p.lfo2onId,
+                                                                                 lfo2onButton);
+        
+        lfo3onButtonAttach = new AudioProcessorValueTreeState::ButtonAttachment (p.treeState,
+                                                                                 p.lfo3onId,
+                                                                                 lfo3onButton);
+        
+        triplet1Attach = new AudioProcessorValueTreeState::ButtonAttachment (p.treeState,
+                                                                             p.triplet1Id,
+                                                                             triplet1Button);
+        
+        triplet2Attach = new AudioProcessorValueTreeState::ButtonAttachment (p.treeState,
+                                                                             p.triplet2Id,
+                                                                             triplet2Button);
+        
+        triplet3Attach = new AudioProcessorValueTreeState::ButtonAttachment (p.treeState,
+                                                                             p.triplet3Id,
+                                                                             triplet3Button);
+        
+        dotted1Attach = new AudioProcessorValueTreeState::ButtonAttachment (p.treeState,
+                                                                            p.dotted1Id,
+                                                                            dotted1Button);
+        
+        dotted2Attach = new AudioProcessorValueTreeState::ButtonAttachment (p.treeState,
+                                                                            p.dotted2Id,
+                                                                            dotted2Button);
+        
+        dotted3Attach = new AudioProcessorValueTreeState::ButtonAttachment (p.treeState,
+                                                                            p.dotted3Id,
+                                                                            dotted3Button);
+        
+        tempoSync1Attach = new AudioProcessorValueTreeState::ButtonAttachment (p.treeState,
+                                                                               p.tempoSync1Id,
+                                                                               tempoSync1Button);
+        
+        tempoSync2Attach = new AudioProcessorValueTreeState::ButtonAttachment (p.treeState,
+                                                                               p.tempoSync2Id,
+                                                                               tempoSync2Button);
+        
+        tempoSync3Attach = new AudioProcessorValueTreeState::ButtonAttachment (p.treeState,
+                                                                               p.tempoSync3Id,
+                                                                               tempoSync3Button);
+        
+        sync2to1Attach = new AudioProcessorValueTreeState::ButtonAttachment (p.treeState,
+                                                                             p.sync2to1Id,
+                                                                             sync2to1Button);
+        
+        syncAllAttach = new AudioProcessorValueTreeState::ButtonAttachment (p.treeState,
+                                                                            p.syncAllId,
+                                                                            syncAllButton);
+        
+        phase0Attach = new AudioProcessorValueTreeState::ButtonAttachment (p.treeState,
+                                                                           p.phase0Id,
+                                                                           phase0);
+        
+        phase90Attach = new AudioProcessorValueTreeState::ButtonAttachment (p.treeState,
+                                                                            p.phase90Id,
+                                                                            phase90);
+        
+        phase180Attach = new AudioProcessorValueTreeState::ButtonAttachment (p.treeState,
+                                                                             p.phase180Id,
+                                                                             phase180);
+        
+        //Combo Boxes
+        lfo1TypeAttach = new AudioProcessorValueTreeState::ComboBoxAttachment (p.treeState,
+                                                                               p.lfo1TypeId,
+                                                                               mod1ShapeMenu);
+        
+        lfo2TypeAttach = new AudioProcessorValueTreeState::ComboBoxAttachment (p.treeState,
+                                                                               p.lfo2TypeId,
+                                                                               mod2ShapeMenu);
+        
+        lfo3TypeAttach = new AudioProcessorValueTreeState::ComboBoxAttachment (p.treeState,
+                                                                               p.lfo3TypeId,
+                                                                               mod3ShapeMenu);
+        
+        
     }
 
     ~ModEditor()
@@ -807,6 +916,9 @@ public:
         dotted1Button.setLookAndFeel (newLookAndFeel);
         dotted2Button.setLookAndFeel (newLookAndFeel);
         dotted3Button.setLookAndFeel (newLookAndFeel);
+        
+        sync2to1Button.setLookAndFeel (newLookAndFeel);
+        syncAllButton.setLookAndFeel (newLookAndFeel);
     }
 //================================================================================================
     void paint (Graphics& g) override
@@ -912,8 +1024,38 @@ private:
     double freq1, freq2, freq3;
     
     MyLookAndFeel myLookAndFeel;
+    //====================================================================================
+    ScopedPointer<AudioProcessorValueTreeState::SliderAttachment>   lfo1FreqSliderAttach,
+                                                                    lfo2FreqSliderAttach,
+                                                                    lfo3FreqSliderAttach,
+                                                                    lfo1TFreqSliderAttach,
+                                                                    lfo2TFreqSliderAttach,
+                                                                    lfo3TFreqSliderAttach;
+    
+    ScopedPointer<AudioProcessorValueTreeState::ButtonAttachment>   lfo1onButtonAttach,
+                                                                    lfo2onButtonAttach,
+                                                                    lfo3onButtonAttach,
+                                                                    triplet1Attach,
+                                                                    triplet2Attach,
+                                                                    triplet3Attach,
+                                                                    dotted1Attach,
+                                                                    dotted2Attach,
+                                                                    dotted3Attach,
+                                                                    tempoSync1Attach,
+                                                                    tempoSync2Attach,
+                                                                    tempoSync3Attach,
+                                                                    sync2to1Attach,
+                                                                    syncAllAttach,
+                                                                    phase0Attach,
+                                                                    phase90Attach,
+                                                                    phase180Attach;
+    
+    ScopedPointer<AudioProcessorValueTreeState::ComboBoxAttachment>  lfo1TypeAttach,
+                                                                     lfo2TypeAttach,
+                                                                     lfo3TypeAttach;
     //==============================================================
     Proc& proc;
+    Vibrato2AudioProcessor& p;
     EffectEditor& effectEditor;
     //==============================================================
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (ModEditor)
