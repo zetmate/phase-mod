@@ -10,13 +10,14 @@
 
 #pragma once
 
-#include "Proc.h"
+#include "ParameterControl.h"
 
 
 //==============================================================================
 /**
 */
-class Vibrato2AudioProcessor  : public AudioProcessor
+class Vibrato2AudioProcessor  : public AudioProcessor,
+                                public AudioProcessorValueTreeState::Listener
 {
 public:
     //==============================================================================
@@ -32,7 +33,7 @@ public:
    #endif
 
     void processBlock (AudioBuffer<float>&, MidiBuffer&) override;
-
+    
     //==============================================================================
     AudioProcessorEditor* createEditor() override;
     bool hasEditor() const override;
@@ -44,7 +45,8 @@ public:
     bool producesMidi() const override;
     bool isMidiEffect() const override;
     double getTailLengthSeconds() const override;
-
+    //==============================================================================
+    void parameterChanged (const String& parameterID, float newValue) override;
     //==============================================================================
     int getNumPrograms() override;
     int getCurrentProgram() override;
@@ -61,7 +63,7 @@ public:
     friend class ModEditor;
 private:
     //some gui related stuff
-    AudioProcessorValueTreeState treeState;
+    AudioProcessorValueTreeState parameters;
     UndoManager undoManager;
     
     //Ranges
@@ -113,6 +115,7 @@ private:
     
     String feedbackId = "feedback", feedbackName = "Feedback", feedbackLabelText = delayName;
     float feedbackDefault = -70;
+    float* feedbackParameter = nullptr;
     
     String fbLfoAmpId = "fbLfoAmp", fbLfoAmpName = "Feedback LFO Depth", fbLfoAmpLabelText = fbLfoAmpName;
     float fbLfoAmpDefault = 80;
@@ -221,7 +224,6 @@ private:
     
     String phase180Id = "phase180", phase180Name = "LFO2 phase shift 180", phase180LabelText = phase180Name;
     float phase180Default = 0;
-    
     //==============================================================================
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (Vibrato2AudioProcessor)
 };

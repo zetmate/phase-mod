@@ -36,7 +36,7 @@ public:
     };
     
     Proc()  : sampleRate (1), resourcesReleased (false),
-                dryWetPropotion(1),
+                dryWetPropotion(0.5),
                 channelSet (mono),
                 processorType (separate)
     {
@@ -415,5 +415,4 @@ protected:
     AudioPlayHead::CurrentPositionInfo currentPositionInfo;
     double currentBpm = 120;
     bool transportIsAvailable = false;
-    
 };

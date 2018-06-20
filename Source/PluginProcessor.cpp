@@ -13,7 +13,7 @@
 
 
 //==============================================================================
-Vibrato2AudioProcessor::Vibrato2AudioProcessor()  : treeState (*this, &undoManager),
+Vibrato2AudioProcessor::Vibrato2AudioProcessor()  : parameters (*this, &undoManager),
                                                     depthRange (0, 100, 1, 1),
                                                     delayRange (2, 500, 0.1, 1),
                                                     feedbackRange (-99, 99, 1, 1),
@@ -79,113 +79,118 @@ Vibrato2AudioProcessor::Vibrato2AudioProcessor()  : treeState (*this, &undoManag
     lfo2TFreqRange.setSkewForCentre (-5);
     lfo3TFreqRange.setSkewForCentre (-5);
     
-    treeState.createAndAddParameter (depthId, depthName, depthLabelText, depthRange,
+    parameters.createAndAddParameter (depthId, depthName, depthLabelText, depthRange,
                                      depthDefault, nullptr, nullptr);
     
-    treeState.createAndAddParameter (delayId, delayName, delayLabelText, delayRange,
+    parameters.createAndAddParameter (delayId, delayName, delayLabelText, delayRange,
                                      delayDefault, nullptr, nullptr);
     
-    treeState.createAndAddParameter (feedbackId, feedbackName, feedbackLabelText, feedbackRange,
+    parameters.createAndAddParameter (feedbackId, feedbackName, feedbackLabelText, feedbackRange,
                                      feedbackDefault, nullptr, nullptr);
     
-    treeState.createAndAddParameter (fbLfoAmpId, fbLfoAmpName, fbLfoAmpLabelText, fbLfoAmpRange,
+    parameters.createAndAddParameter (fbLfoAmpId, fbLfoAmpName, fbLfoAmpLabelText, fbLfoAmpRange,
                                      fbLfoAmpDefault, nullptr, nullptr);
     
-    treeState.createAndAddParameter (procTypeId, procTypeName, procTypeLabelText, procTypeRange,
+    parameters.createAndAddParameter (procTypeId, procTypeName, procTypeLabelText, procTypeRange,
                                      procTypeDefault, nullptr, nullptr);
     
-    treeState.createAndAddParameter (fbTypeId, fbTypeName, fbTypeLabelText, fbTypeRange,
+    parameters.createAndAddParameter (fbTypeId, fbTypeName, fbTypeLabelText, fbTypeRange,
                                      fbTypeDefault, nullptr, nullptr);
     
-    treeState.createAndAddParameter (mixId, mixName, mixLabelText, mixRange,
+    parameters.createAndAddParameter (mixId, mixName, mixLabelText, mixRange,
                                      mixDefault, nullptr, nullptr);
     
-    treeState.createAndAddParameter (voice1MixId, voice1MixName, voice1MixLabelText, voice1MixRange,
+    parameters.createAndAddParameter (voice1MixId, voice1MixName, voice1MixLabelText, voice1MixRange,
                                      voice1MixDefault, nullptr, nullptr);
     
-    treeState.createAndAddParameter (voice2MixId, voice2MixName, voice2MixLabelText, voice2MixRange,
+    parameters.createAndAddParameter (voice2MixId, voice2MixName, voice2MixLabelText, voice2MixRange,
                                      voice2MixDefault, nullptr, nullptr);
     
-    treeState.createAndAddParameter (masterId, masterName, masterLabelText, masterRange,
+    parameters.createAndAddParameter (masterId, masterName, masterLabelText, masterRange,
                                      masterDefault, nullptr, nullptr);
     
-    treeState.createAndAddParameter (lfo1onId, lfo1onName, lfo1onLabelText, lfo1onRange,
+    parameters.createAndAddParameter (lfo1onId, lfo1onName, lfo1onLabelText, lfo1onRange,
                                      lfo1onDefault, nullptr, nullptr);
     
-    treeState.createAndAddParameter (lfo2onId, lfo2onName, lfo2onLabelText, lfo2onRange,
+    parameters.createAndAddParameter (lfo2onId, lfo2onName, lfo2onLabelText, lfo2onRange,
                                      lfo2onDefault, nullptr, nullptr);
     
-    treeState.createAndAddParameter (lfo3onId, lfo3onName, lfo3onLabelText, lfo3onRange,
+    parameters.createAndAddParameter (lfo3onId, lfo3onName, lfo3onLabelText, lfo3onRange,
                                      lfo3onDefault, nullptr, nullptr);
     
-    treeState.createAndAddParameter (lfo1FreqId, lfo1FreqName, lfo1FreqLabelText, lfo1FreqRange,
+    parameters.createAndAddParameter (lfo1FreqId, lfo1FreqName, lfo1FreqLabelText, lfo1FreqRange,
                                      lfo1FreqDefault, nullptr, nullptr);
     
-    treeState.createAndAddParameter (lfo2FreqId, lfo2FreqName, lfo2FreqLabelText, lfo2FreqRange,
+    parameters.createAndAddParameter (lfo2FreqId, lfo2FreqName, lfo2FreqLabelText, lfo2FreqRange,
                                      lfo2FreqDefault, nullptr, nullptr);
     
-    treeState.createAndAddParameter (lfo3FreqId, lfo3FreqName, lfo3FreqLabelText, lfo3FreqRange,
+    parameters.createAndAddParameter (lfo3FreqId, lfo3FreqName, lfo3FreqLabelText, lfo3FreqRange,
                                      lfo3FreqDefault, nullptr, nullptr);
     
-    treeState.createAndAddParameter (lfo1TFreqId, lfo1TFreqName, lfo1TFreqLabelText, lfo1TFreqRange,
+    parameters.createAndAddParameter (lfo1TFreqId, lfo1TFreqName, lfo1TFreqLabelText, lfo1TFreqRange,
                                      lfo1TFreqDefault, nullptr, nullptr);
     
-    treeState.createAndAddParameter (lfo2TFreqId, lfo2TFreqName, lfo2TFreqLabelText, lfo2TFreqRange,
+    parameters.createAndAddParameter (lfo2TFreqId, lfo2TFreqName, lfo2TFreqLabelText, lfo2TFreqRange,
                                      lfo2TFreqDefault, nullptr, nullptr);
     
-    treeState.createAndAddParameter (lfo3TFreqId, lfo3TFreqName, lfo3TFreqLabelText, lfo3TFreqRange,
+    parameters.createAndAddParameter (lfo3TFreqId, lfo3TFreqName, lfo3TFreqLabelText, lfo3TFreqRange,
                                      lfo3TFreqDefault, nullptr, nullptr);
     
-    treeState.createAndAddParameter (triplet1Id, triplet1Name, triplet1LabelText, triplet1Range,
+    parameters.createAndAddParameter (triplet1Id, triplet1Name, triplet1LabelText, triplet1Range,
                                      triplet1Default, nullptr, nullptr);
     
-    treeState.createAndAddParameter (triplet2Id, triplet2Name, triplet2LabelText, triplet2Range,
+    parameters.createAndAddParameter (triplet2Id, triplet2Name, triplet2LabelText, triplet2Range,
                                      triplet2Default, nullptr, nullptr);
     
-    treeState.createAndAddParameter (triplet3Id, triplet3Name, triplet3LabelText, triplet3Range,
+    parameters.createAndAddParameter (triplet3Id, triplet3Name, triplet3LabelText, triplet3Range,
                                      triplet3Default, nullptr, nullptr);
     
-    treeState.createAndAddParameter (dotted1Id, dotted1Name, dotted1LabelText, dotted1Range,
+    parameters.createAndAddParameter (dotted1Id, dotted1Name, dotted1LabelText, dotted1Range,
                                      dotted1Default, nullptr, nullptr);
     
-    treeState.createAndAddParameter (dotted2Id, dotted2Name, dotted2LabelText, dotted2Range,
+    parameters.createAndAddParameter (dotted2Id, dotted2Name, dotted2LabelText, dotted2Range,
                                      dotted2Default, nullptr, nullptr);
     
-    treeState.createAndAddParameter (dotted3Id, dotted3Name, dotted3LabelText, dotted3Range,
+    parameters.createAndAddParameter (dotted3Id, dotted3Name, dotted3LabelText, dotted3Range,
                                      dotted3Default, nullptr, nullptr);
     
-    treeState.createAndAddParameter (lfo1TypeId, lfo1TypeName, lfo1TypeLabelText, lfo1TypeRange,
+    parameters.createAndAddParameter (lfo1TypeId, lfo1TypeName, lfo1TypeLabelText, lfo1TypeRange,
                                      lfo1TypeDefault, nullptr, nullptr);
     
-    treeState.createAndAddParameter (lfo2TypeId, lfo2TypeName, lfo2TypeLabelText, lfo2TypeRange,
+    parameters.createAndAddParameter (lfo2TypeId, lfo2TypeName, lfo2TypeLabelText, lfo2TypeRange,
                                      lfo2TypeDefault, nullptr, nullptr);
     
-    treeState.createAndAddParameter (lfo3TypeId, lfo3TypeName, lfo3TypeLabelText, lfo3TypeRange,
+    parameters.createAndAddParameter (lfo3TypeId, lfo3TypeName, lfo3TypeLabelText, lfo3TypeRange,
                                      lfo3TypeDefault, nullptr, nullptr);
     
-    treeState.createAndAddParameter (tempoSync1Id, tempoSync1Name, tempoSync1LabelText, tempoSync1Range,
+    parameters.createAndAddParameter (tempoSync1Id, tempoSync1Name, tempoSync1LabelText, tempoSync1Range,
                                      tempoSync1Default, nullptr, nullptr);
     
-    treeState.createAndAddParameter (tempoSync2Id, tempoSync2Name, tempoSync2LabelText, tempoSync2Range,
+    parameters.createAndAddParameter (tempoSync2Id, tempoSync2Name, tempoSync2LabelText, tempoSync2Range,
                                      tempoSync2Default, nullptr, nullptr);
     
-    treeState.createAndAddParameter (tempoSync3Id, tempoSync3Name, tempoSync3LabelText, tempoSync3Range,
+    parameters.createAndAddParameter (tempoSync3Id, tempoSync3Name, tempoSync3LabelText, tempoSync3Range,
                                      tempoSync3Default, nullptr, nullptr);
     
-    treeState.createAndAddParameter (sync2to1Id, sync2to1Name, sync2to1LabelText, sync2to1Range,
+    parameters.createAndAddParameter (sync2to1Id, sync2to1Name, sync2to1LabelText, sync2to1Range,
                                      sync2to1Default, nullptr, nullptr);
     
-    treeState.createAndAddParameter (syncAllId, syncAllName, syncAllLabelText, syncAllRange,
+    parameters.createAndAddParameter (syncAllId, syncAllName, syncAllLabelText, syncAllRange,
                                      syncAllDefault, nullptr, nullptr);
     
-    treeState.createAndAddParameter (phase0Id, phase0Name, phase0LabelText, phase0Range,
+    parameters.createAndAddParameter (phase0Id, phase0Name, phase0LabelText, phase0Range,
                                      phase0Default, nullptr, nullptr);
     
-    treeState.createAndAddParameter (phase90Id, phase90Name, phase90LabelText, phase90Range,
+    parameters.createAndAddParameter (phase90Id, phase90Name, phase90LabelText, phase90Range,
                                      phase90Default, nullptr, nullptr);
     
-    treeState.createAndAddParameter (phase180Id, phase180Name, phase180LabelText, phase180Range,
+    parameters.createAndAddParameter (phase180Id, phase180Name, phase180LabelText, phase180Range,
                                      phase180Default, nullptr, nullptr);
+    
+    parameters.state = ValueTree (Identifier ("Whalor"));
+    
+    feedbackParameter = parameters.getRawParameterValue (feedbackId);
+    parameters.addParameterListener (feedbackId, this);
 }
 
 Vibrato2AudioProcessor::~Vibrato2AudioProcessor()
@@ -263,6 +268,7 @@ void Vibrato2AudioProcessor::prepareToPlay (double sampleRate, int samplesPerBlo
         proc.setToMono();
     
     proc.prepare (sampleRate, samplesPerBlock);
+    //proc.setFeedbackGain (*feedbackParameter);
 }
 
 void Vibrato2AudioProcessor::releaseResources()
@@ -320,17 +326,33 @@ AudioProcessorEditor* Vibrato2AudioProcessor::createEditor()
 }
 
 //==============================================================================
+void Vibrato2AudioProcessor::parameterChanged (const String& parameterID, float newValue)
+{
+    if (getActiveEditor() == nullptr)
+    {
+        if (parameterID == feedbackId)
+            proc.setFeedbackGain (newValue / 100.0);
+    }
+}
+
 void Vibrato2AudioProcessor::getStateInformation (MemoryBlock& destData)
 {
     // You should use this method to store your parameters in the memory block.
     // You could do that either as raw data, or use the XML or ValueTree classes
     // as intermediaries to make it easy to save and load complex data.
+    auto state = parameters.copyState();
+    std::unique_ptr<XmlElement> xml (state.createXml());
+    copyXmlToBinary (*xml, destData);
 }
 
 void Vibrato2AudioProcessor::setStateInformation (const void* data, int sizeInBytes)
 {
     // You should use this method to restore your parameters from this memory block,
     // whose contents will have been created by the getStateInformation() call.
+    std::unique_ptr<XmlElement> xmlState (getXmlFromBinary (data, sizeInBytes));
+    if (xmlState.get() != nullptr)
+        if (xmlState->hasTagName (parameters.state.getType()))
+            parameters.replaceState (ValueTree::fromXml (*xmlState));
 }
 
 //==============================================================================

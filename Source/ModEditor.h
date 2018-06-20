@@ -151,108 +151,108 @@ public:
         
         //ATTACHEMENTS
         //Sliders
-        lfo1FreqSliderAttach = new AudioProcessorValueTreeState::SliderAttachment (p.treeState,
+        lfo1FreqSliderAttach = new AudioProcessorValueTreeState::SliderAttachment (p.parameters,
                                                                                    p.lfo1FreqId,
                                                                                    freq1Slider);
         
-        lfo2FreqSliderAttach = new AudioProcessorValueTreeState::SliderAttachment (p.treeState,
+        lfo2FreqSliderAttach = new AudioProcessorValueTreeState::SliderAttachment (p.parameters,
                                                                                    p.lfo2FreqId,
                                                                                    freq2Slider);
         
-        lfo3FreqSliderAttach = new AudioProcessorValueTreeState::SliderAttachment (p.treeState,
+        lfo3FreqSliderAttach = new AudioProcessorValueTreeState::SliderAttachment (p.parameters,
                                                                                    p.lfo3FreqId,
                                                                                    freq3Slider);
         
-        lfo1TFreqSliderAttach = new AudioProcessorValueTreeState::SliderAttachment (p.treeState,
+        lfo1TFreqSliderAttach = new AudioProcessorValueTreeState::SliderAttachment (p.parameters,
                                                                                     p.lfo1TFreqId,
                                                                                     tempo1Slider);
         
-        lfo2TFreqSliderAttach = new AudioProcessorValueTreeState::SliderAttachment (p.treeState,
+        lfo2TFreqSliderAttach = new AudioProcessorValueTreeState::SliderAttachment (p.parameters,
                                                                                     p.lfo2TFreqId,
                                                                                     tempo2Slider);
         
-        lfo3TFreqSliderAttach = new AudioProcessorValueTreeState::SliderAttachment (p.treeState,
+        lfo3TFreqSliderAttach = new AudioProcessorValueTreeState::SliderAttachment (p.parameters,
                                                                                     p.lfo3TFreqId,
                                                                                     tempo3Slider);
         //Buttons
-        lfo1onButtonAttach = new AudioProcessorValueTreeState::ButtonAttachment (p.treeState,
+        lfo1onButtonAttach = new AudioProcessorValueTreeState::ButtonAttachment (p.parameters,
                                                                                  p.lfo1onId,
                                                                                  lfo1onButton);
         
-        lfo2onButtonAttach = new AudioProcessorValueTreeState::ButtonAttachment (p.treeState,
+        lfo2onButtonAttach = new AudioProcessorValueTreeState::ButtonAttachment (p.parameters,
                                                                                  p.lfo2onId,
                                                                                  lfo2onButton);
         
-        lfo3onButtonAttach = new AudioProcessorValueTreeState::ButtonAttachment (p.treeState,
+        lfo3onButtonAttach = new AudioProcessorValueTreeState::ButtonAttachment (p.parameters,
                                                                                  p.lfo3onId,
                                                                                  lfo3onButton);
         
-        triplet1Attach = new AudioProcessorValueTreeState::ButtonAttachment (p.treeState,
+        triplet1Attach = new AudioProcessorValueTreeState::ButtonAttachment (p.parameters,
                                                                              p.triplet1Id,
                                                                              triplet1Button);
         
-        triplet2Attach = new AudioProcessorValueTreeState::ButtonAttachment (p.treeState,
+        triplet2Attach = new AudioProcessorValueTreeState::ButtonAttachment (p.parameters,
                                                                              p.triplet2Id,
                                                                              triplet2Button);
         
-        triplet3Attach = new AudioProcessorValueTreeState::ButtonAttachment (p.treeState,
+        triplet3Attach = new AudioProcessorValueTreeState::ButtonAttachment (p.parameters,
                                                                              p.triplet3Id,
                                                                              triplet3Button);
         
-        dotted1Attach = new AudioProcessorValueTreeState::ButtonAttachment (p.treeState,
+        dotted1Attach = new AudioProcessorValueTreeState::ButtonAttachment (p.parameters,
                                                                             p.dotted1Id,
                                                                             dotted1Button);
         
-        dotted2Attach = new AudioProcessorValueTreeState::ButtonAttachment (p.treeState,
+        dotted2Attach = new AudioProcessorValueTreeState::ButtonAttachment (p.parameters,
                                                                             p.dotted2Id,
                                                                             dotted2Button);
         
-        dotted3Attach = new AudioProcessorValueTreeState::ButtonAttachment (p.treeState,
+        dotted3Attach = new AudioProcessorValueTreeState::ButtonAttachment (p.parameters,
                                                                             p.dotted3Id,
                                                                             dotted3Button);
         
-        tempoSync1Attach = new AudioProcessorValueTreeState::ButtonAttachment (p.treeState,
+        tempoSync1Attach = new AudioProcessorValueTreeState::ButtonAttachment (p.parameters,
                                                                                p.tempoSync1Id,
                                                                                tempoSync1Button);
         
-        tempoSync2Attach = new AudioProcessorValueTreeState::ButtonAttachment (p.treeState,
+        tempoSync2Attach = new AudioProcessorValueTreeState::ButtonAttachment (p.parameters,
                                                                                p.tempoSync2Id,
                                                                                tempoSync2Button);
         
-        tempoSync3Attach = new AudioProcessorValueTreeState::ButtonAttachment (p.treeState,
+        tempoSync3Attach = new AudioProcessorValueTreeState::ButtonAttachment (p.parameters,
                                                                                p.tempoSync3Id,
                                                                                tempoSync3Button);
         
-        sync2to1Attach = new AudioProcessorValueTreeState::ButtonAttachment (p.treeState,
+        sync2to1Attach = new AudioProcessorValueTreeState::ButtonAttachment (p.parameters,
                                                                              p.sync2to1Id,
                                                                              sync2to1Button);
         
-        syncAllAttach = new AudioProcessorValueTreeState::ButtonAttachment (p.treeState,
+        syncAllAttach = new AudioProcessorValueTreeState::ButtonAttachment (p.parameters,
                                                                             p.syncAllId,
                                                                             syncAllButton);
         
-        phase0Attach = new AudioProcessorValueTreeState::ButtonAttachment (p.treeState,
+        phase0Attach = new AudioProcessorValueTreeState::ButtonAttachment (p.parameters,
                                                                            p.phase0Id,
                                                                            phase0);
         
-        phase90Attach = new AudioProcessorValueTreeState::ButtonAttachment (p.treeState,
+        phase90Attach = new AudioProcessorValueTreeState::ButtonAttachment (p.parameters,
                                                                             p.phase90Id,
                                                                             phase90);
         
-        phase180Attach = new AudioProcessorValueTreeState::ButtonAttachment (p.treeState,
+        phase180Attach = new AudioProcessorValueTreeState::ButtonAttachment (p.parameters,
                                                                              p.phase180Id,
                                                                              phase180);
         
         //Combo Boxes
-        lfo1TypeAttach = new AudioProcessorValueTreeState::ComboBoxAttachment (p.treeState,
+        lfo1TypeAttach = new AudioProcessorValueTreeState::ComboBoxAttachment (p.parameters,
                                                                                p.lfo1TypeId,
                                                                                mod1ShapeMenu);
         
-        lfo2TypeAttach = new AudioProcessorValueTreeState::ComboBoxAttachment (p.treeState,
+        lfo2TypeAttach = new AudioProcessorValueTreeState::ComboBoxAttachment (p.parameters,
                                                                                p.lfo2TypeId,
                                                                                mod2ShapeMenu);
         
-        lfo3TypeAttach = new AudioProcessorValueTreeState::ComboBoxAttachment (p.treeState,
+        lfo3TypeAttach = new AudioProcessorValueTreeState::ComboBoxAttachment (p.parameters,
                                                                                p.lfo3TypeId,
                                                                                mod3ShapeMenu);
         

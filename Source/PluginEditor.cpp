@@ -26,6 +26,7 @@ Vibrato2AudioProcessorEditor::Vibrato2AudioProcessorEditor (Vibrato2AudioProcess
     addAndMakeVisible (effectEditor);
     addAndMakeVisible (modEditor);
     //addAndMakeVisible (masterEditor);
+    
 }
 
 Vibrato2AudioProcessorEditor::~Vibrato2AudioProcessorEditor()

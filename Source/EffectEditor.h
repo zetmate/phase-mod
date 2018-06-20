@@ -10,6 +10,7 @@
 
 #pragma once
 #include "MyLookAndFeel.h"
+#include "ParameterControl.h"
 //==============================================================================
 /*
 */
@@ -79,43 +80,43 @@ public:
                             Slider::TextEntryBoxPosition::TextBoxBelow, 50, this, this, true);
         
         //slider attachments
-        depthSliderAttach = new AudioProcessorValueTreeState::SliderAttachment (p.treeState,
+        depthSliderAttach = new AudioProcessorValueTreeState::SliderAttachment (p.parameters,
                                                                                 p.depthId,
                                                                                 depthSlider);
         
-        delaySliderAttach = new AudioProcessorValueTreeState::SliderAttachment (p.treeState,
+        delaySliderAttach = new AudioProcessorValueTreeState::SliderAttachment (p.parameters,
                                                                                 p.delayId,
                                                                                 delaySlider);
         
-        feedbackSliderAttach = new AudioProcessorValueTreeState::SliderAttachment (p.treeState,
+        feedbackSliderAttach = new AudioProcessorValueTreeState::SliderAttachment (p.parameters,
                                                                                    p.feedbackId,
                                                                                    feedbackSlider);
         
-        fbLfoAmpSliderAttach = new AudioProcessorValueTreeState::SliderAttachment (p.treeState,
+        fbLfoAmpSliderAttach = new AudioProcessorValueTreeState::SliderAttachment (p.parameters,
                                                                                    p.fbLfoAmpId,
                                                                                    lfo3AmpSlider);
         
-        mixSliderAttach = new AudioProcessorValueTreeState::SliderAttachment (p.treeState,
+        mixSliderAttach = new AudioProcessorValueTreeState::SliderAttachment (p.parameters,
                                                                               p.mixId,
                                                                               dryWetSlider);
         
-        voice1MixSliderAttach = new AudioProcessorValueTreeState::SliderAttachment (p.treeState,
+        voice1MixSliderAttach = new AudioProcessorValueTreeState::SliderAttachment (p.parameters,
                                                                                     p.voice1MixId,
                                                                                     voice1MixSlider);
         
-        voice2MixSliderAttach = new AudioProcessorValueTreeState::SliderAttachment (p.treeState,
+        voice2MixSliderAttach = new AudioProcessorValueTreeState::SliderAttachment (p.parameters,
                                                                                     p.voice2MixId,
                                                                                     voice2MixSlider);
         
-        masterSliderAttach = new AudioProcessorValueTreeState::SliderAttachment (p.treeState,
+        masterSliderAttach = new AudioProcessorValueTreeState::SliderAttachment (p.parameters,
                                                                                  p.masterId,
                                                                                  inputGainSlider);
         
-        procTypeButtonAttach = new AudioProcessorValueTreeState::ButtonAttachment (p.treeState,
+        procTypeButtonAttach = new AudioProcessorValueTreeState::ButtonAttachment (p.parameters,
                                                                                    p.procTypeId,
                                                                                    processingTypeButton);
         
-        fbTypeButtonAttach = new AudioProcessorValueTreeState::ButtonAttachment (p.treeState,
+        fbTypeButtonAttach = new AudioProcessorValueTreeState::ButtonAttachment (p.parameters,
                                                                                  p.fbTypeId,
                                                                                  feedbackTypeButton);
     }
@@ -139,14 +140,12 @@ public:
         }
         else if (slider == &feedbackSlider)
         {
-            if (feedbackTypeButton.getToggleState())
+            if (doubleFeedback)
             {
-                if (value < 5 && value > -5)
-                    proc.setPrevSampleGain (0);
             }
             else
             {
-                proc.setFeedbackGain (value / 100.0);
+               proc.setFeedbackGain (value / 100.0);
             }
         }
         else if (slider == &lfo3AmpSlider)
@@ -252,6 +251,7 @@ public:
                 }
                 Utility::setSliderEnabled (&feedbackSlider, &feedbackLabel, false);
                 feedbackTypeButton.setButtonText ("double feedback");
+                doubleFeedback = true;
             }
             else
             {
@@ -259,6 +259,7 @@ public:
                 proc.setPrevSampleGain (0);
                 proc.setFeedbackGain (feedbackSlider.getValue() / 100.0);
                 feedbackTypeButton.setButtonText ("single feedback");
+                doubleFeedback = false;
             }
         }
        
@@ -331,6 +332,8 @@ private:
     NormalisableRange<double> feedbackSeparateRange, feedbackCascadeRange;
     
     TextButton processingTypeButton, feedbackTypeButton;
+    
+    bool doubleFeedback = false;
     
     //================================================
     //MASTER EDITOR

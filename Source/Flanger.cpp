@@ -80,7 +80,10 @@ void Flanger::processSampleMono (const float input,
     
     //count dry & wet gains
     wetGain = dryWetPropotion;
-    dryGain = 1 - wetGain;
+    if (wetGain <= 1)
+        dryGain = 1 - wetGain;
+    else
+        dryGain = 0;
     
     //output signal
     output = dryGain * input + wetGain * filtered;

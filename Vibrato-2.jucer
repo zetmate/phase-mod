@@ -25,12 +25,13 @@
       <FILE id="CbKq8p" name="Ramp.h" compile="0" resource="0" file="Source/Ramp.h"/>
       <FILE id="vtJt3j" name="Utility.h" compile="0" resource="0" file="Source/Utility.h"/>
       <FILE id="QhxcCk" name="Tempo.h" compile="0" resource="0" file="Source/Tempo.h"/>
+      <FILE id="gjAE0i" name="ParameterControl.h" compile="0" resource="0"
+            file="Source/ParameterControl.h"/>
       <FILE id="eQJryR" name="PluginEditor.cpp" compile="1" resource="0"
             file="Source/PluginEditor.cpp"/>
       <FILE id="vgj6hr" name="PluginEditor.h" compile="0" resource="0" file="Source/PluginEditor.h"/>
       <FILE id="aWL34v" name="EffectEditor.h" compile="0" resource="0" file="Source/EffectEditor.h"/>
       <FILE id="gT8PKW" name="ModEditor.h" compile="0" resource="0" file="Source/ModEditor.h"/>
-      <FILE id="XVp9bP" name="VoiceEditor.h" compile="0" resource="0" file="Source/VoiceEditor.h"/>
       <FILE id="uOYf1d" name="MasterEditor.h" compile="0" resource="0" file="Source/MasterEditor.h"/>
       <FILE id="Ea1wHg" name="MyLookAndFeel.h" compile="0" resource="0" file="Source/MyLookAndFeel.h"/>
     </GROUP>
