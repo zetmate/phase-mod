@@ -33,23 +33,15 @@ Vibrato2AudioProcessor::Vibrato2AudioProcessor()  : parameters (*this, &undoMana
                                                     lfo1TFreqRange (-10, -1, 1, 1),
                                                     lfo2TFreqRange (-10, -1, 1, 1),
                                                     lfo3TFreqRange (-10, -1, 1, 1),
-                                                    triplet1Range (0, 1, 1, 1),
-                                                    triplet2Range (0, 1, 1, 1),
-                                                    triplet3Range (0, 1, 1, 1),
-                                                    dotted1Range (0, 1, 1, 1),
-                                                    dotted2Range (0, 1, 1, 1),
-                                                    dotted3Range (0, 1, 1, 1),
                                                     lfo1TypeRange (0, 5, 1, 1),
                                                     lfo2TypeRange (0, 5, 1, 1),
                                                     lfo3TypeRange (0, 4, 1, 1),
+                                                    note1TypeRange (0, 2, 1, 1),
+                                                    note2TypeRange (0, 2, 1, 1),
+                                                    note3TypeRange (0, 2, 1, 1),
                                                     tempoSync1Range (0, 1, 1, 1),
                                                     tempoSync2Range (0, 1, 1, 1),
-                                                    tempoSync3Range (0, 1, 1, 1),
-                                                    sync2to1Range (0, 1, 1, 1),
-                                                    syncAllRange (0, 1, 1, 1),
-                                                    phase0Range (0, 1, 1, 1),
-                                                    phase90Range (0, 1, 1, 1),
-                                                    phase180Range (0, 1, 1, 1)
+                                                    tempoSync3Range (0, 1, 1, 1)
 #ifndef JucePlugin_PreferredChannelConfigurations
      : AudioProcessor (BusesProperties()
                      #if ! JucePlugin_IsMidiEffect
@@ -162,30 +154,6 @@ Vibrato2AudioProcessor::Vibrato2AudioProcessor()  : parameters (*this, &undoMana
                                       [&] (String s) -> float { return textToLfoTFreq (s); });
     parameters.addParameterListener (lfo3TFreqId, this);
     
-    parameters.createAndAddParameter (triplet1Id, triplet1Name, triplet1LabelText, triplet1Range,
-                                     triplet1Default, nullptr, nullptr);
-    parameters.addParameterListener (triplet1Id, this);
-    
-    parameters.createAndAddParameter (triplet2Id, triplet2Name, triplet2LabelText, triplet2Range,
-                                     triplet2Default, nullptr, nullptr);
-    parameters.addParameterListener (triplet2Id, this);
-    
-    parameters.createAndAddParameter (triplet3Id, triplet3Name, triplet3LabelText, triplet3Range,
-                                     triplet3Default, nullptr, nullptr);
-    parameters.addParameterListener (triplet3Id, this);
-    
-    parameters.createAndAddParameter (dotted1Id, dotted1Name, dotted1LabelText, dotted1Range,
-                                     dotted1Default, nullptr, nullptr);
-    parameters.addParameterListener (dotted1Id, this);
-    
-    parameters.createAndAddParameter (dotted2Id, dotted2Name, dotted2LabelText, dotted2Range,
-                                     dotted2Default, nullptr, nullptr);
-    parameters.addParameterListener (dotted2Id, this);
-    
-    parameters.createAndAddParameter (dotted3Id, dotted3Name, dotted3LabelText, dotted3Range,
-                                     dotted3Default, nullptr, nullptr);
-    parameters.addParameterListener (dotted3Id, this);
-    
     parameters.createAndAddParameter (lfo1TypeId, lfo1TypeName, lfo1TypeLabelText, lfo1TypeRange,
                                      lfo1TypeDefault, nullptr, nullptr);
     parameters.addParameterListener (lfo1TypeId, this);
@@ -197,6 +165,18 @@ Vibrato2AudioProcessor::Vibrato2AudioProcessor()  : parameters (*this, &undoMana
     parameters.createAndAddParameter (lfo3TypeId, lfo3TypeName, lfo3TypeLabelText, lfo3TypeRange,
                                      lfo3TypeDefault, nullptr, nullptr);
     parameters.addParameterListener (lfo3TypeId, this);
+    
+    parameters.createAndAddParameter (note1TypeId, note1TypeName, note1TypeLabelText, note1TypeRange,
+                                      note1TypeDefault, nullptr, nullptr);
+    parameters.addParameterListener (note1TypeId, this);
+    
+    parameters.createAndAddParameter (note2TypeId, note2TypeName, note2TypeLabelText, note2TypeRange,
+                                      note2TypeDefault, nullptr, nullptr);
+    parameters.addParameterListener (note2TypeId, this);
+    
+    parameters.createAndAddParameter (note3TypeId, note3TypeName, note3TypeLabelText, note3TypeRange,
+                                      note3TypeDefault, nullptr, nullptr);
+    parameters.addParameterListener (note3TypeId, this);
     
     parameters.createAndAddParameter (tempoSync1Id, tempoSync1Name, tempoSync1LabelText, tempoSync1Range,
                                      tempoSync1Default, nullptr, nullptr);
@@ -210,25 +190,6 @@ Vibrato2AudioProcessor::Vibrato2AudioProcessor()  : parameters (*this, &undoMana
                                      tempoSync3Default, nullptr, nullptr);
     parameters.addParameterListener (tempoSync3Id, this);
     
-    parameters.createAndAddParameter (sync2to1Id, sync2to1Name, sync2to1LabelText, sync2to1Range,
-                                     sync2to1Default, nullptr, nullptr);
-    parameters.addParameterListener (sync2to1Id, this);
-    
-    parameters.createAndAddParameter (syncAllId, syncAllName, syncAllLabelText, syncAllRange,
-                                     syncAllDefault, nullptr, nullptr);
-    parameters.addParameterListener (syncAllId, this);
-    
-    parameters.createAndAddParameter (phase0Id, phase0Name, phase0LabelText, phase0Range,
-                                     phase0Default, nullptr, nullptr);
-    parameters.addParameterListener (phase0Id, this);
-    
-    parameters.createAndAddParameter (phase90Id, phase90Name, phase90LabelText, phase90Range,
-                                     phase90Default, nullptr, nullptr);
-    parameters.addParameterListener (phase90Id, this);
-    
-    parameters.createAndAddParameter (phase180Id, phase180Name, phase180LabelText, phase180Range,
-                                     phase180Default, nullptr, nullptr);
-    parameters.addParameterListener (phase180Id, this);
     
     parameters.state = ValueTree (Identifier ("Whalor"));
 }
@@ -368,10 +329,10 @@ AudioProcessorEditor* Vibrato2AudioProcessor::createEditor()
 //==============================================================================
 void Vibrato2AudioProcessor::parameterChanged (const String& parameterID, float newValue)
 {
-//    if (getActiveEditor() == nullptr)
-//    {
+    if (getActiveEditor() == nullptr)
+    {
         ParameterControl::updateParameter (*this, parameterID, newValue);
-//    }
+    }
 }
 
 void Vibrato2AudioProcessor::getStateInformation (MemoryBlock& destData)

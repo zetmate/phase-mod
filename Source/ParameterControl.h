@@ -74,11 +74,32 @@ public:
         else if (parameterId == p.lfo3onId)
             setLfo3on (p, parameterValue);
         
-        else if (parameterId == p.sync2to1Id)
-            setSync2to1 (p, parameterValue);
+        else if (parameterId == p.tempoSync1Id)
+            setTempoSync1 (p, parameterValue);
         
-        else if (parameterId == p.syncAllId)
-            setSyncAll (p, parameterValue);
+        else if (parameterId == p.tempoSync2Id)
+            setTempoSync2 (p, parameterValue);
+        
+        else if (parameterId == p.tempoSync3Id)
+            setTempoSync3 (p, parameterValue);
+        
+        else if (parameterId == p.note1TypeId)
+            setNote1Type (p, parameterValue);
+        
+        else if (parameterId == p.note2TypeId)
+            setNote2Type (p, parameterValue);
+        
+        else if (parameterId == p.note3TypeId)
+            setNote3Type (p, parameterValue);
+        
+        else if (parameterId == p.lfo1TypeId)
+            setLfo1Shape (p, parameterValue);
+        
+        else if (parameterId == p.lfo2TypeId)
+            setLfo2Shape (p, parameterValue);
+        
+        else if (parameterId == p.lfo3TypeId)
+            setLfo3Shape (p, parameterValue);
     }
     
     static void setDepth (Vibrato2AudioProcessor& p, const float parameterValue)
@@ -232,124 +253,100 @@ public:
     static void setFreq1 (Vibrato2AudioProcessor& p, float parameterValue)
     {
         p.proc.setFreq1 (parameterValue);
-            
-        bool sync2to1 = roundToInt (*p.parameters.getRawParameterValue (p.sync2to1Id));
-        if (sync2to1)
-        {
-            p.proc.setFreq2 (parameterValue);
-            
-            bool syncAll = roundToInt (*p.parameters.getRawParameterValue (p.syncAllId));
-            if (syncAll)
-                p.proc.setFreq3 (parameterValue);
-        }
     }
     
     static void setFreq2 (Vibrato2AudioProcessor& p, float parameterValue)
     {
-        bool sync2to1 = roundToInt (*p.parameters.getRawParameterValue (p.sync2to1Id));
-        if (!sync2to1)
-            p.proc.setFreq2 (parameterValue);
+        p.proc.setFreq2 (parameterValue);
     }
     
     static void setFreq3 (Vibrato2AudioProcessor& p, float parameterValue)
     {
-        bool syncAll = roundToInt (*p.parameters.getRawParameterValue (p.syncAllId));
-        if (!syncAll)
-            p.proc.setFreq3 (parameterValue);
+        p.proc.setFreq3 (parameterValue);
     }
     
-    static float setTFreq1 (Vibrato2AudioProcessor& p, float parameterValue)
+    static void setTFreq1 (Vibrato2AudioProcessor& p, float parameterValue)
     {
         bool tempoSync = getBoolFromParameter (p, p.tempoSync1Id);
         if (tempoSync)
         {
             double bpm = p.proc.getCurrentBpm();
             float freq = Utility::tempoToHz (roundToInt (parameterValue * -1), bpm);
-            float tmi = 1.0f;
             
-            bool triplet = roundToInt (*p.parameters.getRawParameterValue (p.triplet1Id));
-            if (triplet)
+            int noteType = roundToInt (*p.parameters.getRawParameterValue (p.note1TypeId));
+            float tmi = 1.0f;
+            switch (noteType)
             {
-                tmi = 3.0 / 2.0;
-            }
-            else
-            {
-                bool dotted = roundToInt (*p.parameters.getRawParameterValue (p.dotted1Id));
-                if (dotted)
+                case 1:
+                    tmi = 3.0 / 2.0;
+                    break;
+                    
+                case 2:
                     tmi = 0.75;
+                    break;
+                    
+                default:
+                    break;
             }
             
             p.proc.setFreq1 (freq * tmi);
-            
-            bool synced2to1 = getBoolFromParameter (p, p.sync2to1Id);
-            if (synced2to1)
-            {
-                p.proc.setFreq2 (freq * tmi);
-                
-                bool syncedAll = getBoolFromParameter (p, p.syncAllId);
-                if (syncedAll)
-                    p.proc.setFreq3 (freq * tmi);
-            }
-            
-            return freq * tmi;
         }
-        return p.lfo1FreqDefault;
     }
     
-    static float setTFreq2 (Vibrato2AudioProcessor& p, float parameterValue)
+    static void setTFreq2 (Vibrato2AudioProcessor& p, float parameterValue)
     {
         bool tempoSync = getBoolFromParameter (p, p.tempoSync2Id);
         if (tempoSync)
         {
             double bpm = p.proc.getCurrentBpm();
             float freq = Utility::tempoToHz (roundToInt (parameterValue * -1), bpm);
-            float tmi = 1.0f;
             
-            bool triplet = roundToInt (*p.parameters.getRawParameterValue (p.triplet2Id));
-            if (triplet)
+            int noteType = roundToInt (*p.parameters.getRawParameterValue (p.note2TypeId));
+            float tmi = 1.0f;
+            switch (noteType)
             {
-                tmi = 3.0 / 2.0;
-            }
-            else
-            {
-                bool dotted = roundToInt (*p.parameters.getRawParameterValue (p.dotted2Id));
-                if (dotted)
+                case 1:
+                    tmi = 3.0 / 2.0;
+                    break;
+                    
+                case 2:
                     tmi = 0.75;
+                    break;
+                    
+                default:
+                    break;
             }
             
             p.proc.setFreq2 (freq * tmi);
-            
-            return freq * tmi;
         }
-        return p.lfo2FreqDefault;
     }
     
-    static float setTFreq3 (Vibrato2AudioProcessor& p, float parameterValue)
+    static void setTFreq3 (Vibrato2AudioProcessor& p, float parameterValue)
     {
         bool tempoSync = getBoolFromParameter (p, p.tempoSync3Id);
         if (tempoSync)
         {
             double bpm = p.proc.getCurrentBpm();
             float freq = Utility::tempoToHz (roundToInt (parameterValue * -1), bpm);
-            float tmi = 1.0f;
             
-            bool triplet = roundToInt (*p.parameters.getRawParameterValue (p.triplet3Id));
-            if (triplet)
+            int noteType = roundToInt (*p.parameters.getRawParameterValue (p.note3TypeId));
+            float tmi = 1.0f;
+            switch (noteType)
             {
-                tmi = 3.0 / 2.0;
-            }
-            else
-            {
-                bool dotted = roundToInt (*p.parameters.getRawParameterValue (p.dotted3Id));
-                if (dotted)
+                case 1:
+                    tmi = 3.0 / 2.0;
+                    break;
+                    
+                case 2:
                     tmi = 0.75;
+                    break;
+                    
+                default:
+                    break;
             }
             
             p.proc.setFreq3 (freq * tmi);
-            
-            return freq * tmi;
         }
-        return p.lfo3FreqDefault;
     }
     
     static void setLfo1on (Vibrato2AudioProcessor& p, float parameterValue)
@@ -379,71 +376,170 @@ public:
             p.proc.setLfo3on (false);
     }
     
-    static void setSync2to1 (Vibrato2AudioProcessor& p, float parameterValue)
+    static void setTempoSync1 (Vibrato2AudioProcessor& p, float parameterValue)
     {
-        bool isOn = roundToInt (parameterValue);
-        if (isOn)
+        bool tempoSync = getBoolFromParameter (p, p.tempoSync1Id);
+        if (tempoSync)
         {
-            float freq = p.proc.getFreq1();
-            p.proc.setFreq2 (freq);
+            float tempoParamValue = getParameterValue (p, p.lfo1TFreqId);
+            setTFreq1 (p, tempoParamValue);
         }
         else
         {
-            //set freq2
-            bool tempoSync = getBoolFromParameter (p, p.tempoSync2Id);
-            if (tempoSync)
-            {
-                float tfreq = *p.parameters.getRawParameterValue (p.lfo2TFreqId);
-                setTFreq2 (p, tfreq);
-            }
-            else
-            {
-                float freq = *p.parameters.getRawParameterValue (p.lfo2FreqId);
-                setFreq2 (p, freq);
-            }
+            float freq = getParameterValue (p, p.lfo1FreqId);
+            setFreq1 (p, freq);
         }
     }
     
-    static void setSyncAll (Vibrato2AudioProcessor& p, float parameterValue)
+    static void setTempoSync2 (Vibrato2AudioProcessor& p, float parameterValue)
     {
-        bool isOn = roundToInt (parameterValue);
-        if (isOn)
+        bool tempoSync = getBoolFromParameter (p, p.tempoSync2Id);
+        if (tempoSync)
         {
-            float freq = p.proc.getFreq1();
-            p.proc.setFreq2 (freq);
-            p.proc.setFreq3 (freq);
+            float tempoParamValue = getParameterValue (p, p.lfo2TFreqId);
+            setTFreq2 (p, tempoParamValue);
         }
         else
         {
-            //set freq2
-            bool tempoSync2 = getBoolFromParameter (p, p.tempoSync2Id);
-            if (tempoSync2)
-            {
-                float tfreq = *p.parameters.getRawParameterValue (p.lfo2TFreqId);
-                setTFreq2 (p, tfreq);
-            }
-            else
-            {
-                float freq = *p.parameters.getRawParameterValue (p.lfo2FreqId);
-                setFreq2 (p, freq);
-            }
-            
-            //set freq3
-            bool tempoSync3 = getBoolFromParameter (p, p.tempoSync3Id);
-            if (tempoSync3)
-            {
-                float tfreq = *p.parameters.getRawParameterValue (p.lfo3TFreqId);
-                setTFreq3 (p, tfreq);
-            }
-            else
-            {
-                float freq = *p.parameters.getRawParameterValue (p.lfo3FreqId);
-                setFreq3 (p, freq);
-            }
+            float freq = getParameterValue (p, p.lfo2FreqId);
+            setFreq2 (p, freq);
         }
     }
     
-private:
+    static void setTempoSync3 (Vibrato2AudioProcessor& p, float parameterValue)
+    {
+        bool tempoSync = getBoolFromParameter (p, p.tempoSync3Id);
+        if (tempoSync)
+        {
+            float tempoParamValue = getParameterValue (p, p.lfo3TFreqId);
+            setTFreq3 (p, tempoParamValue);
+        }
+        else
+        {
+            float freq = getParameterValue (p, p.lfo3FreqId);
+            setFreq3 (p, freq);
+        }
+    }
+    
+    static void setNote1Type (Vibrato2AudioProcessor& p, float parameterValue)
+    {
+        float tempoFreq = getParameterValue (p, p.lfo1TFreqId);
+        setTFreq1 (p, tempoFreq);
+    }
+    
+    static void setNote2Type (Vibrato2AudioProcessor& p, float parameterValue)
+    {
+        float tempoFreq = getParameterValue (p, p.lfo2TFreqId);
+        setTFreq2 (p, tempoFreq);
+    }
+    
+    static void setNote3Type (Vibrato2AudioProcessor& p, float parameterValue)
+    {
+        float tempoFreq = getParameterValue (p, p.lfo3TFreqId);
+        setTFreq3 (p, tempoFreq);
+    }
+    
+    static void setLfo1Shape (Vibrato2AudioProcessor& p, float parameterValue)
+    {
+        int i = roundToInt (parameterValue) + 1;
+        switch (i)
+        {
+            case 1:
+                p.proc.setlfoShape1 (Flanger::LfoShape::sin);
+                break;
+                
+            case 2:
+                p.proc.setlfoShape1 (Flanger::LfoShape::triangle);
+                break;
+                
+            case 3:
+                p.proc.setlfoShape1 (Flanger::LfoShape::saw);
+                break;
+                
+            case 4:
+                p.proc.setlfoShape1 (Flanger::LfoShape::square);
+                break;
+                
+            case 5:
+                p.proc.setlfoShape1 (Flanger::LfoShape::random);
+                break;
+                
+            case 6:
+                p.proc.setlfoShape1 (Flanger::LfoShape::noise);
+                break;
+                
+            default:
+                break;
+        }
+    }
+    
+    static void setLfo2Shape (Vibrato2AudioProcessor& p, float parameterValue)
+    {
+        int i = roundToInt (parameterValue) + 1;
+        
+        switch (i)
+        {
+            case 1:
+                p.proc.setlfoShape2 (Flanger::LfoShape::sin);
+                break;
+                
+            case 2:
+                p.proc.setlfoShape2 (Flanger::LfoShape::triangle);
+                break;
+                
+            case 3:
+                p.proc.setlfoShape2 (Flanger::LfoShape::saw);
+                break;
+                
+            case 4:
+                p.proc.setlfoShape2 (Flanger::LfoShape::square);
+                break;
+                
+            case 5:
+                p.proc.setlfoShape2 (Flanger::LfoShape::random);
+                break;
+                
+            case 6:
+                p.proc.setlfoShape2 (Flanger::LfoShape::noise);
+                break;
+                
+            default:
+                break;
+        }
+    }
+    
+    static void setLfo3Shape (Vibrato2AudioProcessor& p, float parameterValue)
+    {
+        int i = roundToInt (parameterValue) + 1;
+        
+        switch (i)
+        {
+            case 1:
+                p.proc.setlfoShape3 (Flanger::LfoShape::sin);
+                break;
+                
+            case 2:
+                p.proc.setlfoShape3 (Flanger::LfoShape::triangle);
+                break;
+                
+            case 3:
+                p.proc.setlfoShape3 (Flanger::LfoShape::saw);
+                break;
+                
+            case 4:
+                p.proc.setlfoShape3 (Flanger::LfoShape::square);
+                break;
+                
+            case 5:
+                p.proc.setlfoShape3 (Flanger::LfoShape::random);
+                break;
+                
+            default:
+                break;
+        }
+    }
+    
+    //GETTERS
     static bool getBoolFromParameter (Vibrato2AudioProcessor& p, juce::StringRef parameterID)
     {
         bool b = roundToInt (*p.parameters.getRawParameterValue (parameterID));
