@@ -10,7 +10,7 @@
 
 #include "PluginProcessor.h"
 #include "PluginEditor.h"
-
+#include "ParameterControl.h"
 
 //==============================================================================
 Vibrato2AudioProcessor::Vibrato2AudioProcessor()  : parameters (*this, &undoManager),
@@ -79,118 +79,158 @@ Vibrato2AudioProcessor::Vibrato2AudioProcessor()  : parameters (*this, &undoMana
     lfo2TFreqRange.setSkewForCentre (-5);
     lfo3TFreqRange.setSkewForCentre (-5);
     
+    //DEPTH
     parameters.createAndAddParameter (depthId, depthName, depthLabelText, depthRange,
                                      depthDefault, nullptr, nullptr);
+    parameters.addParameterListener (depthId, this);
     
     parameters.createAndAddParameter (delayId, delayName, delayLabelText, delayRange,
                                      delayDefault, nullptr, nullptr);
+    parameters.addParameterListener (delayId, this);
     
     parameters.createAndAddParameter (feedbackId, feedbackName, feedbackLabelText, feedbackRange,
                                      feedbackDefault, nullptr, nullptr);
+    parameters.addParameterListener (feedbackId, this);
     
     parameters.createAndAddParameter (fbLfoAmpId, fbLfoAmpName, fbLfoAmpLabelText, fbLfoAmpRange,
                                      fbLfoAmpDefault, nullptr, nullptr);
+    parameters.addParameterListener (fbLfoAmpId, this);
     
     parameters.createAndAddParameter (procTypeId, procTypeName, procTypeLabelText, procTypeRange,
                                      procTypeDefault, nullptr, nullptr);
+    parameters.addParameterListener (procTypeId, this);
     
     parameters.createAndAddParameter (fbTypeId, fbTypeName, fbTypeLabelText, fbTypeRange,
                                      fbTypeDefault, nullptr, nullptr);
+    parameters.addParameterListener (fbTypeId, this);
     
     parameters.createAndAddParameter (mixId, mixName, mixLabelText, mixRange,
                                      mixDefault, nullptr, nullptr);
+    parameters.addParameterListener (mixId, this);
     
     parameters.createAndAddParameter (voice1MixId, voice1MixName, voice1MixLabelText, voice1MixRange,
                                      voice1MixDefault, nullptr, nullptr);
+    parameters.addParameterListener (voice1MixId, this);
     
     parameters.createAndAddParameter (voice2MixId, voice2MixName, voice2MixLabelText, voice2MixRange,
                                      voice2MixDefault, nullptr, nullptr);
+    parameters.addParameterListener (voice2MixId, this);
     
     parameters.createAndAddParameter (masterId, masterName, masterLabelText, masterRange,
                                      masterDefault, nullptr, nullptr);
+    parameters.addParameterListener (masterId, this);
     
     parameters.createAndAddParameter (lfo1onId, lfo1onName, lfo1onLabelText, lfo1onRange,
                                      lfo1onDefault, nullptr, nullptr);
+    parameters.addParameterListener (lfo1onId, this);
     
     parameters.createAndAddParameter (lfo2onId, lfo2onName, lfo2onLabelText, lfo2onRange,
                                      lfo2onDefault, nullptr, nullptr);
+    parameters.addParameterListener (lfo2onId, this);
     
     parameters.createAndAddParameter (lfo3onId, lfo3onName, lfo3onLabelText, lfo3onRange,
                                      lfo3onDefault, nullptr, nullptr);
+    parameters.addParameterListener (lfo3onId, this);
     
     parameters.createAndAddParameter (lfo1FreqId, lfo1FreqName, lfo1FreqLabelText, lfo1FreqRange,
                                      lfo1FreqDefault, nullptr, nullptr);
+    parameters.addParameterListener (lfo1FreqId, this);
     
     parameters.createAndAddParameter (lfo2FreqId, lfo2FreqName, lfo2FreqLabelText, lfo2FreqRange,
                                      lfo2FreqDefault, nullptr, nullptr);
+    parameters.addParameterListener (lfo2FreqId, this);
     
     parameters.createAndAddParameter (lfo3FreqId, lfo3FreqName, lfo3FreqLabelText, lfo3FreqRange,
                                      lfo3FreqDefault, nullptr, nullptr);
+    parameters.addParameterListener (lfo3FreqId, this);
     
     parameters.createAndAddParameter (lfo1TFreqId, lfo1TFreqName, lfo1TFreqLabelText, lfo1TFreqRange,
-                                     lfo1TFreqDefault, nullptr, nullptr);
+                                      lfo1TFreqDefault,
+                                      [&] (float f) -> String { return lfoTFreqToText (f); },
+                                      [&] (String s) -> float { return textToLfoTFreq (s); });
+    parameters.addParameterListener (lfo1TFreqId, this);
     
     parameters.createAndAddParameter (lfo2TFreqId, lfo2TFreqName, lfo2TFreqLabelText, lfo2TFreqRange,
-                                     lfo2TFreqDefault, nullptr, nullptr);
+                                      lfo2TFreqDefault,
+                                      [&] (float f) -> String { return lfoTFreqToText (f); },
+                                      [&] (String s) -> float { return textToLfoTFreq (s); });
+    parameters.addParameterListener (lfo2TFreqId, this);
     
     parameters.createAndAddParameter (lfo3TFreqId, lfo3TFreqName, lfo3TFreqLabelText, lfo3TFreqRange,
-                                     lfo3TFreqDefault, nullptr, nullptr);
+                                      lfo3TFreqDefault,
+                                      [&] (float f) -> String { return lfoTFreqToText (f); },
+                                      [&] (String s) -> float { return textToLfoTFreq (s); });
+    parameters.addParameterListener (lfo3TFreqId, this);
     
     parameters.createAndAddParameter (triplet1Id, triplet1Name, triplet1LabelText, triplet1Range,
                                      triplet1Default, nullptr, nullptr);
+    parameters.addParameterListener (triplet1Id, this);
     
     parameters.createAndAddParameter (triplet2Id, triplet2Name, triplet2LabelText, triplet2Range,
                                      triplet2Default, nullptr, nullptr);
+    parameters.addParameterListener (triplet2Id, this);
     
     parameters.createAndAddParameter (triplet3Id, triplet3Name, triplet3LabelText, triplet3Range,
                                      triplet3Default, nullptr, nullptr);
+    parameters.addParameterListener (triplet3Id, this);
     
     parameters.createAndAddParameter (dotted1Id, dotted1Name, dotted1LabelText, dotted1Range,
                                      dotted1Default, nullptr, nullptr);
+    parameters.addParameterListener (dotted1Id, this);
     
     parameters.createAndAddParameter (dotted2Id, dotted2Name, dotted2LabelText, dotted2Range,
                                      dotted2Default, nullptr, nullptr);
+    parameters.addParameterListener (dotted2Id, this);
     
     parameters.createAndAddParameter (dotted3Id, dotted3Name, dotted3LabelText, dotted3Range,
                                      dotted3Default, nullptr, nullptr);
+    parameters.addParameterListener (dotted3Id, this);
     
     parameters.createAndAddParameter (lfo1TypeId, lfo1TypeName, lfo1TypeLabelText, lfo1TypeRange,
                                      lfo1TypeDefault, nullptr, nullptr);
+    parameters.addParameterListener (lfo1TypeId, this);
     
     parameters.createAndAddParameter (lfo2TypeId, lfo2TypeName, lfo2TypeLabelText, lfo2TypeRange,
                                      lfo2TypeDefault, nullptr, nullptr);
+    parameters.addParameterListener (lfo2TypeId, this);
     
     parameters.createAndAddParameter (lfo3TypeId, lfo3TypeName, lfo3TypeLabelText, lfo3TypeRange,
                                      lfo3TypeDefault, nullptr, nullptr);
+    parameters.addParameterListener (lfo3TypeId, this);
     
     parameters.createAndAddParameter (tempoSync1Id, tempoSync1Name, tempoSync1LabelText, tempoSync1Range,
                                      tempoSync1Default, nullptr, nullptr);
+    parameters.addParameterListener (tempoSync1Id, this);
     
     parameters.createAndAddParameter (tempoSync2Id, tempoSync2Name, tempoSync2LabelText, tempoSync2Range,
                                      tempoSync2Default, nullptr, nullptr);
+    parameters.addParameterListener (tempoSync2Id, this);
     
     parameters.createAndAddParameter (tempoSync3Id, tempoSync3Name, tempoSync3LabelText, tempoSync3Range,
                                      tempoSync3Default, nullptr, nullptr);
+    parameters.addParameterListener (tempoSync3Id, this);
     
     parameters.createAndAddParameter (sync2to1Id, sync2to1Name, sync2to1LabelText, sync2to1Range,
                                      sync2to1Default, nullptr, nullptr);
+    parameters.addParameterListener (sync2to1Id, this);
     
     parameters.createAndAddParameter (syncAllId, syncAllName, syncAllLabelText, syncAllRange,
                                      syncAllDefault, nullptr, nullptr);
+    parameters.addParameterListener (syncAllId, this);
     
     parameters.createAndAddParameter (phase0Id, phase0Name, phase0LabelText, phase0Range,
                                      phase0Default, nullptr, nullptr);
+    parameters.addParameterListener (phase0Id, this);
     
     parameters.createAndAddParameter (phase90Id, phase90Name, phase90LabelText, phase90Range,
                                      phase90Default, nullptr, nullptr);
+    parameters.addParameterListener (phase90Id, this);
     
     parameters.createAndAddParameter (phase180Id, phase180Name, phase180LabelText, phase180Range,
                                      phase180Default, nullptr, nullptr);
+    parameters.addParameterListener (phase180Id, this);
     
     parameters.state = ValueTree (Identifier ("Whalor"));
-    
-    feedbackParameter = parameters.getRawParameterValue (feedbackId);
-    parameters.addParameterListener (feedbackId, this);
 }
 
 Vibrato2AudioProcessor::~Vibrato2AudioProcessor()
@@ -328,11 +368,10 @@ AudioProcessorEditor* Vibrato2AudioProcessor::createEditor()
 //==============================================================================
 void Vibrato2AudioProcessor::parameterChanged (const String& parameterID, float newValue)
 {
-    if (getActiveEditor() == nullptr)
-    {
-        if (parameterID == feedbackId)
-            proc.setFeedbackGain (newValue / 100.0);
-    }
+//    if (getActiveEditor() == nullptr)
+//    {
+        ParameterControl::updateParameter (*this, parameterID, newValue);
+//    }
 }
 
 void Vibrato2AudioProcessor::getStateInformation (MemoryBlock& destData)

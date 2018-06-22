@@ -9,8 +9,7 @@
 */
 
 #pragma once
-
-#include "ParameterControl.h"
+#include "Proc.h"
 
 
 //==============================================================================
@@ -61,6 +60,7 @@ public:
     Proc proc;
     friend class EffectEditor;
     friend class ModEditor;
+    friend struct ParameterControl;
 private:
     //some gui related stuff
     AudioProcessorValueTreeState parameters;
@@ -115,7 +115,6 @@ private:
     
     String feedbackId = "feedback", feedbackName = "Feedback", feedbackLabelText = delayName;
     float feedbackDefault = -70;
-    float* feedbackParameter = nullptr;
     
     String fbLfoAmpId = "fbLfoAmp", fbLfoAmpName = "Feedback LFO Depth", fbLfoAmpLabelText = fbLfoAmpName;
     float fbLfoAmpDefault = 80;
@@ -171,22 +170,22 @@ private:
     float lfo3TFreqDefault = -4;
     
     //triplet and dotted buttons
-    String triplet1Id = "triplet1", triplet1Name = "Triplet", triplet1LabelText = triplet1Name;
+    String triplet1Id = "triplet1", triplet1Name = "LFO1 Triplet", triplet1LabelText = triplet1Name;
     float triplet1Default = 0;
     
-    String triplet2Id = "triplet2", triplet2Name = "Triplet", triplet2LabelText = triplet2Name;
+    String triplet2Id = "triplet2", triplet2Name = "LFO2 Triplet", triplet2LabelText = triplet2Name;
     float triplet2Default = 0;
     
-    String triplet3Id = "triplet3", triplet3Name = "Triplet", triplet3LabelText = triplet3Name;
+    String triplet3Id = "triplet3", triplet3Name = "LFO3 Triplet", triplet3LabelText = triplet3Name;
     float triplet3Default = 0;
     
-    String dotted1Id = "dotted1", dotted1Name = "Dotted", dotted1LabelText = dotted1Name;
+    String dotted1Id = "dotted1", dotted1Name = "LFO1 Dotted", dotted1LabelText = dotted1Name;
     float dotted1Default = 0;
     
-    String dotted2Id = "dotted2", dotted2Name = "Dotted", dotted2LabelText = dotted2Name;
+    String dotted2Id = "dotted2", dotted2Name = "LFO2 Dotted", dotted2LabelText = dotted2Name;
     float dotted2Default = 0;
     
-    String dotted3Id = "dotted3", dotted3Name = "Dotted", dotted3LabelText = dotted3Name;
+    String dotted3Id = "dotted3", dotted3Name = "LFO3 Dotted", dotted3LabelText = dotted3Name;
     float dotted3Default = 0;
     
     //LFO SHAPE COMBO BOXES
@@ -200,13 +199,13 @@ private:
     float lfo3TypeDefault = 0;
     
     //TEMPO SYNC BUTTONS
-    String tempoSync1Id = "tempoSync1", tempoSync1Name = "Tempo Sync", tempoSync1LabelText = tempoSync1Name;
+    String tempoSync1Id = "tempoSync1", tempoSync1Name = "LFO1 Tempo Sync", tempoSync1LabelText = tempoSync1Name;
     float tempoSync1Default = 0;
     
-    String tempoSync2Id = "tempoSync2", tempoSync2Name = "Tempo Sync", tempoSync2LabelText = tempoSync2Name;
+    String tempoSync2Id = "tempoSync2", tempoSync2Name = "LFO2 Tempo Sync", tempoSync2LabelText = tempoSync2Name;
     float tempoSync2Default = 0;
     
-    String tempoSync3Id = "tempoSync3", tempoSync3Name = "Tempo Sync", tempoSync3LabelText = tempoSync3Name;
+    String tempoSync3Id = "tempoSync3", tempoSync3Name = "LFO3 Tempo Sync", tempoSync3LabelText = tempoSync3Name;
     float tempoSync3Default = 0;
     
     //lfo sync buttons
@@ -224,6 +223,131 @@ private:
     
     String phase180Id = "phase180", phase180Name = "LFO2 phase shift 180", phase180LabelText = phase180Name;
     float phase180Default = 0;
+    
+    
+    //TEXT TO VALUE AND VALUE TO TEXT FUNCS
+    
+    String lfoTFreqToText (float value)
+    {
+        int index = roundToInt (value) * -1;
+        switch (index)
+        {
+            case Tempo::eight1:
+                return "8 / 1";
+                break;
+                
+            case Tempo::four1:
+                return ("4 / 1");
+                break;
+                
+            case Tempo::two1:
+                return ("2 / 1");
+                break;
+                
+            case Tempo::one1:
+                return ("1 / 1");
+                break;
+                
+            case Tempo::one2:
+                return ("1 / 2");
+                break;
+                
+            case Tempo::one4:
+                return ("1 / 4");
+                break;
+                
+            case Tempo::one8:
+                return ("1 / 8");
+                break;
+                
+            case Tempo::one16:
+                return ("1 / 16");
+                break;
+                
+            case Tempo::one32:
+                return ("1 / 32");
+                break;
+                
+            case Tempo::one64:
+                return ("1 / 64");
+                break;
+                
+            default:
+                return "";
+                break;
+        }
+    }
+    
+    float textToLfoTFreq (String string)
+    {
+        String s = string.getLastCharacters (3);
+        int denum = s.getIntValue();
+        if (denum == 0)
+        {
+            s = string.getLastCharacters (2);
+            denum = s.getIntValue();
+            if (denum == 0)
+            {
+                s = string.getLastCharacters (1);
+                denum = s.getIntValue();
+            }
+        }
+        denum = Utility::magnitude (denum);
+        
+        if (denum == 0)
+            return -4;
+        
+        if (denum != 1)
+        {
+            if (denum < 3)
+                return -6;
+            else if (denum < 6)
+                return -5;
+            else if (denum < 12)
+                return -4;
+            else if (denum < 24)
+                return -3;
+            else if (denum < 48)
+                return -2;
+            else
+                return -1;
+        }
+        else
+        {
+            int num = Utility::magnitude (string.getIntValue());
+            
+            if (num > 6)
+                num = 8;
+            else if (num >= 3)
+                num = 4;
+            else if (num <= 1)
+                num = 1;
+            else
+                num = 2;
+            
+            switch (num)
+            {
+                case 1:
+                    return -7;
+                    break;
+                    
+                case 2:
+                    return -8;
+                    break;
+                    
+                case 4:
+                    return -9;
+                    break;
+                    
+                case 8:
+                    return -10;
+                    break;
+                    
+                default:
+                    break;
+            }
+        }
+    }
     //==============================================================================
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (Vibrato2AudioProcessor)
 };

@@ -39,28 +39,15 @@ public:
         
         Utility::addSlider (&tempo1Slider, &tempo1Label, "Voice 1 LFO", -10, -1, 1, -5,
                             "", Slider::SliderStyle::LinearHorizontal,
-                            Slider::TextEntryBoxPosition::NoTextBox, -9, this, this, false);
+                            Slider::TextEntryBoxPosition::TextBoxBelow, -9, this, this, false);
         
         Utility::addSlider (&tempo2Slider, &tempo2Label, "Voice 2 LFO", -10, -1, 1, -5,
                             "", Slider::SliderStyle::LinearHorizontal,
-                            Slider::TextEntryBoxPosition::NoTextBox, -9, this, this, false);
+                            Slider::TextEntryBoxPosition::TextBoxBelow, -9, this, this, false);
         
         Utility::addSlider (&tempo3Slider, &tempo3Label, "Feedback LFO", -10, -1, 1, -5,
                             "", Slider::SliderStyle::LinearHorizontal,
-                            Slider::TextEntryBoxPosition::NoTextBox, -4, this, this, false);
-        
-        tempo1TextBox.setText ("4 / 1");
-        tempo2TextBox.setText ("4 / 1");
-        tempo3TextBox.setText ("1 / 8");
-        tempo1TextBox.setReadOnly (true);
-        tempo2TextBox.setReadOnly (true);
-        tempo3TextBox.setReadOnly (true);
-        tempo1TextBox.setJustification (Justification::centred);
-        tempo2TextBox.setJustification (Justification::centred);
-        tempo3TextBox.setJustification (Justification::centred);
-        addChildComponent (tempo1TextBox);
-        addChildComponent (tempo2TextBox);
-        addChildComponent (tempo3TextBox);
+                            Slider::TextEntryBoxPosition::TextBoxBelow, -4, this, this, false);
         
         Utility::addTextButton (&triplet1Button, "T", false, true, true, this, this);
         Utility::addTextButton (&triplet2Button, "T", false, true, true, this, this);
@@ -133,15 +120,17 @@ public:
         phase0.setClickingTogglesState (true);
         phase90.setClickingTogglesState (true);
         phase180.setClickingTogglesState (true);
-        addChildComponent (phase0);
-        addChildComponent (phase90);
-        addChildComponent (phase180);
+        phase90.setToggleState (false, dontSendNotification);
+        phase180.setToggleState (false, dontSendNotification);
+        phase0.setToggleState (true, sendNotification);
+        addAndMakeVisible (phase0);
+        addAndMakeVisible (phase90);
+        addAndMakeVisible (phase180);
         
         setAllButtonsLookAndFeel (&myLookAndFeel);
         
         Utility::setSliderEnabled (&freq3Slider, &freq3Label, false);
         Utility::setSliderEnabled (&tempo3Slider, &tempo3Label, false);
-        tempo3TextBox.setEnabled (false);
         triplet3Button.setEnabled (false);
         dotted3Button.setEnabled (false);
         
@@ -269,77 +258,41 @@ public:
         
         if (slider == &freq1Slider)
         {
-            proc.setFreq1 (value);
+            ParameterControl::setFreq1 (p, value);
             freq1 = value;
-            
-            if (synced2to1)
-            {
-                freq2Slider.setValue (value);
-                if (syncedAll)
-                    freq3Slider.setValue (value);
-            }
         }
         
         else if (slider == &freq2Slider)
         {
-            proc.setFreq2 (value);
-            freq2 = value;
-            
-            if (synced2to1)
-            {
-                freq1Slider.setValue (value);
-                if (syncedAll)
-                    proc.setFreq3 (value);
-            }
+            ParameterControl::setFreq2 (p, value);
+            if (!synced2to1)
+                freq2 = value;
         }
         
         else if (slider == &freq3Slider)
         {
-            proc.setFreq3 (value);
-            freq3 = value;
-            
-            if (syncedAll)
-                freq1Slider.setValue (value);
+            ParameterControl::setFreq3 (p, value);
+            if (!syncedAll)
+                freq3 = value;
         }
         
         else if (slider == &tempo1Slider)
         {
+            freq1 = ParameterControl::setTFreq1 (p, value);
             if (synced2to1)
             {
-                tempo2Slider.setValue (value);
+                freq2 = freq1;
                 if (syncedAll)
-                    tempo3Slider.setValue (value);
+                    freq3 = freq1;
             }
-            double bpm = proc.getCurrentBpm();
-            freq1 = Utility::tempoToHz ((int)floor(-value), bpm);
-            proc.setFreq1 (freq1 * tmi1);
-            
-            setTempoTextBoxText (tempo1TextBox, (int)floor(-value));
         }
         else if (slider == &tempo2Slider)
         {
-            if (synced2to1)
-            {
-                tempo1Slider.setValue (value);
-                if (syncedAll)
-                    tempo3Slider.setValue (value);
-            }
-            double bpm = proc.getCurrentBpm();
-            freq2 = Utility::tempoToHz ((int)floor(-value), bpm);
-            proc.setFreq2 (freq2 * tmi2);
-            
-            setTempoTextBoxText (tempo2TextBox, (int)floor(-value));
+            freq2 = ParameterControl::setTFreq1 (p, value);
         }
         else if (slider == &tempo3Slider)
         {
-            if (syncedAll)
-                tempo1Slider.setValue (value);
-            
-            double bpm = proc.getCurrentBpm();
-            freq3 = Utility::tempoToHz ((int)floor(-value), bpm);
-            proc.setFreq3 (freq3 * tmi3);
-            
-            setTempoTextBoxText (tempo3TextBox, (int)floor(-value));
+            freq3 = ParameterControl::setTFreq1 (p, value);
         }
     }
     
@@ -352,22 +305,20 @@ public:
             if (isOn)
             {
                 button->setButtonText ("ON");
-                proc.setLfo1on (true);
+                ParameterControl::setLfo1on (p, 1);
                 Utility::setSliderEnabled (&freq1Slider, &freq1Label, true);
                 Utility::setSliderEnabled (&tempo1Slider, &tempo1Label, true);
                 triplet1Button.setEnabled (true);
                 dotted1Button.setEnabled (true);
-                tempo1TextBox.setEnabled (true);
             }
             else
             {
                 button->setButtonText ("OFF");
-                proc.setLfo1on (false);
+                ParameterControl::setLfo1on (p, 0);
                 Utility::setSliderEnabled (&freq1Slider, &freq1Label, false);
                 Utility::setSliderEnabled (&tempo1Slider, &tempo1Label, false);
                 triplet1Button.setEnabled (false);
                 dotted1Button.setEnabled (false);
-                tempo1TextBox.setEnabled (false);
             }
         }
         else if (button == &lfo2onButton)
@@ -375,22 +326,20 @@ public:
             if (isOn)
             {
                 button->setButtonText ("ON");
-                proc.setLfo2on (true);
+                ParameterControl::setLfo2on (p, 1);
                 Utility::setSliderEnabled (&freq2Slider, &freq2Label, true);
                 Utility::setSliderEnabled (&tempo2Slider, &tempo2Label, true);
                 triplet2Button.setEnabled (true);
                 dotted2Button.setEnabled (true);
-                tempo2TextBox.setEnabled (true);
             }
             else
             {
                 button->setButtonText ("OFF");
-                proc.setLfo2on (false);
+                ParameterControl::setLfo2on (p, 0);
                 Utility::setSliderEnabled (&freq2Slider, &freq2Label, false);
                 Utility::setSliderEnabled (&tempo2Slider, &tempo2Label, false);
                 triplet2Button.setEnabled (false);
                 dotted2Button.setEnabled (false);
-                tempo2TextBox.setEnabled (false);
             }
         }
         else if (button == &lfo3onButton)
@@ -398,25 +347,23 @@ public:
             if (isOn)
             {
                 button->setButtonText ("ON");
-                proc.setLfo3on (true);
+                ParameterControl::setLfo3on (p, 1);
                 Utility::setSliderEnabled (&freq3Slider, &freq3Label, true);
                 Utility::setSliderEnabled (&tempo3Slider, &tempo3Label, true);
                 triplet3Button.setEnabled (true);
                 dotted3Button.setEnabled (true);
-                tempo3TextBox.setEnabled (true);
                 
                 effectEditor.setLfo3AmpMode (true);
             }
             else
             {
                 button->setButtonText ("OFF");
-                proc.setLfo3on (false);
+                ParameterControl::setLfo3on (p, 0);
                 proc.setFeedbackGain (effectEditor.feedbackSlider.getValue() / 100.0);
                 Utility::setSliderEnabled (&freq3Slider, &freq3Label, false);
                 Utility::setSliderEnabled (&tempo3Slider, &tempo3Label, false);
                 triplet3Button.setEnabled (false);
                 dotted3Button.setEnabled (false);
-                tempo3TextBox.setEnabled (false);
                 
                 effectEditor.setLfo3AmpMode (false);
                 
@@ -428,36 +375,16 @@ public:
             if (isOn)
             {
                 synced2to1 = true;
-                if (tempoSync1)
-                {
-                    tempoSync2Button.setToggleState (true, sendNotification);
-                    tempo2Slider.setValue (tempo1Slider.getValue());
-                    
-                    bool triplet = triplet1Button.getToggleState();
-                    bool dotted = dotted1Button.getToggleState();
-                    triplet2Button.setToggleState (triplet, sendNotification);
-                    dotted2Button.setToggleState (dotted, sendNotification);
-                }
-                else
-                {
-                    tempoSync2Button.setToggleState (false, sendNotification);
-                    freq2Slider.setValue (freq1Slider.getValue());
-                }
-                
-                phase0.setVisible (true);
-                phase90.setVisible (true);
-                phase180.setVisible (true);
-                phase0.setToggleState (true, dontSendNotification);
-                tempoSync2Button.setToggleState (tempoSync1, sendNotification);
+                freq2Label.setText ("Synced with LFO1", dontSendNotification);
+                freq2Slider.setEnabled (false);
             }
             else
             {
                 synced2to1 = false;
-                syncedAll = false;
-                phase0.setVisible (false);
-                phase90.setVisible (false);
-                phase180.setVisible (false);
-                proc.setPhaseShift (Proc::PhaseShift::deg0);
+                freq2Label.setText ("Voice 2 LFO", dontSendNotification);
+                if (lfo2onButton.getToggleState())
+                    freq2Slider.setEnabled (true);
+                    
                 syncAllButton.setToggleState (false, sendNotification);
             }
         }
@@ -466,37 +393,20 @@ public:
             if (isOn)
             {
                 syncedAll = true;
-                if (tempoSync1)
-                {
-                    tempoSync2Button.setToggleState (true, sendNotification);
-                    tempoSync3Button.setToggleState (true, sendNotification);
-                    
-                    bool triplet = triplet1Button.getToggleState();
-                    bool dotted = dotted1Button.getToggleState();
-                    triplet2Button.setToggleState (triplet, sendNotification);
-                    triplet3Button.setToggleState (triplet, sendNotification);
-                    dotted2Button.setToggleState (dotted, sendNotification);
-                    dotted3Button.setToggleState (dotted, sendNotification);
-                    
-                    double value = tempo1Slider.getValue();
-                    tempo2Slider.setValue (value);
-                    tempo3Slider.setValue (value);
-                }
-                else
-                {
-                    tempoSync2Button.setToggleState (false, sendNotification);
-                    tempoSync3Button.setToggleState (false, sendNotification);
-                    
-                    double value = freq1Slider.getValue();
-                    freq3Slider.setValue (value);
-                    freq2Slider.setValue (value);
-                }
-                sync2to1Button.setToggleState (true, sendNotification);
-                tempoSync3Button.setToggleState (tempoSync1, sendNotification);
+                
+                freq2Label.setText ("Synced with LFO1", dontSendNotification);
+                freq2Slider.setEnabled (false);
+                
+                freq3Label.setText ("Synced with LFO1", dontSendNotification);
+                freq3Slider.setEnabled (false);
             }
             else
             {
                 syncedAll = false;
+                
+                freq3Label.setText ("Voice 3 LFO", dontSendNotification);
+                if (lfo3onButton.getToggleState())
+                    freq3Slider.setEnabled (true);
             }
         }
         else if (button == &tempoSync1Button)
@@ -507,7 +417,6 @@ public:
 
                 freq1Slider.setVisible (false);
                 tempo1Slider.setVisible (true);
-                tempo1TextBox.setVisible (true);
                 triplet1Button.setVisible (true);
                 dotted1Button.setVisible (true);
                 
@@ -531,7 +440,6 @@ public:
                 
                 freq1Slider.setVisible (true);
                 tempo1Slider.setVisible (false);
-                tempo1TextBox.setVisible (false);
                 triplet1Button.setVisible (false);
                 dotted1Button.setVisible (false);
                 
@@ -551,7 +459,6 @@ public:
                 
                 freq2Slider.setVisible (false);
                 tempo2Slider.setVisible (true);
-                tempo2TextBox.setVisible (true);
                 triplet2Button.setVisible (true);
                 dotted2Button.setVisible (true);
                 
@@ -576,7 +483,6 @@ public:
                 
                 freq2Slider.setVisible (true);
                 tempo2Slider.setVisible (false);
-                tempo2TextBox.setVisible (false);
                 triplet2Button.setVisible (false);
                 dotted2Button.setVisible (false);
                 
@@ -596,7 +502,6 @@ public:
                 
                 freq3Slider.setVisible (false);
                 tempo3Slider.setVisible (true);
-                tempo3TextBox.setVisible (true);
                 triplet3Button.setVisible (true);
                 dotted3Button.setVisible (true);
                 
@@ -612,7 +517,6 @@ public:
                 
                 freq3Slider.setVisible (true);
                 tempo3Slider.setVisible (false);
-                tempo3TextBox.setVisible (false);
                 triplet3Button.setVisible (false);
                 dotted3Button.setVisible (false);
                 
@@ -845,55 +749,6 @@ public:
             }
         }
     }
-    
-    void setTempoTextBoxText (TextEditor& textBox, int tempoIndex)
-    {
-        switch (tempoIndex)
-        {
-            case Tempo::eight1:
-                textBox.setText ("8 / 1");
-                break;
-                
-            case Tempo::four1:
-                textBox.setText ("4 / 1");
-                break;
-                
-            case Tempo::two1:
-                textBox.setText ("2 / 1");
-                break;
-                
-            case Tempo::one1:
-                textBox.setText ("1 / 1");
-                break;
-                
-            case Tempo::one2:
-                textBox.setText ("1 / 2");
-                break;
-                
-            case Tempo::one4:
-                textBox.setText ("1 / 4");
-                break;
-                
-            case Tempo::one8:
-                textBox.setText ("1 / 8");
-                break;
-                
-            case Tempo::one16:
-                textBox.setText ("1 / 16");
-                break;
-                
-            case Tempo::one32:
-                textBox.setText ("1 / 32");
-                break;
-                
-            case Tempo::one64:
-                textBox.setText ("1 / 64");
-                break;
-                
-            default:
-                break;
-        }
-    }
 //================================================================================================
     void setAllButtonsLookAndFeel (LookAndFeel* newLookAndFeel)
     {
@@ -955,10 +810,6 @@ public:
         tempo2Slider.setBounds (cell2x, row1y - 10, 100, 50);
         tempo3Slider.setBounds (cell3x, row1y - 10, 100, 50);
         
-        tempo1TextBox.setBounds (cell1x + 25, row1y + 40, 50, 25);
-        tempo2TextBox.setBounds (cell2x + 25, row1y + 40, 50, 25);
-        tempo3TextBox.setBounds (cell3x + 25, row1y + 40, 50, 25);
-        
         triplet1Button.setBounds (cell1x, row1y + 75, 40, 25);
         dotted1Button.setBounds (cell1x + 60, row1y + 75, 40, 25);
         
@@ -1005,7 +856,6 @@ private:
     Slider tempo3Slider;
     Label tempo3Label;
     
-    TextEditor tempo1TextBox, tempo2TextBox, tempo3TextBox;
     TextButton triplet1Button, triplet2Button, triplet3Button;
     TextButton dotted1Button, dotted2Button, dotted3Button;
     

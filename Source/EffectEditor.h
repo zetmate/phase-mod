@@ -57,7 +57,7 @@ public:
         
         //======================================================================================
         //                                  MASTER EDITOR
-        Utility::addSlider (&inputGainSlider, &inputGainLabel, "MASTER", -24, 16, 0.1, 0,
+        Utility::addSlider (&inputGainSlider, &inputGainLabel, "INPUT GAIN", -24, 16, 0.1, 0,
                             "dB", Slider::SliderStyle::RotaryVerticalDrag,
                             Slider::TextEntryBoxPosition::TextBoxBelow, 0, this, this, true);
         
@@ -128,54 +128,34 @@ public:
     //===================================================================================
     void sliderValueChanged (Slider* slider) override
     {
-        double value = slider->getValue();
+        const double value = slider->getValue();
         
         if (slider == &depthSlider)
-        {
-            proc.setDepth (value / 100.0);
-        }
+            ParameterControl::setDepth (p, value);
+        
         else if (slider == &delaySlider)
-        {
-            proc.setMaxDelayTime (value);
-        }
+            ParameterControl::setDelay (p, value);
+        
         else if (slider == &feedbackSlider)
-        {
-            if (doubleFeedback)
-            {
-            }
-            else
-            {
-               proc.setFeedbackGain (value / 100.0);
-            }
-        }
+            ParameterControl::setFeedback (p, value);
+        
         else if (slider == &lfo3AmpSlider)
-        {
-            proc.setLfo3Amp (value / 100.0);
-        }
+            ParameterControl::setLfo3Amp (p, value);
+        
         //=====================================
         //MASTER
         else if (slider == &dryWetSlider)
-        {
-            proc.setDryWet (value / 100.0);
-        }
+            ParameterControl::setMix (p, value);
+        
         else if (slider == &inputGainSlider)
-        {
-            proc.setInputGain (Utility::fromDb (value));
-        }
+            ParameterControl::setMaster (p, value);
+        
         else if (slider == &voice1MixSlider)
-        {
-            if (processingTypeButton.getToggleState())
-                proc.setGain1 (value / 100.0);
-            else
-                proc.setVoice1Mix (value / 100.0);
-        }
+            ParameterControl::setVoice1Mix (p, value);
+        
         else if (slider == &voice2MixSlider)
-        {
-            if (processingTypeButton.getToggleState())
-                proc.setGain2 (value / 100.0);
-            else
-                proc.setVoice2Mix (value / 100.0);
-        }
+            ParameterControl::setVoice2Mix (p, value);
+        
     }
     
     void buttonClicked (Button* button) override
@@ -187,77 +167,43 @@ public:
             if (isOn)
             {
                 button->setButtonText ("separate processing");
-                proc.setSeparateProcessing();
-                
-                //set feedback ranges
-                feedbackSlider.setRange (-99, 99, 1);
-                lfo3AmpSlider.setRange (-99, 99, 1);
+                ParameterControl::setProcType (p, 1);
+//                //set feedback ranges
+//                feedbackSlider.setRange (-99, 99, 1);
+//                lfo3AmpSlider.setRange (-99, 99, 1);
                 
                 //set appropriate feedback value
-                double cascadeFbValue = feedbackCascadeRange.convertTo0to1 (feedbackSlider.getValue());
-                double separateFbValue = feedbackSeparateRange.convertFrom0to1 (cascadeFbValue);
-                feedbackSlider.setValue (separateFbValue);
+//                double cascadeFbValue = feedbackCascadeRange.convertTo0to1 (feedbackSlider.getValue());
+//                double separateFbValue = feedbackSeparateRange.convertFrom0to1 (cascadeFbValue);
+//                feedbackSlider.setValue (separateFbValue);
                 
                 //enable double feedback
                 feedbackTypeButton.setEnabled (true);
                 
-                //update voice gain sliders' values
-                proc.setGain1 (voice1MixSlider.getValue() / 100.0);
-                proc.setGain2 (voice2MixSlider.getValue() / 100.0);
-                
                 //set dry wet of voices to 100%
-                proc.setVoice1Mix (1.0);
-                proc.setVoice2Mix (1.0);
+//                proc.setVoice1Mix (1.0);
+//                proc.setVoice2Mix (1.0);
             }
             else
             {
                 button->setButtonText ("cascade processing");
-                proc.setCascadeProcessing();
-                
-                //set feedback ranges
-                feedbackSlider.setRange (-65, 65, 1);
-                lfo3AmpSlider.setRange (-65, 65, 1);
-                
-                //set aproptiate feedback value
-                double separateFbValue = feedbackSeparateRange.convertTo0to1 (feedbackSlider.getValue());
-                double cascadeFbValue = feedbackCascadeRange.convertFrom0to1 (separateFbValue);
-                feedbackSlider.setValue (cascadeFbValue);
-                
-                //disable double feedback
-                feedbackTypeButton.setToggleState (false, sendNotification);
+                ParameterControl::setProcType (p, 0);
                 feedbackTypeButton.setEnabled (false);
-                
-                //update voice mix sliders' values
-                double value1 = voice1MixSlider.getValue();
-                double value2 = voice2MixSlider.getValue();
-                proc.setVoice1Mix (value1 / 100.0);
-                proc.setVoice2Mix (value2 / 100.0);
             }
         }
         else if (button == &feedbackTypeButton)
         {
             if (isOn)
             {
-                float currentFbGain = feedbackSlider.getValue() / 100.0;
-                if (currentFbGain > 0)
-                {
-                    proc.setFeedbackGain (0.7);
-                    proc.setPrevSampleGain (0.25);
-                }
-                else
-                {
-                    proc.setFeedbackGain (-0.7);
-                    proc.setPrevSampleGain (-0.25);
-                }
+                ParameterControl::setFbType (p, 1);
                 Utility::setSliderEnabled (&feedbackSlider, &feedbackLabel, false);
                 feedbackTypeButton.setButtonText ("double feedback");
                 doubleFeedback = true;
             }
             else
             {
+                ParameterControl::setFbType (p, 0);
                 Utility::setSliderEnabled (&feedbackSlider, &feedbackLabel, true);
-                proc.setPrevSampleGain (0);
-                proc.setFeedbackGain (feedbackSlider.getValue() / 100.0);
                 feedbackTypeButton.setButtonText ("single feedback");
                 doubleFeedback = false;
             }
