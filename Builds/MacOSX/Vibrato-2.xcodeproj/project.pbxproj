@@ -67,14 +67,14 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
-		FAAF0A1220DAD2B0005655F4 /* PBXContainerItemProxy */ = {
+		FA1B947820DE817100A5357A /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 6031AEDCD22E2DE8C1CAD8A1 /* Project object */;
 			proxyType = 1;
 			remoteGlobalIDString = 19074B42764B91E46E22A660;
 			remoteInfo = "Vibrato-2 - AU";
 		};
-		FAAF0A1320DAD2B0005655F4 /* PBXContainerItemProxy */ = {
+		FA1B947920DE817100A5357A /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 6031AEDCD22E2DE8C1CAD8A1 /* Project object */;
 			proxyType = 1;
@@ -262,10 +262,10 @@
 				10AA896B227DE9B52751949C /* Utility.h */,
 				ABD058E52F2AD00C2550B1D9 /* Tempo.h */,
 				100CADA499D0119D846EDC28 /* ParameterControl.h */,
-				EE1CE7DFF1CA469571B15F01 /* EffectEditor.h */,
-				EFD32AE8798835BBBF5AEF13 /* ModEditor.h */,
 				2163E81B33FC139F0921E51A /* PluginEditor.cpp */,
 				1BB0F5213D22C857A72BC86F /* PluginEditor.h */,
+				EE1CE7DFF1CA469571B15F01 /* EffectEditor.h */,
+				EFD32AE8798835BBBF5AEF13 /* ModEditor.h */,
 				475430036726660B0A7CE2D7 /* MasterEditor.h */,
 				9DBB39B472CFD594C97D0727 /* MyLookAndFeel.h */,
 			);
@@ -520,12 +520,12 @@
 		237DE2A88B7438A16477C89F /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 93F84B065BF6ADF9FD3FC842 /* Vibrato-2 - Shared Code */;
-			targetProxy = FAAF0A1320DAD2B0005655F4 /* PBXContainerItemProxy */;
+			targetProxy = FA1B947920DE817100A5357A /* PBXContainerItemProxy */;
 		};
 		9550D4BC1BEF0196D5159181 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 19074B42764B91E46E22A660 /* Vibrato-2 - AU */;
-			targetProxy = FAAF0A1220DAD2B0005655F4 /* PBXContainerItemProxy */;
+			targetProxy = FA1B947820DE817100A5357A /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -568,6 +568,7 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				PRODUCT_NAME = Whalor;
+				VALID_ARCHS = x86_64;
 				WARNING_CFLAGS = "-Wreorder";
 				ZERO_LINK = NO;
 			};
@@ -576,7 +577,7 @@
 		01FF97E09F3CF5EFD62DD578 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
+				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
 				CLANG_CXX_LANGUAGE_STANDARD = "c++14";
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_LINK_OBJC_RUNTIME = NO;
@@ -591,8 +592,8 @@
 					"_NDEBUG=1",
 					"NDEBUG=1",
 					"JUCER_XCODE_MAC_F6D2F4CF=1",
-					"JUCE_APP_VERSION=0.1",
-					"JUCE_APP_VERSION_HEX=0x100",
+					"JUCE_APP_VERSION=0.3.1",
+					"JUCE_APP_VERSION_HEX=0x301",
 					"JucePlugin_Build_VST=0",
 					"JucePlugin_Build_VST3=0",
 					"JucePlugin_Build_AU=1",
@@ -653,8 +654,8 @@
 					"_DEBUG=1",
 					"DEBUG=1",
 					"JUCER_XCODE_MAC_F6D2F4CF=1",
-					"JUCE_APP_VERSION=0.1",
-					"JUCE_APP_VERSION_HEX=0x100",
+					"JUCE_APP_VERSION=0.3.1",
+					"JUCE_APP_VERSION_HEX=0x301",
 					"JucePlugin_Build_VST=0",
 					"JucePlugin_Build_VST3=0",
 					"JucePlugin_Build_AU=1",
@@ -698,8 +699,8 @@
 					"_DEBUG=1",
 					"DEBUG=1",
 					"JUCER_XCODE_MAC_F6D2F4CF=1",
-					"JUCE_APP_VERSION=0.1",
-					"JUCE_APP_VERSION_HEX=0x100",
+					"JUCE_APP_VERSION=0.3.1",
+					"JUCE_APP_VERSION_HEX=0x301",
 					"JucePlugin_Build_VST=0",
 					"JucePlugin_Build_VST3=0",
 					"JucePlugin_Build_AU=1",
@@ -738,7 +739,7 @@
 		D7C588A6090D1A39002AA666 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
+				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
 				CLANG_CXX_LANGUAGE_STANDARD = "c++14";
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_LINK_OBJC_RUNTIME = NO;
@@ -751,8 +752,8 @@
 					"_NDEBUG=1",
 					"NDEBUG=1",
 					"JUCER_XCODE_MAC_F6D2F4CF=1",
-					"JUCE_APP_VERSION=0.1",
-					"JUCE_APP_VERSION_HEX=0x100",
+					"JUCE_APP_VERSION=0.3.1",
+					"JUCE_APP_VERSION_HEX=0x301",
 					"JucePlugin_Build_VST=0",
 					"JucePlugin_Build_VST3=0",
 					"JucePlugin_Build_AU=1",
@@ -825,6 +826,7 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				PRODUCT_NAME = Whalor;
+				VALID_ARCHS = x86_64;
 				WARNING_CFLAGS = "-Wreorder";
 				ZERO_LINK = NO;
 			};

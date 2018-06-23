@@ -7,7 +7,7 @@
               pluginManufacturerCode="Frau" pluginCode="Whlr" aaxIdentifier="com.freakaudio.whalor"
               pluginAUExportPrefix="WhalorAU" pluginVSTCategory="kPlugCategEffect"
               pluginVST3Category="Modulation" pluginRTASCategory="32" pluginAAXCategory="32"
-              version="0.1" companyName="Freak Audio" bundleIdentifier="com.freakaudio.oceanscape">
+              version="0.3.1" companyName="Freak Audio" bundleIdentifier="com.freakaudio.oceanscape">
   <MAINGROUP id="tWmXHB" name="Vibrato-2">
     <GROUP id="{34B66B48-FA1C-EDCA-2DD6-03316E3E6503}" name="Source">
       <FILE id="QVxRk1" name="PluginProcessor.cpp" compile="1" resource="0"
@@ -42,7 +42,7 @@
         <CONFIGURATION isDebug="1" name="Debug" osxSDK="10.13 SDK" osxCompatibility="10.7 SDK"
                        targetName="Whalor"/>
         <CONFIGURATION isDebug="0" name="Release" osxCompatibility="10.7 SDK" osxSDK="10.13 SDK"
-                       osxArchitecture="64BitIntel" targetName="Whalor"/>
+                       osxArchitecture="64BitUniversal" targetName="Whalor"/>
       </CONFIGURATIONS>
       <MODULEPATHS>
         <MODULEPATH id="juce_core" path="../../../../JUCE/modules"/>

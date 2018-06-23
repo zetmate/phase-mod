@@ -392,7 +392,8 @@ public:
         {
             p.proc.setLfo3on (false);
             bool doublefb = getBoolFromParameter (p, p.fbTypeId);
-            if (doublefb)
+            bool sepProc = getBoolFromParameter (p, p.procTypeId);
+            if (doublefb && sepProc)
             {
                 float fb = getParameterValue (p, p.feedbackId);
                 if (fb > 0)
