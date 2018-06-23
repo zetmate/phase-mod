@@ -39,15 +39,15 @@ public:
         
         Utility::addSlider (&tempo1Slider, &tempo1Label, "Voice 1 LFO", -10, -1, 1, -5,
                             "", Slider::SliderStyle::LinearHorizontal,
-                            Slider::TextEntryBoxPosition::TextBoxBelow, -9, this, this, false);
+                            Slider::TextEntryBoxPosition::TextBoxBelow, -8, this, this, false);
         
         Utility::addSlider (&tempo2Slider, &tempo2Label, "Voice 2 LFO", -10, -1, 1, -5,
                             "", Slider::SliderStyle::LinearHorizontal,
-                            Slider::TextEntryBoxPosition::TextBoxBelow, -9, this, this, false);
+                            Slider::TextEntryBoxPosition::TextBoxBelow, -8, this, this, false);
         
         Utility::addSlider (&tempo3Slider, &tempo3Label, "Feedback LFO", -10, -1, 1, -5,
                             "", Slider::SliderStyle::LinearHorizontal,
-                            Slider::TextEntryBoxPosition::TextBoxBelow, -4, this, this, false);
+                            Slider::TextEntryBoxPosition::TextBoxBelow, -3, this, this, false);
         
         //mod 1
         mod1ShapeMenu.addItem ("sin", 1);
@@ -109,7 +109,7 @@ public:
         note3TypeMenu.addListener (this);
         note3TypeMenu.setJustificationType (Justification::centred);
         note3TypeMenu.setSelectedId (1);
-        addChildComponent (note2TypeMenu);
+        addChildComponent (note3TypeMenu);
         
         Utility::addTextButton (&tempoSync1Button, "TEMPO SYNC", false, true, true, this, this);
         Utility::addTextButton (&tempoSync2Button, "TEMPO SYNC", false, true, true, this, this);
@@ -123,6 +123,10 @@ public:
         setAllButtonsLookAndFeel (&myLookAndFeel);
         
         note3TypeMenu.setEnabled (false);
+        
+        tempo1Slider.updateText();
+        tempo2Slider.updateText();
+        tempo3Slider.updateText();
         
         Utility::setSliderEnabled (&freq3Slider, &freq3Label, false);
         Utility::setSliderEnabled (&tempo3Slider, &tempo3Label, false);
@@ -233,11 +237,11 @@ public:
         }
         else if (slider == &tempo2Slider)
         {
-            ParameterControl::setTFreq1 (p, value);
+            ParameterControl::setTFreq2 (p, value);
         }
         else if (slider == &tempo3Slider)
         {
-            ParameterControl::setTFreq1 (p, value);
+            ParameterControl::setTFreq3 (p, value);
         }
     }
     
@@ -360,7 +364,7 @@ public:
             else
             {
                 tempoSync3 = false;
-                ParameterControl::setTempoSync1 (p, 0);
+                ParameterControl::setTempoSync3 (p, 0);
                 freq3Slider.setVisible (true);
                 tempo3Slider.setVisible (false);
                 note3TypeMenu.setVisible (false);

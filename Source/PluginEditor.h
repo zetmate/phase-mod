@@ -34,7 +34,7 @@ private:
     int editorWidth = 400;
     int masterEditorWidth = 150;
     int effectEditorHeight = 250;
-    int modEditorHeight = 310;
+    int modEditorHeight = 310 + 50;
     
     MasterEditor masterEditor;
     EffectEditor effectEditor;

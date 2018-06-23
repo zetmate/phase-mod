@@ -65,6 +65,7 @@ private:
     //some gui related stuff
     AudioProcessorValueTreeState parameters;
     UndoManager undoManager;
+    bool editorCreated = false;
     
     //Ranges
     NormalisableRange<float>    depthRange,
@@ -109,7 +110,7 @@ private:
     float feedbackDefault = -70;
     
     String fbLfoAmpId = "fbLfoAmp", fbLfoAmpName = "Feedback LFO Depth", fbLfoAmpLabelText = fbLfoAmpName;
-    float fbLfoAmpDefault = 80;
+    float fbLfoAmpDefault = 99;
     
     String procTypeId = "procType", procTypeName = "Processing Type", procTypeLabelText = procTypeName;
     float procTypeDefault = 1;
@@ -311,6 +312,7 @@ private:
                     break;
                     
                 default:
+                    return -10;
                     break;
             }
         }

@@ -68,8 +68,8 @@ public:
         prevSampleGainRamp.setTime (5, sampleRate);
         minDelayRamp.setTime (250, sampleRate);
         maxDelayRamp.setTime (250, sampleRate);
-        lfoFreqRamp_delay.setTime (70, sampleRate);
-        lfoFreqRamp_feedback.setTime (70, sampleRate);
+        lfoFreqRamp_delay.setTime (250, sampleRate);
+        lfoFreqRamp_feedback.setTime (250, sampleRate);
         currentDelayRamp.setTime (15, sampleRate);
         lfoAmpRamp_feedback.setTime (5, sampleRate);
         

@@ -191,7 +191,7 @@ Vibrato2AudioProcessor::Vibrato2AudioProcessor()  : parameters (*this, &undoMana
     parameters.addParameterListener (tempoSync3Id, this);
     
     
-    parameters.state = ValueTree (Identifier ("Whalor"));
+    parameters.state = ValueTree (Identifier ("Default"));
 }
 
 Vibrato2AudioProcessor::~Vibrato2AudioProcessor()
@@ -269,7 +269,6 @@ void Vibrato2AudioProcessor::prepareToPlay (double sampleRate, int samplesPerBlo
         proc.setToMono();
     
     proc.prepare (sampleRate, samplesPerBlock);
-    //proc.setFeedbackGain (*feedbackParameter);
 }
 
 void Vibrato2AudioProcessor::releaseResources()
@@ -323,15 +322,17 @@ bool Vibrato2AudioProcessor::hasEditor() const
 
 AudioProcessorEditor* Vibrato2AudioProcessor::createEditor()
 {
+    editorCreated = true;
     return new Vibrato2AudioProcessorEditor (*this);
 }
 
 //==============================================================================
 void Vibrato2AudioProcessor::parameterChanged (const String& parameterID, float newValue)
 {
-    if (getActiveEditor() == nullptr)
+    if (getActiveEditor() == nullptr && editorCreated)
     {
-        ParameterControl::updateParameter (*this, parameterID, newValue);
+        String parameter = parameterID;
+        ParameterControl::updateParameter (*this, parameter, newValue);
     }
 }
 
