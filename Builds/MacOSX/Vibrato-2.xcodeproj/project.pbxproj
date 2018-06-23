@@ -67,14 +67,14 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
-		FA1B947A20DE8D1E00A5357A /* PBXContainerItemProxy */ = {
+		FA3AE01C20DEE8BE007F3318 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 6031AEDCD22E2DE8C1CAD8A1 /* Project object */;
 			proxyType = 1;
 			remoteGlobalIDString = 19074B42764B91E46E22A660;
 			remoteInfo = "Vibrato-2 - AU";
 		};
-		FA1B947B20DE8D1E00A5357A /* PBXContainerItemProxy */ = {
+		FA3AE01D20DEE8BE007F3318 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 6031AEDCD22E2DE8C1CAD8A1 /* Project object */;
 			proxyType = 1;
@@ -520,12 +520,12 @@
 		237DE2A88B7438A16477C89F /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 93F84B065BF6ADF9FD3FC842 /* Vibrato-2 - Shared Code */;
-			targetProxy = FA1B947B20DE8D1E00A5357A /* PBXContainerItemProxy */;
+			targetProxy = FA3AE01D20DEE8BE007F3318 /* PBXContainerItemProxy */;
 		};
 		9550D4BC1BEF0196D5159181 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 19074B42764B91E46E22A660 /* Vibrato-2 - AU */;
-			targetProxy = FA1B947A20DE8D1E00A5357A /* PBXContainerItemProxy */;
+			targetProxy = FA3AE01C20DEE8BE007F3318 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 

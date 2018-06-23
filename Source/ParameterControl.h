@@ -180,8 +180,9 @@ public:
             
             //set appropriate feedback gain
             float fb = *p.parameters.getRawParameterValue (p.feedbackId);
-            
-            if (getBoolFromParameter (p, p.fbTypeId))
+            float doubleFb = getBoolFromParameter (p, p.fbTypeId);
+            float lfo3off = !getBoolFromParameter (p, p.lfo3onId);
+            if (doubleFb && lfo3off)
             {
                 if (fb > 0)
                 {

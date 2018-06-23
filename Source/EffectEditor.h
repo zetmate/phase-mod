@@ -169,10 +169,15 @@ public:
                 button->setButtonText ("separate processing");
                 ParameterControl::setProcType (p, 1);
                 
-                //enable double feedback
-                feedbackTypeButton.setEnabled (true);
-                if (ParameterControl::getBoolFromParameter (p, p.fbTypeId))
-                    Utility::setSliderEnabled (&feedbackSlider, &feedbackLabel, false);
+                //enable double feedback if lfo3 is off
+                bool lfo3off = !ParameterControl::getBoolFromParameter (p, p.lfo3onId);
+                if (lfo3off)
+                {
+                    feedbackTypeButton.setEnabled (true);
+                    bool doubleFb = ParameterControl::getBoolFromParameter (p, p.fbTypeId);
+                    if (doubleFb)
+                        Utility::setSliderEnabled (&feedbackSlider, &feedbackLabel, false);
+                }
             }
             else
             {
