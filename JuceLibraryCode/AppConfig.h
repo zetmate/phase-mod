@@ -325,7 +325,7 @@
  #define JucePlugin_Desc                   "Modulation effect"
 #endif
 #ifndef  JucePlugin_Manufacturer
- #define JucePlugin_Manufacturer           "Freak Audio"
+ #define JucePlugin_Manufacturer           "Maercs DSP"
 #endif
 #ifndef  JucePlugin_ManufacturerWebsite
  #define JucePlugin_ManufacturerWebsite    ""
@@ -334,7 +334,7 @@
  #define JucePlugin_ManufacturerEmail      ""
 #endif
 #ifndef  JucePlugin_ManufacturerCode
- #define JucePlugin_ManufacturerCode       0x46726175 // 'Frau'
+ #define JucePlugin_ManufacturerCode       0x4d616572 // 'Maer'
 #endif
 #ifndef  JucePlugin_PluginCode
  #define JucePlugin_PluginCode             0x57686c72 // 'Whlr'
@@ -406,7 +406,7 @@
  #define JucePlugin_RTASDisableMultiMono   0
 #endif
 #ifndef  JucePlugin_AAXIdentifier
- #define JucePlugin_AAXIdentifier          com.freakaudio.whalor
+ #define JucePlugin_AAXIdentifier          com.maercs.whalor
 #endif
 #ifndef  JucePlugin_AAXManufacturerCode
  #define JucePlugin_AAXManufacturerCode    JucePlugin_ManufacturerCode
@@ -430,7 +430,7 @@
  #define JucePlugin_IAASubType             JucePlugin_PluginCode
 #endif
 #ifndef  JucePlugin_IAAName
- #define JucePlugin_IAAName                "Freak Audio: Whalor"
+ #define JucePlugin_IAAName                "Maercs DSP: Whalor"
 #endif
 #ifndef  JucePlugin_MaxNumInputChannels
  #define JucePlugin_MaxNumInputChannels    2

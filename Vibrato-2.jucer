@@ -3,11 +3,11 @@
 <JUCERPROJECT name="Vibrato-2" projectType="audioplug" jucerVersion="5.3.2"
               buildVST="0" pluginName="Whalor" id="sFywJT" pluginAUMainType="'aufx'"
               pluginChannelConfigs="{1, 1}, {1, 2}, {2, 2}" pluginFormats="buildAU"
-              pluginDesc="Modulation effect" pluginManufacturer="Freak Audio"
-              pluginManufacturerCode="Frau" pluginCode="Whlr" aaxIdentifier="com.freakaudio.whalor"
+              pluginDesc="Modulation effect" pluginManufacturer="Maercs DSP"
+              pluginManufacturerCode="Maer" pluginCode="Whlr" aaxIdentifier="com.maercs.whalor"
               pluginAUExportPrefix="WhalorAU" pluginVSTCategory="kPlugCategEffect"
               pluginVST3Category="Modulation" pluginRTASCategory="32" pluginAAXCategory="32"
-              version="0.3.1" companyName="Freak Audio" bundleIdentifier="com.freakaudio.oceanscape">
+              version="0.3.1" companyName="Maercs DSP" bundleIdentifier="com.freakaudio.oceanscape">
   <MAINGROUP id="tWmXHB" name="Vibrato-2">
     <GROUP id="{34B66B48-FA1C-EDCA-2DD6-03316E3E6503}" name="Source">
       <FILE id="QVxRk1" name="PluginProcessor.cpp" compile="1" resource="0"

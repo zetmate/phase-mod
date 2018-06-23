@@ -29,13 +29,13 @@
     <array>
       <dict>
         <key>name</key>
-        <string>Freak Audio: Whalor</string>
+        <string>Maercs DSP: Whalor</string>
         <key>description</key>
         <string>Modulation effect</string>
         <key>factoryFunction</key>
         <string>WhalorAUFactory</string>
         <key>manufacturer</key>
-        <string>Frau</string>
+        <string>Maer</string>
         <key>type</key>
         <string>aufx</string>
         <key>subtype</key>
