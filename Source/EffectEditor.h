@@ -168,27 +168,18 @@ public:
             {
                 button->setButtonText ("separate processing");
                 ParameterControl::setProcType (p, 1);
-//                //set feedback ranges
-//                feedbackSlider.setRange (-99, 99, 1);
-//                lfo3AmpSlider.setRange (-99, 99, 1);
-                
-                //set appropriate feedback value
-//                double cascadeFbValue = feedbackCascadeRange.convertTo0to1 (feedbackSlider.getValue());
-//                double separateFbValue = feedbackSeparateRange.convertFrom0to1 (cascadeFbValue);
-//                feedbackSlider.setValue (separateFbValue);
                 
                 //enable double feedback
                 feedbackTypeButton.setEnabled (true);
-                
-                //set dry wet of voices to 100%
-//                proc.setVoice1Mix (1.0);
-//                proc.setVoice2Mix (1.0);
+                if (ParameterControl::getBoolFromParameter (p, p.fbTypeId))
+                    Utility::setSliderEnabled (&feedbackSlider, &feedbackLabel, false);
             }
             else
             {
                 button->setButtonText ("cascade processing");
                 ParameterControl::setProcType (p, 0);
                 feedbackTypeButton.setEnabled (false);
+                Utility::setSliderEnabled (&feedbackSlider, &feedbackLabel, true);
             }
         }
         else if (button == &feedbackTypeButton)
@@ -215,12 +206,12 @@ public:
     {
         if (lfo3AmpMode)
         {
-            double value = lfo3AmpSlider.getValue();
+            //double value = lfo3AmpSlider.getValue();
             feedbackSlider.setVisible (false);
             lfo3AmpSlider.setVisible (true);
-            lfo3AmpSlider.setValue (value);
+            //lfo3AmpSlider.setValue (value);
             
-            feedbackTypeButton.setToggleState (false, sendNotification);
+            //feedbackTypeButton.setToggleState (false, sendNotification);
             feedbackTypeButton.setEnabled (false);
         }
         else
@@ -228,7 +219,7 @@ public:
             lfo3AmpSlider.setVisible (false);
             feedbackSlider.setVisible (true);
             feedbackTypeButton.setEnabled (true);
-            proc.setFeedbackGain (feedbackSlider.getValue() / 100);
+            //proc.setFeedbackGain (feedbackSlider.getValue() / 100);
         }
     }
     //===================================================================================

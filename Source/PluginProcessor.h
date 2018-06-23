@@ -46,6 +46,7 @@ public:
     double getTailLengthSeconds() const override;
     //==============================================================================
     void parameterChanged (const String& parameterID, float newValue) override;
+    void updateParameters();
     //==============================================================================
     int getNumPrograms() override;
     int getCurrentProgram() override;
@@ -97,7 +98,8 @@ private:
                                 note3TypeRange,
                                 tempoSync1Range,
                                 tempoSync2Range,
-                                tempoSync3Range;
+                                tempoSync3Range,
+                                phaseRange;
     
     //MAIN PARAMETERS==========================================================
     String depthId = "depth", depthName = "Depth", depthLabelText = depthName;
@@ -127,7 +129,7 @@ private:
     String voice2MixId = "voice2Mix", voice2MixName = "Voice 2 Mix", voice2MixLabelText = voice2MixName.toUpperCase();
     float voice2MixDefault = 100;
     
-    String masterId = "master", masterName = "Master", masterLabelText = masterName.toUpperCase();
+    String masterId = "inputGain", masterName = "Input gain", masterLabelText = masterName.toUpperCase();
     float masterDefault = 0;
     
     // MODULATION PARAMETERS
@@ -191,6 +193,10 @@ private:
     
     String tempoSync3Id = "tempoSync3", tempoSync3Name = "LFO3 Tempo Sync", tempoSync3LabelText = tempoSync3Name;
     float tempoSync3Default = 0;
+    
+    //PHASE
+    String phaseId = "phase", phaseName = "Phase shift", phaseLabelText = phaseName;
+    float phaseDefault = 180;
     
     
     //TEXT TO VALUE AND VALUE TO TEXT FUNCS

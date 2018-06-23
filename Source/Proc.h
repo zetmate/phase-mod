@@ -30,9 +30,9 @@ public:
     
     enum PhaseShift
     {
-        deg0,
-        deg90,
-        deg180
+        deg0 = 0,
+        deg90 = 90,
+        deg180 = 180
     };
     
     Proc()  : sampleRate (1), resourcesReleased (false),
@@ -44,6 +44,11 @@ public:
         
         //set initial values
         setMaxDelayTime (60);
+        
+        voiceMid.setDelayLfoFhase (0.5);
+        voiceEcho.setDelayLfoFhase (0.5);
+        voiceMid.setFeedbackLfoFhase (0.5);
+        voiceEcho.setFeedbackLfoFhase (0.5);
         
         //set default mono behaviour
         setToMono();
@@ -83,9 +88,6 @@ public:
         //count coefficients
         
         //prepare ranges: set start, end, interval, skew
-        
-        //prepare wavetables
-        //set sample rate, range, mono/stereo & count wtt
         
         //prepare copy buffers
         //set size according to buffer size & clear the buffers
@@ -129,8 +131,6 @@ public:
         voiceFar.setToMono();
         voiceEcho.setToMono();
         
-        //set wavetavle to mono
-        
         //change channel set
         channelSet = mono;
     }
@@ -142,8 +142,6 @@ public:
         voiceMid.setToStereo();
         voiceFar.setToStereo();
         voiceEcho.setToStereo();
-        
-        //set wavetavle to stereo
         
         //set channel set
         channelSet = stereo;
@@ -300,32 +298,30 @@ public:
     }
     
     //phaseShift
-    void setPhaseShift (PhaseShift phaseShift)
+    void setPhaseShift (PhaseShift newPhaseShift)
     {
-        int phaseIndex = 1;
-        switch (phaseShift)
+        phaseShift = newPhaseShift;
+        if (phaseShift == deg180)
         {
-            case deg90:
-                phaseIndex = 4;
-                break;
-                
-            case deg180:
-                phaseIndex = 2;
-                break;
-                
-            default:
-                break;
+            voiceMid.setDelayLfoFhase (0.5);
+            voiceEcho.setDelayLfoFhase (0.5);
+            voiceMid.setFeedbackLfoFhase (0.5);
+            voiceEcho.setFeedbackLfoFhase (0.5);
         }
-        
-        int counter1 = voiceClose.lfoCounter_delay;
-        int numSamples2 = voiceFar.lfoNumSamples_delay;
-        int counter2 = counter1 + (numSamples2 / phaseIndex);
-        
-        if (counter2 >= numSamples2)
-            counter2 = counter2 - numSamples2;
-        
-        voiceFar.lfoCounter_delay = counter2;
-        voiceEcho.lfoCounter_delay = counter2;
+        else if (phaseShift == deg90)
+        {
+            voiceMid.setDelayLfoFhase (0.25);
+            voiceEcho.setDelayLfoFhase (0.25);
+            voiceMid.setFeedbackLfoFhase (0.25);
+            voiceEcho.setFeedbackLfoFhase (0.25);
+        }
+        else
+        {
+            voiceMid.setDelayLfoFhase (0);
+            voiceEcho.setDelayLfoFhase (0);
+            voiceMid.setFeedbackLfoFhase (0);
+            voiceEcho.setFeedbackLfoFhase (0);
+        }
     }
     
     //getters
@@ -413,7 +409,7 @@ protected:
     //processor info
     ChannelSet channelSet;
     ProcessorType processorType;
-    PhaseShift phaseShift = deg0;
+    PhaseShift phaseShift = deg180;
 
     //limiter
     Compressor limiterLeft;

@@ -181,6 +181,15 @@ public:
     {
         lfoAmpRamp_feedback.setRange (lfoAmp_feedback, newAmplitude);
     }
+    //set lfo phase
+    void setDelayLfoFhase (double phaseFrom0to1)
+    {
+        lfoPhase_delay = phaseFrom0to1;
+    }
+    void setFeedbackLfoFhase (double phaseFrom0to1)
+    {
+        lfoPhase_feedback = phaseFrom0to1;
+    }
     
     //lfo on/off
     void setDelayLfoOn (bool shouldBeOn)
@@ -330,6 +339,10 @@ private:
     //amps
     double lfoAmp_feedback = 1;
     
+    //phase
+    double lfoPhase_delay = 0;
+    double lfoPhase_feedback = 0;
+    
     //other stuff
     double prevLfoValue_delay;
     bool delayLfoOn, fbLfoOn;
@@ -346,24 +359,24 @@ private:
         if (shape == sin)
         {
             value = Utility::sinFromMinus1toPlus1 (counter, numSamples,
-                                          1.0, 0.0, 0.0) / 2.0 + 0.5;
+                                                   1.0, 0.0, lfoPhase_delay) / 2.0 + 0.5;
         }
         else if (shape == triangle)
         {
             value = Utility::triangleFrom0to1 (counter, numSamples,
-                                               1.0, 0.0, 0.0);
+                                               1.0, 0.0, lfoPhase_delay);
         }
         else if (shape == saw)
         {
             targetValue = Utility::sawFrom0to1 (counter, numSamples,
-                                                1.0, 0.0, 0.0);
+                                                1.0, 0.0, lfoPhase_delay);
             currentDelayRamp.setRange (prevLfoValue_delay, targetValue);
             value = currentDelayRamp.applyRamp (prevLfoValue_delay);
         }
         else if (shape == square)
         {
             targetValue = Utility::squareFrom0to1 (counter, numSamples,
-                                             1.0, 0.0, 0.0);
+                                             1.0, 0.0, lfoPhase_delay);
             currentDelayRamp.setRange (prevLfoValue_delay, targetValue);
             value = currentDelayRamp.applyRamp (prevLfoValue_delay);
         }
@@ -386,16 +399,16 @@ private:
         
         if (shape == sin)
             value = Utility::sinFromMinus1toPlus1 (counter, numSamples,
-                                          1.0, 0.0, 0.0);
+                                                   1.0, 0.0, lfoPhase_feedback);
         else if (shape == triangle)
             value = Utility::triangleFrom0to1 (counter, numSamples,
-                                               1.0, 0.0, 0.0) * 2 - 1;
+                                               1.0, 0.0, lfoPhase_feedback) * 2 - 1;
         else if (shape == saw)
             value = Utility::sawFrom0to1 (counter, numSamples,
-                                          1.0, 0.0, 0.0) * 2 - 1;
+                                          1.0, 0.0, lfoPhase_feedback) * 2 - 1;
         else if (shape == square)
             value = Utility::squareFrom0to1 (counter, numSamples,
-                                             1.0, 0.0, 0.0) * 2 - 1;
+                                             1.0, 0.0, lfoPhase_feedback) * 2 - 1;
         else if (shape == random)
             value = randomLfo.randomFrom0to1 (numSamples, 1.0, 0.0, 0.0) * 2 - 1;
         

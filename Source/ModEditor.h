@@ -49,6 +49,11 @@ public:
                             "", Slider::SliderStyle::LinearHorizontal,
                             Slider::TextEntryBoxPosition::TextBoxBelow, -3, this, this, false);
         
+        Utility::addSlider (&phaseSlider, &phaseLabel, "Phase shift", 0, 180, 90, 90,
+                            "deg", Slider::SliderStyle::LinearHorizontal,
+                            Slider::TextEntryBoxPosition::TextBoxRight, 180, this, this, true);
+        phaseLabel.attachToComponent (&phaseSlider, true);
+        
         //mod 1
         mod1ShapeMenu.addItem ("sin", 1);
         mod1ShapeMenu.addItem ("triangle", 2);
@@ -156,6 +161,11 @@ public:
         lfo3TFreqSliderAttach = new AudioProcessorValueTreeState::SliderAttachment (p.parameters,
                                                                                     p.lfo3TFreqId,
                                                                                     tempo3Slider);
+        
+        phaseSliderAttach = new AudioProcessorValueTreeState::SliderAttachment (p.parameters,
+                                                                                p.phaseId,
+                                                                                phaseSlider);
+        
         //Buttons
         lfo1onButtonAttach = new AudioProcessorValueTreeState::ButtonAttachment (p.parameters,
                                                                                  p.lfo1onId,
@@ -242,6 +252,10 @@ public:
         else if (slider == &tempo3Slider)
         {
             ParameterControl::setTFreq3 (p, value);
+        }
+        else if (slider == &phaseSlider)
+        {
+            ParameterControl::setPhase (p, value);
         }
     }
     
@@ -420,7 +434,7 @@ public:
         int row1y = 50 + 50;
         int row2y = 175 + 50;
         int row3y = 210 + 50;
-        //int row4y = 255 + 50;
+        int row4y = 255 + 50;
         
         int cell1x = 25;
         int cell2x = 150;
@@ -455,6 +469,8 @@ public:
         tempoSync2Button.setBounds (cell2x, row3y, 100, 30);
         tempoSync3Button.setBounds (cell3x, row3y, 100, 30);
         
+        //foutrh row
+        phaseSlider.setBounds (cell2x, row4y, 175, 30);
     }
 private:
     Slider freq1Slider;
@@ -475,6 +491,9 @@ private:
     Slider tempo3Slider;
     Label tempo3Label;
     
+    Slider phaseSlider;
+    Label phaseLabel;
+    
     ComboBox mod1ShapeMenu, mod2ShapeMenu, mod3ShapeMenu;
     ComboBox note1TypeMenu, note2TypeMenu, note3TypeMenu;
     TextButton tempoSync1Button, tempoSync2Button, tempoSync3Button;
@@ -493,7 +512,8 @@ private:
                                                                         lfo3FreqSliderAttach,
                                                                         lfo1TFreqSliderAttach,
                                                                         lfo2TFreqSliderAttach,
-                                                                        lfo3TFreqSliderAttach;
+                                                                        lfo3TFreqSliderAttach,
+                                                                        phaseSliderAttach;
     
     ScopedPointer <AudioProcessorValueTreeState::ButtonAttachment>      lfo1onButtonAttach,
                                                                         lfo2onButtonAttach,

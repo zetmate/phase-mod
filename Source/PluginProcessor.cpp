@@ -41,7 +41,8 @@ Vibrato2AudioProcessor::Vibrato2AudioProcessor()  : parameters (*this, &undoMana
                                                     note3TypeRange (0, 2, 1, 1),
                                                     tempoSync1Range (0, 1, 1, 1),
                                                     tempoSync2Range (0, 1, 1, 1),
-                                                    tempoSync3Range (0, 1, 1, 1)
+                                                    tempoSync3Range (0, 1, 1, 1),
+                                                    phaseRange (0, 180, 90, 1)
 #ifndef JucePlugin_PreferredChannelConfigurations
      : AudioProcessor (BusesProperties()
                      #if ! JucePlugin_IsMidiEffect
@@ -190,6 +191,10 @@ Vibrato2AudioProcessor::Vibrato2AudioProcessor()  : parameters (*this, &undoMana
                                      tempoSync3Default, nullptr, nullptr);
     parameters.addParameterListener (tempoSync3Id, this);
     
+    parameters.createAndAddParameter (phaseId, phaseName, phaseLabelText, phaseRange,
+                                      phaseDefault, nullptr, nullptr);
+    parameters.addParameterListener (phaseId, this);
+    
     
     parameters.state = ValueTree (Identifier ("Default"));
 }
@@ -335,6 +340,125 @@ void Vibrato2AudioProcessor::parameterChanged (const String& parameterID, float 
         ParameterControl::updateParameter (*this, parameter, newValue);
     }
 }
+void Vibrato2AudioProcessor::updateParameters()
+{
+    {
+        float depth = *parameters.getRawParameterValue (depthId);
+        ParameterControl::setDepth (*this, depth);
+    }
+    {
+        float delay = *parameters.getRawParameterValue (delayId);
+        ParameterControl::setDelay (*this, delay);
+    }
+    {
+        float feedback = *parameters.getRawParameterValue (feedbackId);
+        ParameterControl::setFeedback (*this, feedback);
+    }
+    {
+        float lfo3amp = *parameters.getRawParameterValue (fbLfoAmpId);
+        ParameterControl::setLfo3Amp (*this, lfo3amp);
+    }
+    {
+        float procType = *parameters.getRawParameterValue (procTypeId);
+        ParameterControl::setProcType (*this, procType);
+    }
+    {
+        float fbType = *parameters.getRawParameterValue (fbTypeId);
+        ParameterControl::setFbType (*this, fbType);
+    }
+    {
+        float mix = *parameters.getRawParameterValue (mixId);
+        ParameterControl::setMix (*this, mix);
+    }
+    {
+        float voice1Mix = *parameters.getRawParameterValue (voice1MixId);
+        ParameterControl::setVoice1Mix (*this, voice1Mix);
+    }
+    {
+        float voice2Mix = *parameters.getRawParameterValue (voice2MixId);
+        ParameterControl::setVoice2Mix (*this, voice2Mix);
+    }
+    {
+        float master = *parameters.getRawParameterValue (masterId);
+        ParameterControl::setMaster (*this, master);
+    }
+    {
+        float lfo1on = *parameters.getRawParameterValue (lfo1onId);
+        ParameterControl::setLfo1on (*this, lfo1on);
+    }
+    {
+        float lfo2on = *parameters.getRawParameterValue (lfo2onId);
+        ParameterControl::setLfo2on (*this, lfo2on);
+    }
+    {
+        float lfo3on = *parameters.getRawParameterValue (lfo3onId);
+        ParameterControl::setLfo3on (*this, lfo3on);
+    }
+    {
+        float lfo1freq = *parameters.getRawParameterValue (lfo1FreqId);
+        ParameterControl::setFreq1 (*this, lfo1freq);
+    }
+    {
+        float lfo2freq = *parameters.getRawParameterValue (lfo2FreqId);
+        ParameterControl::setFreq2 (*this, lfo2freq);
+    }
+    {
+        float lfo3freq = *parameters.getRawParameterValue (lfo3FreqId);
+        ParameterControl::setFreq3 (*this, lfo3freq);
+    }
+    {
+        float lfo1Tfreq = *parameters.getRawParameterValue (lfo1TFreqId);
+        ParameterControl::setTFreq1 (*this, lfo1Tfreq);
+    }
+    {
+        float lfo2Tfreq = *parameters.getRawParameterValue (lfo2TFreqId);
+        ParameterControl::setTFreq2 (*this, lfo2Tfreq);
+    }
+    {
+        float lfo3Tfreq = *parameters.getRawParameterValue (lfo3TFreqId);
+        ParameterControl::setTFreq3 (*this, lfo3Tfreq);
+    }
+    {
+        float lfo1Type = *parameters.getRawParameterValue (lfo1TypeId);
+        ParameterControl::setLfo1Shape (*this, lfo1Type);
+    }
+    {
+        float lfo2Type = *parameters.getRawParameterValue (lfo2TypeId);
+        ParameterControl::setLfo2Shape (*this, lfo2Type);
+    }
+    {
+        float lfo3Type = *parameters.getRawParameterValue (lfo3TypeId);
+        ParameterControl::setLfo3Shape (*this, lfo3Type);
+    }
+    {
+        float note1Type = *parameters.getRawParameterValue (note1TypeId);
+        ParameterControl::setNote1Type (*this, note1Type);
+    }
+    {
+        float note2Type = *parameters.getRawParameterValue (note2TypeId);
+        ParameterControl::setNote2Type (*this, note2Type);
+    }
+    {
+        float note3Type = *parameters.getRawParameterValue (note3TypeId);
+        ParameterControl::setNote3Type (*this, note3Type);
+    }
+    {
+        float tempoSync1 = *parameters.getRawParameterValue (tempoSync1Id);
+        ParameterControl::setTempoSync1 (*this, tempoSync1);
+    }
+    {
+        float tempoSync2 = *parameters.getRawParameterValue (tempoSync2Id);
+        ParameterControl::setTempoSync2 (*this, tempoSync2);
+    }
+    {
+        float tempoSync3 = *parameters.getRawParameterValue (tempoSync3Id);
+        ParameterControl::setTempoSync3 (*this, tempoSync3);
+    }
+    {
+        float phase = *parameters.getRawParameterValue (phaseId);
+        ParameterControl::setPhase (*this, phase);
+    }
+}
 
 void Vibrato2AudioProcessor::getStateInformation (MemoryBlock& destData)
 {
@@ -354,6 +478,7 @@ void Vibrato2AudioProcessor::setStateInformation (const void* data, int sizeInBy
     if (xmlState.get() != nullptr)
         if (xmlState->hasTagName (parameters.state.getType()))
             parameters.replaceState (ValueTree::fromXml (*xmlState));
+    updateParameters();
 }
 
 //==============================================================================

@@ -100,6 +100,9 @@ public:
         
         else if (parameterId == p.lfo3TypeId)
             setLfo3Shape (p, parameterValue);
+        
+        else if (parameterId == p.phaseId)
+            setPhase (p, parameterValue);
     }
     
     static void setDepth (Vibrato2AudioProcessor& p, const float parameterValue)
@@ -115,15 +118,20 @@ public:
     static void setFeedback (Vibrato2AudioProcessor& p, const float parameterValue)
     {
         bool doubleFeedback = roundToInt (*p.parameters.getRawParameterValue (p.fbTypeId));
+        bool cascProc = !getBoolFromParameter (p, p.procTypeId);
+        if (cascProc)
+            doubleFeedback = false;
+        
+        bool lfo3off = !getBoolFromParameter (p, p.lfo3onId);
             
-        if (doubleFeedback == false)
+        if (doubleFeedback == false && lfo3off)
         {
             bool sepProc = roundToInt (*p.parameters.getRawParameterValue (p.procTypeId));
             
             if (sepProc)
                 p.proc.setFeedbackGain (parameterValue / 100.0);
             else
-                p.proc.setFeedbackGain (0.7 * parameterValue / 100.0);
+                p.proc.setFeedbackGain (0.65 * parameterValue / 100.0);
         }
     }
     
@@ -208,7 +216,7 @@ public:
             
             //set appropriate feedback gain
             float fb = *p.parameters.getRawParameterValue (p.feedbackId);
-            p.proc.setFeedbackGain (0.7 * fb / 100.0);
+            p.proc.setFeedbackGain (0.65 * fb / 100.0);
             
             //remove double feedback
             p.proc.setPrevSampleGain (0);
@@ -224,7 +232,8 @@ public:
     static void setFbType (Vibrato2AudioProcessor& p, float parameterValue)
     {
         bool sepProc = getBoolFromParameter (p, p.procTypeId);
-        if (sepProc)
+        bool lfo3off = !getBoolFromParameter (p, p.lfo3onId);
+        if (sepProc && lfo3off)
         {
             bool doubleFb = roundToInt (parameterValue);
             float fb = *p.parameters.getRawParameterValue (p.feedbackId);
@@ -247,6 +256,10 @@ public:
                 p.proc.setPrevSampleGain (0);
                 p.proc.setFeedbackGain (fb / 100.0);
             }
+        }
+        else
+        {
+            p.proc.setPrevSampleGain (0);
         }
     }
     
@@ -371,9 +384,29 @@ public:
     {
         bool isOn = roundToInt (parameterValue);
         if (isOn)
+        {
             p.proc.setLfo3on (true);
+            p.proc.setPrevSampleGain (0);
+        }
         else
+        {
             p.proc.setLfo3on (false);
+            bool doublefb = getBoolFromParameter (p, p.fbTypeId);
+            if (doublefb)
+            {
+                float fb = getParameterValue (p, p.feedbackId);
+                if (fb > 0)
+                {
+                    p.proc.setFeedbackGain (0.7);
+                    p.proc.setPrevSampleGain (0.25);
+                }
+                else
+                {
+                    p.proc.setFeedbackGain (-0.7);
+                    p.proc.setPrevSampleGain (-0.25);
+                }
+            }
+        }
     }
     
     static void setTempoSync1 (Vibrato2AudioProcessor& p, float parameterValue)
@@ -537,6 +570,11 @@ public:
             default:
                 break;
         }
+    }
+    
+    static void setPhase (Vibrato2AudioProcessor& p, float parameterValue)
+    {
+        p.proc.setPhaseShift ((Proc::PhaseShift) parameterValue);
     }
     
     //GETTERS
