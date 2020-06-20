@@ -26,3 +26,9 @@
 *.exe
 *.out
 *.app
+
+# System files
+.DS_Store
+
+# Builds
+Builds/
