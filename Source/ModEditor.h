@@ -10,8 +10,7 @@
 
 #pragma once
 
-#include "../JuceLibraryCode/JuceHeader.h"
-#include "MyLookAndFeel.h"
+#include "UIThemes.h"
 //==============================================================================
 /*
 */
@@ -125,7 +124,7 @@ public:
         Utility::addTextButton (&lfo3onButton, "OFF", false, true, true, this, this);
         
         
-        setAllButtonsLookAndFeel (&myLookAndFeel);
+        setAllButtonsLookAndFeel (&lookAndFeel);
         
         note3TypeMenu.setEnabled (false);
         
@@ -505,7 +504,7 @@ private:
     //for tempo sync (tempo multiplication index used for counting tripplets and dotted)
     double tmi1 = 1, tmi2 = 1, tmi3 = 1;
     
-    MyLookAndFeel myLookAndFeel;
+    LFMod lookAndFeel;
     //====================================================================================
     ScopedPointer <AudioProcessorValueTreeState::SliderAttachment>      lfo1FreqSliderAttach,
                                                                         lfo2FreqSliderAttach,

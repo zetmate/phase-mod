@@ -34,7 +34,8 @@ Vibrato2AudioProcessorEditor::~Vibrato2AudioProcessorEditor()
 
 void Vibrato2AudioProcessorEditor::paint (Graphics& g)
 {
-    g.fillAll (Colours::black);
+    ColourGradient BGradient;
+    g.setGradientFill(BGradient);
 }
 
 void Vibrato2AudioProcessorEditor::resized()

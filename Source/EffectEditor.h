@@ -9,7 +9,7 @@
 */
 
 #pragma once
-#include "MyLookAndFeel.h"
+#include "UIThemes.h"
 #include "ParameterControl.h"
 //==============================================================================
 /*
@@ -26,22 +26,22 @@ public:
         Utility::addSlider (&depthSlider, &depthLabel, "DEPTH", 0, 100, 1, 50,
                             "%", Slider::SliderStyle::RotaryVerticalDrag,
                             Slider::TextEntryBoxPosition::TextBoxBelow, 30, this, this, true);
-        depthSlider.setLookAndFeel (&myLookAndFeel);
+        depthSlider.setLookAndFeel (&lfEffect);
         
         Utility::addSlider (&delaySlider, &delayLabel, "DELAY", 2, 500, 0.1, 40,
                             " ms", Slider::SliderStyle::RotaryVerticalDrag,
                             Slider::TextEntryBoxPosition::TextBoxBelow, 60, this, this, true);
-        delaySlider.setLookAndFeel (&myLookAndFeel);
+        delaySlider.setLookAndFeel (&lfEffect);
         
         Utility::addSlider (&feedbackSlider, &feedbackLabel, "FEEDBACK", -99, 99, 1, 0,
                             "%", Slider::SliderStyle::RotaryVerticalDrag,
                             Slider::TextEntryBoxPosition::TextBoxBelow, -70, this, this, true);
-        feedbackSlider.setLookAndFeel (&myLookAndFeel);
+        feedbackSlider.setLookAndFeel (&lfEffect);
         
         Utility::addSlider (&lfo3AmpSlider, &lfo3AmpLabel, "Feedback LFO depth", 15, 99, 1, 50,
                             "%", Slider::SliderStyle::RotaryVerticalDrag,
                             Slider::TextEntryBoxPosition::TextBoxBelow, 80, this, this, false);
-        lfo3AmpSlider.setLookAndFeel (&myLookAndFeel);
+        lfo3AmpSlider.setLookAndFeel (&lfEffect);
         
         //set feedback range
         feedbackSeparateRange.start = -99;
@@ -288,7 +288,8 @@ private:
     Slider dryWetSlider;
     Label dryWetLabel;
     
-    MyLookAndFeel myLookAndFeel;
+    LFEffect lfEffect;
+    LFMaster lfMaster;
     //==============================================================
     ScopedPointer<AudioProcessorValueTreeState::SliderAttachment>   depthSliderAttach,
                                                                     delaySliderAttach,

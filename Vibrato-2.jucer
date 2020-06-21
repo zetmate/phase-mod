@@ -33,7 +33,7 @@
       <FILE id="aWL34v" name="EffectEditor.h" compile="0" resource="0" file="Source/EffectEditor.h"/>
       <FILE id="gT8PKW" name="ModEditor.h" compile="0" resource="0" file="Source/ModEditor.h"/>
       <FILE id="uOYf1d" name="MasterEditor.h" compile="0" resource="0" file="Source/MasterEditor.h"/>
-      <FILE id="Ea1wHg" name="MyLookAndFeel.h" compile="0" resource="0" file="Source/MyLookAndFeel.h"/>
+      <FILE id="Ea1wHg" name="UIThemes.h" compile="0" resource="0" file="Source/UIThemes.h"/>
     </GROUP>
   </MAINGROUP>
   <EXPORTFORMATS>
