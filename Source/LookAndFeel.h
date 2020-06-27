@@ -19,6 +19,8 @@ public:
     {
         // Slider
         setColour (Slider::textBoxOutlineColourId, PALETTE.transperent);
+        setColour (Slider::textBoxHighlightColourId, PALETTE.transperent);
+        setColour (Slider::textBoxBackgroundColourId, theme.bg);
         setColour (Slider::thumbColourId, PALETTE.transperent);
 
         setColour (Slider::backgroundColourId, PALETTE.opaqueWhite);
