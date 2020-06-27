@@ -19,7 +19,7 @@ public:
     Colour mint = Colour::fromRGB (55, 211, 169);
     Colour red = Colour::fromRGB (211, 68, 68);
 
-    Colour darkBlue = Colour::fromRGB (16, 12, 33);
+    Colour darkBlue = Colour::fromRGB (38, 31, 67);
     Colour asphalt = Colour::fromRGB (41, 38, 59);
     Colour darkPurple = Colour::fromRGB (60, 37, 70);
     
