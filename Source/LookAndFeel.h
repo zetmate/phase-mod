@@ -17,11 +17,22 @@ public:
     LF (Theme colorTheme)
     :   theme (colorTheme)
     {
-        setColour (Slider::thumbColourId, theme.main);
-        setColour (Slider::rotarySliderFillColourId, PALETTE.opaqueWhite);
+        // Slider
         setColour (Slider::textBoxOutlineColourId, PALETTE.transperent);
+        setColour (Slider::thumbColourId, PALETTE.transperent);
 
-        setColour (TextButton::buttonOnColourId, theme.main);
+        setColour (Slider::backgroundColourId, PALETTE.opaqueWhite);
+        setColour (Slider::rotarySliderOutlineColourId, PALETTE.opaqueWhite);
+
+        setColour (Slider::trackColourId, theme.main);
+        setColour (Slider::rotarySliderFillColourId, theme.main);
+        
+        // Popup
+        setColour (PopupMenu::backgroundColourId, theme.bg);
+        setColour (PopupMenu::highlightedBackgroundColourId, theme.mainDimmed);
+
+        // Button
+        setColour (TextButton::buttonOnColourId, theme.bg);
     }
     ~LF()
     {

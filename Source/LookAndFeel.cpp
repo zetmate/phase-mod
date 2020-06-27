@@ -19,11 +19,12 @@ void LF::drawButtonBackground (Graphics& g,
     auto cornerSize = 6.0f;
     auto bounds = button.getLocalBounds().toFloat().reduced (0.5f, 0.5f);
 
-    auto baseColour = backgroundColour.withMultipliedSaturation (button.hasKeyboardFocus (true) ? 1.3f : 0.9f)
-                                      .withMultipliedAlpha (button.isEnabled() ? 1.0f : 0.5f);
+    auto baseColour = button.getToggleState() ? theme.mainDimmed : PALETTE.transperent;
+    auto outlineColor = button.getToggleState() ? PALETTE.transperent : PALETTE.opaqueWhite;
 
-    if (shouldDrawButtonAsDown || shouldDrawButtonAsHighlighted)
+    if (shouldDrawButtonAsDown || shouldDrawButtonAsHighlighted) {
         baseColour = baseColour.contrasting (shouldDrawButtonAsDown ? 0.2f : 0.05f);
+    }
 
     g.setColour (baseColour);
 
@@ -45,13 +46,15 @@ void LF::drawButtonBackground (Graphics& g,
 
         g.fillPath (path);
 
-        g.setColour (button.findColour (ComboBox::outlineColourId));
+        g.setColour (outlineColor);
+        g.drawRoundedRectangle (bounds, cornerSize + 2, 2.0f);
     }
     else
     {
         g.fillRoundedRectangle (bounds, cornerSize);
 
-        g.setColour (button.findColour (ComboBox::outlineColourId));
+        g.setColour (outlineColor);
+        g.drawRoundedRectangle (bounds, cornerSize, 1.5f);
     }
 }
 
@@ -62,8 +65,8 @@ void LF::drawComboBox (Graphics& g, int width, int height, bool,
     auto cornerSize = box.findParentComponentOfClass<ChoicePropertyComponent>() != nullptr ? 0.0f : 3.0f;
     Rectangle<int> boxBounds (0, 0, width, height);
 
-    g.setColour (box.findColour (ComboBox::backgroundColourId));
-    g.fillRoundedRectangle (boxBounds.toFloat(), cornerSize);
+    g.setColour (PALETTE.opaqueWhite);
+    g.drawRoundedRectangle (boxBounds.toFloat(), cornerSize, 3.0f);
 
     Rectangle<int> arrowZone (width - 23, 12, 17, 6);
     Path path;

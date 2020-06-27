@@ -17,14 +17,14 @@ struct Palette
 public:
     Colour blue = Colour::fromRGB (55, 163, 211);
     Colour mint = Colour::fromRGB (55, 211, 169);
-    Colour red = Colour::fromRGB (211, 55, 55);
+    Colour red = Colour::fromRGB (211, 68, 68);
 
     Colour darkBlue = Colour::fromRGB (16, 12, 33);
     Colour asphalt = Colour::fromRGB (41, 38, 59);
     Colour darkPurple = Colour::fromRGB (60, 37, 70);
     
-    Colour opaqueWhite = Colour::fromRGBA (238, 238, 238, getAlpha(73));
-    Colour white = Colour::fromRGBA (238, 238, 238, getAlpha(93));
+    Colour opaqueWhite = Colour::fromRGBA (238, 238, 238, getAlpha(40));
+    Colour white = Colour::fromRGBA (238, 238, 238, getAlpha(85));
     Colour transperent = Colour::fromRGBA (0, 0, 0, 0);
     
 private:
@@ -45,9 +45,10 @@ struct Theme
         bg (bgColor),
         text (textColor)
     {
+        mainDimmed = Colour (main).withAlpha (0.8f);
     }
     
-    Colour main;
+    Colour main, mainDimmed;
     Colour bg;
     Colour text;
 };
