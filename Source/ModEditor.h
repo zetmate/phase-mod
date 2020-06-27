@@ -428,10 +428,7 @@ public:
 //================================================================================================
     void paint (Graphics& g) override
     {
-        g.fillAll (Colours::black);
-        
-        g.setColour (Colours::grey);
-        g.drawRect (getLocalBounds(), 1);
+        g.fillAll (lookAndFeel.theme.bg);
     }
 
     void resized() override

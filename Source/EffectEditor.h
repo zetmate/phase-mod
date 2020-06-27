@@ -239,10 +239,11 @@ public:
 
     void paint (Graphics& g) override
     {
-        g.fillAll (Colours::black);
-        
-        g.setColour (Colours::grey);
-        g.drawRect (getLocalBounds(), 1);
+        g.fillAll (lfEffect.theme.bg);
+
+        Rectangle<int> masterSectionRect (getLocalBounds().removeFromRight (150));
+        g.setColour (lfMaster.theme.bg);
+        g.fillRect (masterSectionRect);
     }
 
     void resized() override
