@@ -63,6 +63,7 @@ public:
         mod1ShapeMenu.addListener (this);
         mod1ShapeMenu.setJustificationType (Justification::centred);
         mod1ShapeMenu.setSelectedId (1);
+        mod1ShapeMenu.setLookAndFeel (&lookAndFeel);
         addAndMakeVisible (mod1ShapeMenu);
         
         //mod 2
@@ -75,6 +76,7 @@ public:
         mod2ShapeMenu.addListener (this);
         mod2ShapeMenu.setJustificationType (Justification::centred);
         mod2ShapeMenu.setSelectedId (1);
+        mod2ShapeMenu.setLookAndFeel (&lookAndFeel);
         addAndMakeVisible (mod2ShapeMenu);
         
         //mod 3
@@ -86,6 +88,7 @@ public:
         mod3ShapeMenu.addListener (this);
         mod3ShapeMenu.setJustificationType (Justification::centred);
         mod3ShapeMenu.setSelectedId (1);
+        mod3ShapeMenu.setLookAndFeel (&lookAndFeel);
         addAndMakeVisible (mod3ShapeMenu);
         
         //note 1
@@ -95,6 +98,7 @@ public:
         note1TypeMenu.addListener (this);
         note1TypeMenu.setJustificationType (Justification::centred);
         note1TypeMenu.setSelectedId (1);
+        note1TypeMenu.setLookAndFeel (&lookAndFeel);
         addChildComponent (note1TypeMenu);
         
         //note2
@@ -104,6 +108,7 @@ public:
         note2TypeMenu.addListener (this);
         note2TypeMenu.setJustificationType (Justification::centred);
         note2TypeMenu.setSelectedId (1);
+        note2TypeMenu.setLookAndFeel (&lookAndFeel);
         addChildComponent (note2TypeMenu);
         
         //note3
@@ -113,6 +118,7 @@ public:
         note3TypeMenu.addListener (this);
         note3TypeMenu.setJustificationType (Justification::centred);
         note3TypeMenu.setSelectedId (1);
+        note3TypeMenu.setLookAndFeel (&lookAndFeel);
         addChildComponent (note3TypeMenu);
         
         Utility::addTextButton (&tempoSync1Button, "TEMPO SYNC", false, true, true, this, this);

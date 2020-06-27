@@ -18,7 +18,7 @@ public:
     Colour blue = Colour::fromRGB (55, 163, 211);
     Colour mint = Colour::fromRGB (55, 211, 169);
     Colour red = Colour::fromRGB (211, 55, 55);
-    
+
     Colour darkBlue = Colour::fromRGB (16, 12, 33);
     Colour asphalt = Colour::fromRGB (41, 38, 59);
     Colour darkPurple = Colour::fromRGB (60, 37, 70);
@@ -33,11 +33,13 @@ private:
     }
 };
 
-const Palette palette;
+const Palette PALETTE;
 
+
+//==============================================================================
 struct Theme
 {
-    Theme (Colour mainColor, Colour bgColor, Colour textColor = palette.white)
+    Theme (Colour mainColor, Colour bgColor, Colour textColor = PALETTE.white)
     :   main (mainColor),
         bg (bgColor),
         text (textColor)
@@ -47,60 +49,4 @@ struct Theme
     Colour main;
     Colour bg;
     Colour text;
-};
-
-class LF    : public LookAndFeel_V4
-{
-public:
-    LF (Theme colorTheme)
-    :   theme (colorTheme)
-    {
-        setColour (Slider::thumbColourId, theme.main);
-        setColour (Slider::rotarySliderFillColourId, palette.opaqueWhite);
-        setColour (TextButton::buttonOnColourId, theme.main);
-    }
-    ~LF()
-    {
-    }
-    
-    Theme theme;
-};
-
-class LFEffect    : public LF
-{
-public:
-    LFEffect ()
-    :   LF (Theme (palette.blue, palette.asphalt))
-    {
-    }
-
-    ~LFEffect()
-    {
-    }
-};
-
-class LFMod    : public LF
-{
-public:
-    LFMod ()
-    :   LF (Theme (palette.red, palette.darkBlue))
-    {
-    }
-
-    ~LFMod()
-    {
-    }
-};
-
-class LFMaster    : public LF
-{
-public:
-    LFMaster ()
-    :   LF (Theme (palette.mint, palette.darkPurple))
-    {
-    }
-
-    ~LFMaster()
-    {
-    }
 };

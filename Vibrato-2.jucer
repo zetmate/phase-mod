@@ -34,6 +34,8 @@
       <FILE id="gT8PKW" name="ModEditor.h" compile="0" resource="0" file="Source/ModEditor.h"/>
       <FILE id="uOYf1d" name="MasterEditor.h" compile="0" resource="0" file="Source/MasterEditor.h"/>
       <FILE id="Ea1wHg" name="UIThemes.h" compile="0" resource="0" file="Source/UIThemes.h"/>
+      <FILE id="jbWamR" name="LookAndFeel.cpp" compile="1" resource="0" file="Source/LookAndFeel.cpp"/>
+      <FILE id="VOPfma" name="LookAndFeel.h" compile="0" resource="0" file="Source/LookAndFeel.h"/>
     </GROUP>
   </MAINGROUP>
   <EXPORTFORMATS>
