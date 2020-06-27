@@ -14,7 +14,6 @@
 #include "PluginProcessor.h"
 #include "EffectEditor.h"
 #include "ModEditor.h"
-#include "MasterEditor.h"
 
 //==============================================================================
 /**
@@ -34,8 +33,7 @@ private:
     int masterEditorWidth = 150;
     int effectEditorHeight = 250;
     int modEditorHeight = 310 + 50;
-    
-    MasterEditor masterEditor;
+
     EffectEditor effectEditor;
     ModEditor modEditor;
 //==============================================================================
