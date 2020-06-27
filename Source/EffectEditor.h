@@ -23,19 +23,19 @@ public:
     {
         setSize (width, height);
         
-        Utility::addSlider (&depthSlider, &depthLabel, "DEPTH", 0, 100, 1, 50,
+        Utility::addSlider (&depthSlider, &depthLabel, "Depth", 0, 100, 1, 50,
                             "%", Slider::SliderStyle::RotaryVerticalDrag,
                             Slider::TextEntryBoxPosition::TextBoxBelow, 30, this, this, true,
                             &lfEffect);
         depthSlider.setLookAndFeel (&lfEffect);
         
-        Utility::addSlider (&delaySlider, &delayLabel, "DELAY", 2, 500, 0.1, 40,
+        Utility::addSlider (&delaySlider, &delayLabel, "Delay", 2, 500, 0.1, 40,
                             " ms", Slider::SliderStyle::RotaryVerticalDrag,
                             Slider::TextEntryBoxPosition::TextBoxBelow, 60, this, this, true,
                             &lfEffect);
         delaySlider.setLookAndFeel (&lfEffect);
         
-        Utility::addSlider (&feedbackSlider, &feedbackLabel, "FEEDBACK", -99, 99, 1, 0,
+        Utility::addSlider (&feedbackSlider, &feedbackLabel, "Feedback", -99, 99, 1, 0,
                             "%", Slider::SliderStyle::RotaryVerticalDrag,
                             Slider::TextEntryBoxPosition::TextBoxBelow, -70, this, this, true,
                             &lfEffect);
@@ -61,19 +61,19 @@ public:
         
         //======================================================================================
         //                                  MASTER EDITOR
-        Utility::addSlider (&inputGainSlider, &inputGainLabel, "INPUT GAIN", -24, 16, 0.1, 0,
+        Utility::addSlider (&inputGainSlider, &inputGainLabel, "Input Gain", -24, 16, 0.1, 0,
                             "dB", Slider::SliderStyle::RotaryVerticalDrag,
                             Slider::TextEntryBoxPosition::TextBoxBelow, 0, this, this, true,
                             &lfMaster);
         
         inputGainSlider.setDoubleClickReturnValue (true, 0.0);
         
-        Utility::addSlider (&voice1MixSlider, &voice1MixLabel, "VOICE 1 MIX", 0, 200, 1, 100,
+        Utility::addSlider (&voice1MixSlider, &voice1MixLabel, "Voice 1 Mix", 0, 200, 1, 100,
                             "%", Slider::SliderStyle::RotaryVerticalDrag,
                             Slider::TextEntryBoxPosition::TextBoxBelow, 100, this, this, true,
                             &lfMaster);
         
-        Utility::addSlider (&voice2MixSlider, &voice2MixLabel, "VOICE 2 MIX", 0, 200, 1, 100,
+        Utility::addSlider (&voice2MixSlider, &voice2MixLabel, "Voice 2 Mix", 0, 200, 1, 100,
                             "%", Slider::SliderStyle::RotaryVerticalDrag,
                             Slider::TextEntryBoxPosition::TextBoxBelow, 100, this, this, true,
                             &lfMaster);
@@ -82,7 +82,7 @@ public:
         voice2MixSlider.setDoubleClickReturnValue (true, 100);
         
         //global dryWet
-        Utility::addSlider (&dryWetSlider, &dryWetLabel, "MIX", 0, 100, 1, 50,
+        Utility::addSlider (&dryWetSlider, &dryWetLabel, "Mix", 0, 100, 1, 50,
                             "%", Slider::SliderStyle::RotaryVerticalDrag,
                             Slider::TextEntryBoxPosition::TextBoxBelow, 50, this, this, true,
                             &lfMaster);
