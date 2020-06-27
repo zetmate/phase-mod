@@ -19,6 +19,8 @@ public:
     {
         setColour (Slider::thumbColourId, theme.main);
         setColour (Slider::rotarySliderFillColourId, PALETTE.opaqueWhite);
+        setColour (Slider::textBoxOutlineColourId, PALETTE.transperent);
+
         setColour (TextButton::buttonOnColourId, theme.main);
     }
     ~LF()

@@ -25,6 +25,7 @@ public:
     
     Colour opaqueWhite = Colour::fromRGBA (238, 238, 238, getAlpha(73));
     Colour white = Colour::fromRGBA (238, 238, 238, getAlpha(93));
+    Colour transperent = Colour::fromRGBA (0, 0, 0, 0);
     
 private:
     short int getAlpha (int percents)

@@ -422,7 +422,7 @@ public:
                            Slider::TextEntryBoxPosition textBoxPosition,
                            double initialValue, Component* parent,
                            Slider::Listener* listener,
-                           bool makeVisible)
+                           bool makeVisible, LookAndFeel *lookAndFeel)
     {
         if (listener != nullptr)
             slider->addListener (listener);
@@ -437,6 +437,7 @@ public:
                 slider->setTextValueSuffix (valueSuff);
                 slider->setSliderStyle (sliderStyle);
                 slider->setValue (initialValue);
+                slider->setLookAndFeel (lookAndFeel);
                 
             }
             
@@ -461,11 +462,12 @@ public:
     
     static void addTextButton (TextButton* button, const String& buttonText,
                                bool shouldBeOn, bool makeVisible, bool toggleOnClick,
-                               Component* parent, Button::Listener* listener)
+                               Component* parent, Button::Listener* listener, LookAndFeel *lookAndFeel)
     {
         button->setToggleState (shouldBeOn, sendNotification);
         button->setButtonText (buttonText);
         button->setClickingTogglesState (toggleOnClick);
+        button->setLookAndFeel (lookAndFeel);
         
         if (parent != nullptr)
         {

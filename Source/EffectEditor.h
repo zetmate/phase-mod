@@ -9,7 +9,6 @@
 */
 
 #pragma once
-#include "UIThemes.h"
 #include "LookAndFeel.h"
 #include "ParameterControl.h"
 //==============================================================================
@@ -26,22 +25,26 @@ public:
         
         Utility::addSlider (&depthSlider, &depthLabel, "DEPTH", 0, 100, 1, 50,
                             "%", Slider::SliderStyle::RotaryVerticalDrag,
-                            Slider::TextEntryBoxPosition::TextBoxBelow, 30, this, this, true);
+                            Slider::TextEntryBoxPosition::TextBoxBelow, 30, this, this, true,
+                            &lfEffect);
         depthSlider.setLookAndFeel (&lfEffect);
         
         Utility::addSlider (&delaySlider, &delayLabel, "DELAY", 2, 500, 0.1, 40,
                             " ms", Slider::SliderStyle::RotaryVerticalDrag,
-                            Slider::TextEntryBoxPosition::TextBoxBelow, 60, this, this, true);
+                            Slider::TextEntryBoxPosition::TextBoxBelow, 60, this, this, true,
+                            &lfEffect);
         delaySlider.setLookAndFeel (&lfEffect);
         
         Utility::addSlider (&feedbackSlider, &feedbackLabel, "FEEDBACK", -99, 99, 1, 0,
                             "%", Slider::SliderStyle::RotaryVerticalDrag,
-                            Slider::TextEntryBoxPosition::TextBoxBelow, -70, this, this, true);
+                            Slider::TextEntryBoxPosition::TextBoxBelow, -70, this, this, true,
+                            &lfEffect);
         feedbackSlider.setLookAndFeel (&lfEffect);
         
         Utility::addSlider (&lfo3AmpSlider, &lfo3AmpLabel, "Feedback LFO depth", 15, 99, 1, 50,
                             "%", Slider::SliderStyle::RotaryVerticalDrag,
-                            Slider::TextEntryBoxPosition::TextBoxBelow, 80, this, this, false);
+                            Slider::TextEntryBoxPosition::TextBoxBelow, 80, this, this, false,
+                            &lfEffect);
         lfo3AmpSlider.setLookAndFeel (&lfEffect);
         
         //set feedback range
@@ -51,26 +54,29 @@ public:
         feedbackCascadeRange.end = 65;
         
         Utility::addTextButton (&processingTypeButton, "separate processing",
-                                true, true, true, this, this);
+                                true, true, true, this, this, &lfEffect);
         
         Utility::addTextButton (&feedbackTypeButton, "single feedback",
-                                false, true, true, this, this);
+                                false, true, true, this, this, &lfEffect);
         
         //======================================================================================
         //                                  MASTER EDITOR
         Utility::addSlider (&inputGainSlider, &inputGainLabel, "INPUT GAIN", -24, 16, 0.1, 0,
                             "dB", Slider::SliderStyle::RotaryVerticalDrag,
-                            Slider::TextEntryBoxPosition::TextBoxBelow, 0, this, this, true);
+                            Slider::TextEntryBoxPosition::TextBoxBelow, 0, this, this, true,
+                            &lfMaster);
         
         inputGainSlider.setDoubleClickReturnValue (true, 0.0);
         
         Utility::addSlider (&voice1MixSlider, &voice1MixLabel, "VOICE 1 MIX", 0, 200, 1, 100,
                             "%", Slider::SliderStyle::RotaryVerticalDrag,
-                            Slider::TextEntryBoxPosition::TextBoxBelow, 100, this, this, true);
+                            Slider::TextEntryBoxPosition::TextBoxBelow, 100, this, this, true,
+                            &lfMaster);
         
         Utility::addSlider (&voice2MixSlider, &voice2MixLabel, "VOICE 2 MIX", 0, 200, 1, 100,
                             "%", Slider::SliderStyle::RotaryVerticalDrag,
-                            Slider::TextEntryBoxPosition::TextBoxBelow, 100, this, this, true);
+                            Slider::TextEntryBoxPosition::TextBoxBelow, 100, this, this, true,
+                            &lfMaster);
         
         voice1MixSlider.setDoubleClickReturnValue (true, 100);
         voice2MixSlider.setDoubleClickReturnValue (true, 100);
@@ -78,7 +84,8 @@ public:
         //global dryWet
         Utility::addSlider (&dryWetSlider, &dryWetLabel, "MIX", 0, 100, 1, 50,
                             "%", Slider::SliderStyle::RotaryVerticalDrag,
-                            Slider::TextEntryBoxPosition::TextBoxBelow, 50, this, this, true);
+                            Slider::TextEntryBoxPosition::TextBoxBelow, 50, this, this, true,
+                            &lfMaster);
         
         //slider attachments
         depthSliderAttach = new AudioProcessorValueTreeState::SliderAttachment (p.parameters,
