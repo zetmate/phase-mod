@@ -74,6 +74,7 @@ public:
         //set time
         dryWetRamp.setTime (7, sampleRate);
         inputGainRamp.setTime (5, sampleRate);
+        outputGainRamp.setTime (5, sampleRate);
         effectGainRamp.setTime (5, sampleRate);
         gain1Ramp.setTime (5, sampleRate);
         gain2Ramp.setTime (5, sampleRate);
@@ -177,6 +178,11 @@ public:
     void setInputGain (double newInputGain)
     {
         inputGainRamp.setRange (inputGain, newInputGain);
+    }
+    
+    void setOutputGain (double newOutputGain)
+    {
+        outputGainRamp.setRange (outputGain, newOutputGain);
     }
     
     void setEffectGain (double newEffectGain)
@@ -399,12 +405,12 @@ protected:
     Ramp dryWetRamp;
     
     //gains
-    double inputGain = 1.0f;
-    double effectGain = 1.0f;
-    double gain1 = 1.0f;
+    double inputGain = 1.0, outputGain = 1.0;
+    double effectGain = 1.0;
+    double gain1 = 1.0;
     double gain2 = 1.0f;
     //gains' ramps
-    Ramp inputGainRamp, effectGainRamp, gain1Ramp, gain2Ramp;
+    Ramp inputGainRamp, outputGainRamp, effectGainRamp, gain1Ramp, gain2Ramp;
 
     //processor info
     ChannelSet channelSet;
