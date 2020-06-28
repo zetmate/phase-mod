@@ -128,18 +128,20 @@ public:
         note3TypeMenu.setLookAndFeel (&lookAndFeel);
         addChildComponent (note3TypeMenu);
         
-        Utility::addTextButton (&tempoSync1Button, "TEMPO SYNC", false, true, true, this, this,
+        const String tempoSyncText = "tempo sync";
+        
+        Utility::addTextButton (&tempoSync1Button, tempoSyncText, false, true, true, this, this,
                                 &lookAndFeel);
-        Utility::addTextButton (&tempoSync2Button, "TEMPO SYNC", false, true, true, this, this,
+        Utility::addTextButton (&tempoSync2Button, tempoSyncText, false, true, true, this, this,
                                 &lookAndFeel);
-        Utility::addTextButton (&tempoSync3Button, "TEMPO SYNC", false, true, true, this, this,
+        Utility::addTextButton (&tempoSync3Button, tempoSyncText, false, true, true, this, this,
                                 &lookAndFeel);
         
-        Utility::addTextButton (&lfo1onButton, "ON", true, true, true, this, this,
+        Utility::addTextButton (&lfo1onButton, "on", true, true, true, this, this,
                                 &lookAndFeel);
-        Utility::addTextButton (&lfo2onButton, "ON", true, true, true, this, this,
+        Utility::addTextButton (&lfo2onButton, "on", true, true, true, this, this,
                                 &lookAndFeel);
-        Utility::addTextButton (&lfo3onButton, "OFF", false, true, true, this, this,
+        Utility::addTextButton (&lfo3onButton, "off", false, true, true, this, this,
                                 &lookAndFeel);
         
         note3TypeMenu.setEnabled (false);
@@ -282,7 +284,7 @@ public:
         {
             if (isOn)
             {
-                button->setButtonText ("ON");
+                button->setButtonText ("on");
                 ParameterControl::setLfo1on (p, 1);
                 Utility::setSliderEnabled (&freq1Slider, &freq1Label, true);
                 Utility::setSliderEnabled (&tempo1Slider, &tempo1Label, true);
@@ -301,7 +303,7 @@ public:
         {
             if (isOn)
             {
-                button->setButtonText ("ON");
+                button->setButtonText ("on");
                 ParameterControl::setLfo2on (p, 1);
                 Utility::setSliderEnabled (&freq2Slider, &freq2Label, true);
                 Utility::setSliderEnabled (&tempo2Slider, &tempo2Label, true);
@@ -309,7 +311,7 @@ public:
             }
             else
             {
-                button->setButtonText ("OFF");
+                button->setButtonText ("off");
                 ParameterControl::setLfo2on (p, 0);
                 Utility::setSliderEnabled (&freq2Slider, &freq2Label, false);
                 Utility::setSliderEnabled (&tempo2Slider, &tempo2Label, false);
@@ -320,7 +322,7 @@ public:
         {
             if (isOn)
             {
-                button->setButtonText ("ON");
+                button->setButtonText ("on");
                 ParameterControl::setLfo3on (p, 1);
                 Utility::setSliderEnabled (&freq3Slider, &freq3Label, true);
                 Utility::setSliderEnabled (&tempo3Slider, &tempo3Label, true);
@@ -330,7 +332,7 @@ public:
             }
             else
             {
-                button->setButtonText ("OFF");
+                button->setButtonText ("off");
                 ParameterControl::setLfo3on (p, 0);
                 proc.setFeedbackGain (effectEditor.feedbackSlider.getValue() / 100.0);
                 Utility::setSliderEnabled (&freq3Slider, &freq3Label, false);

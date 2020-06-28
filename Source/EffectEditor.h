@@ -41,7 +41,7 @@ public:
                             &lfEffect);
         feedbackSlider.setLookAndFeel (&lfEffect);
         
-        Utility::addSlider (&lfo3AmpSlider, &lfo3AmpLabel, "Feedback LFO depth", 15, 99, 1, 50,
+        Utility::addSlider (&lfo3AmpSlider, &lfo3AmpLabel, "FB LFO depth", 15, 99, 1, 50,
                             "%", Slider::SliderStyle::RotaryVerticalDrag,
                             Slider::TextEntryBoxPosition::TextBoxBelow, 80, this, this, false,
                             &lfEffect);
@@ -56,7 +56,7 @@ public:
         Utility::addTextButton (&processingTypeButton, "separate processing",
                                 true, true, true, this, this, &lfEffect);
         
-        Utility::addTextButton (&feedbackTypeButton, "single feedback",
+        Utility::addTextButton (&feedbackTypeButton, "single",
                                 false, true, true, this, this, &lfEffect);
         
         //======================================================================================
@@ -201,14 +201,14 @@ public:
             {
                 ParameterControl::setFbType (p, 1);
                 Utility::setSliderEnabled (&feedbackSlider, &feedbackLabel, false);
-                feedbackTypeButton.setButtonText ("double feedback");
+                feedbackTypeButton.setButtonText ("double");
                 doubleFeedback = true;
             }
             else
             {
                 ParameterControl::setFbType (p, 0);
                 Utility::setSliderEnabled (&feedbackSlider, &feedbackLabel, true);
-                feedbackTypeButton.setButtonText ("single feedback");
+                feedbackTypeButton.setButtonText ("single");
                 doubleFeedback = false;
             }
         }
