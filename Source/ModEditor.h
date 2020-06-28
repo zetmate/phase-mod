@@ -10,8 +10,7 @@
 
 #pragma once
 
-#include "../JuceLibraryCode/JuceHeader.h"
-#include "MyLookAndFeel.h"
+#include "UIThemes.h"
 //==============================================================================
 /*
 */
@@ -27,31 +26,38 @@ public:
         
         Utility::addSlider (&freq1Slider, &freq1Label, "Voice 1 LFO", 0.01, 17, 0.01, 3,
                             "Hz", Slider::SliderStyle::RotaryVerticalDrag,
-                            Slider::TextEntryBoxPosition::TextBoxBelow, 0.01, this, this, true);
+                            Slider::TextEntryBoxPosition::TextBoxBelow, 0.01, this, this, true,
+                            &lookAndFeel);
         
         Utility::addSlider (&freq2Slider, &freq2Label, "Voice 2 LFO", 0.01, 17, 0.01, 3,
                             "Hz", Slider::SliderStyle::RotaryVerticalDrag,
-                            Slider::TextEntryBoxPosition::TextBoxBelow, 0.01, this, this, true);
+                            Slider::TextEntryBoxPosition::TextBoxBelow, 0.01, this, this, true,
+                            &lookAndFeel);
         
         Utility::addSlider (&freq3Slider, &freq3Label, "Feedback LFO", 0.01, 17, 0.01, 3,
                             "Hz", Slider::SliderStyle::RotaryVerticalDrag,
-                            Slider::TextEntryBoxPosition::TextBoxBelow, 2, this, this, true);
+                            Slider::TextEntryBoxPosition::TextBoxBelow, 2, this, this, true,
+                            &lookAndFeel);
         
         Utility::addSlider (&tempo1Slider, &tempo1Label, "Voice 1 LFO", -10, -1, 1, -5,
                             "", Slider::SliderStyle::LinearHorizontal,
-                            Slider::TextEntryBoxPosition::TextBoxBelow, -8, this, this, false);
+                            Slider::TextEntryBoxPosition::TextBoxBelow, -8, this, this, false,
+                            &lookAndFeel);
         
         Utility::addSlider (&tempo2Slider, &tempo2Label, "Voice 2 LFO", -10, -1, 1, -5,
                             "", Slider::SliderStyle::LinearHorizontal,
-                            Slider::TextEntryBoxPosition::TextBoxBelow, -8, this, this, false);
+                            Slider::TextEntryBoxPosition::TextBoxBelow, -8, this, this, false,
+                            &lookAndFeel);
         
         Utility::addSlider (&tempo3Slider, &tempo3Label, "Feedback LFO", -10, -1, 1, -5,
                             "", Slider::SliderStyle::LinearHorizontal,
-                            Slider::TextEntryBoxPosition::TextBoxBelow, -3, this, this, false);
+                            Slider::TextEntryBoxPosition::TextBoxBelow, -3, this, this, false,
+                            &lookAndFeel);
         
         Utility::addSlider (&phaseSlider, &phaseLabel, "Phase shift", 0, 180, 90, 90,
                             "deg", Slider::SliderStyle::LinearHorizontal,
-                            Slider::TextEntryBoxPosition::TextBoxRight, 180, this, this, true);
+                            Slider::TextEntryBoxPosition::TextBoxRight, 180, this, this, true,
+                            &lookAndFeel);
         phaseLabel.attachToComponent (&phaseSlider, true);
         
         //mod 1
@@ -64,6 +70,7 @@ public:
         mod1ShapeMenu.addListener (this);
         mod1ShapeMenu.setJustificationType (Justification::centred);
         mod1ShapeMenu.setSelectedId (1);
+        mod1ShapeMenu.setLookAndFeel (&lookAndFeel);
         addAndMakeVisible (mod1ShapeMenu);
         
         //mod 2
@@ -76,6 +83,7 @@ public:
         mod2ShapeMenu.addListener (this);
         mod2ShapeMenu.setJustificationType (Justification::centred);
         mod2ShapeMenu.setSelectedId (1);
+        mod2ShapeMenu.setLookAndFeel (&lookAndFeel);
         addAndMakeVisible (mod2ShapeMenu);
         
         //mod 3
@@ -87,6 +95,7 @@ public:
         mod3ShapeMenu.addListener (this);
         mod3ShapeMenu.setJustificationType (Justification::centred);
         mod3ShapeMenu.setSelectedId (1);
+        mod3ShapeMenu.setLookAndFeel (&lookAndFeel);
         addAndMakeVisible (mod3ShapeMenu);
         
         //note 1
@@ -96,6 +105,7 @@ public:
         note1TypeMenu.addListener (this);
         note1TypeMenu.setJustificationType (Justification::centred);
         note1TypeMenu.setSelectedId (1);
+        note1TypeMenu.setLookAndFeel (&lookAndFeel);
         addChildComponent (note1TypeMenu);
         
         //note2
@@ -105,6 +115,7 @@ public:
         note2TypeMenu.addListener (this);
         note2TypeMenu.setJustificationType (Justification::centred);
         note2TypeMenu.setSelectedId (1);
+        note2TypeMenu.setLookAndFeel (&lookAndFeel);
         addChildComponent (note2TypeMenu);
         
         //note3
@@ -114,18 +125,24 @@ public:
         note3TypeMenu.addListener (this);
         note3TypeMenu.setJustificationType (Justification::centred);
         note3TypeMenu.setSelectedId (1);
+        note3TypeMenu.setLookAndFeel (&lookAndFeel);
         addChildComponent (note3TypeMenu);
         
-        Utility::addTextButton (&tempoSync1Button, "TEMPO SYNC", false, true, true, this, this);
-        Utility::addTextButton (&tempoSync2Button, "TEMPO SYNC", false, true, true, this, this);
-        Utility::addTextButton (&tempoSync3Button, "TEMPO SYNC", false, true, true, this, this);
+        const String tempoSyncText = "tempo sync";
         
-        Utility::addTextButton (&lfo1onButton, "ON", true, true, true, this, this);
-        Utility::addTextButton (&lfo2onButton, "ON", true, true, true, this, this);
-        Utility::addTextButton (&lfo3onButton, "OFF", false, true, true, this, this);
+        Utility::addTextButton (&tempoSync1Button, tempoSyncText, false, true, true, this, this,
+                                &lookAndFeel);
+        Utility::addTextButton (&tempoSync2Button, tempoSyncText, false, true, true, this, this,
+                                &lookAndFeel);
+        Utility::addTextButton (&tempoSync3Button, tempoSyncText, false, true, true, this, this,
+                                &lookAndFeel);
         
-        
-        setAllButtonsLookAndFeel (&myLookAndFeel);
+        Utility::addTextButton (&lfo1onButton, "on", true, true, true, this, this,
+                                &lookAndFeel);
+        Utility::addTextButton (&lfo2onButton, "on", true, true, true, this, this,
+                                &lookAndFeel);
+        Utility::addTextButton (&lfo3onButton, "off", false, true, true, this, this,
+                                &lookAndFeel);
         
         note3TypeMenu.setEnabled (false);
         
@@ -267,7 +284,7 @@ public:
         {
             if (isOn)
             {
-                button->setButtonText ("ON");
+                button->setButtonText ("on");
                 ParameterControl::setLfo1on (p, 1);
                 Utility::setSliderEnabled (&freq1Slider, &freq1Label, true);
                 Utility::setSliderEnabled (&tempo1Slider, &tempo1Label, true);
@@ -286,7 +303,7 @@ public:
         {
             if (isOn)
             {
-                button->setButtonText ("ON");
+                button->setButtonText ("on");
                 ParameterControl::setLfo2on (p, 1);
                 Utility::setSliderEnabled (&freq2Slider, &freq2Label, true);
                 Utility::setSliderEnabled (&tempo2Slider, &tempo2Label, true);
@@ -294,7 +311,7 @@ public:
             }
             else
             {
-                button->setButtonText ("OFF");
+                button->setButtonText ("off");
                 ParameterControl::setLfo2on (p, 0);
                 Utility::setSliderEnabled (&freq2Slider, &freq2Label, false);
                 Utility::setSliderEnabled (&tempo2Slider, &tempo2Label, false);
@@ -305,7 +322,7 @@ public:
         {
             if (isOn)
             {
-                button->setButtonText ("ON");
+                button->setButtonText ("on");
                 ParameterControl::setLfo3on (p, 1);
                 Utility::setSliderEnabled (&freq3Slider, &freq3Label, true);
                 Utility::setSliderEnabled (&tempo3Slider, &tempo3Label, true);
@@ -315,7 +332,7 @@ public:
             }
             else
             {
-                button->setButtonText ("OFF");
+                button->setButtonText ("off");
                 ParameterControl::setLfo3on (p, 0);
                 proc.setFeedbackGain (effectEditor.feedbackSlider.getValue() / 100.0);
                 Utility::setSliderEnabled (&freq3Slider, &freq3Label, false);
@@ -409,24 +426,11 @@ public:
             ParameterControl::setNote3Type (p, i - 1);
         
     }
-//================================================================================================
-    void setAllButtonsLookAndFeel (LookAndFeel* newLookAndFeel)
-    {
-        lfo1onButton.setLookAndFeel (newLookAndFeel);
-        lfo2onButton.setLookAndFeel (newLookAndFeel);
-        lfo3onButton.setLookAndFeel (newLookAndFeel);
-        
-        tempoSync1Button.setLookAndFeel (newLookAndFeel);
-        tempoSync2Button.setLookAndFeel (newLookAndFeel);
-        tempoSync3Button.setLookAndFeel (newLookAndFeel);
-    }
+
 //================================================================================================
     void paint (Graphics& g) override
     {
-        g.fillAll (Colours::black);
-        
-        g.setColour (Colours::grey);
-        g.drawRect (getLocalBounds(), 1);
+        g.fillAll (lookAndFeel.theme.bg);
     }
 
     void resized() override
@@ -505,7 +509,7 @@ private:
     //for tempo sync (tempo multiplication index used for counting tripplets and dotted)
     double tmi1 = 1, tmi2 = 1, tmi3 = 1;
     
-    MyLookAndFeel myLookAndFeel;
+    LFMod lookAndFeel;
     //====================================================================================
     ScopedPointer <AudioProcessorValueTreeState::SliderAttachment>      lfo1FreqSliderAttach,
                                                                         lfo2FreqSliderAttach,

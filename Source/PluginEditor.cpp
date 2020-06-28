@@ -15,7 +15,6 @@
 //==============================================================================
 Vibrato2AudioProcessorEditor::Vibrato2AudioProcessorEditor (Vibrato2AudioProcessor& p)
     : AudioProcessorEditor (&p),
-        masterEditor (p.proc, masterEditorWidth, effectEditorHeight + modEditorHeight),
         effectEditor (p, editorWidth + masterEditorWidth,
                       effectEditorHeight + modEditorHeight),
         modEditor (p, effectEditor, editorWidth, modEditorHeight),
@@ -34,7 +33,8 @@ Vibrato2AudioProcessorEditor::~Vibrato2AudioProcessorEditor()
 
 void Vibrato2AudioProcessorEditor::paint (Graphics& g)
 {
-    g.fillAll (Colours::black);
+    ColourGradient BGradient;
+    g.setGradientFill(BGradient);
 }
 
 void Vibrato2AudioProcessorEditor::resized()
@@ -46,9 +46,5 @@ void Vibrato2AudioProcessorEditor::resized()
     modEditor.setBounds (0, effectEditorHeight,
                          modEditor.getWidth(),
                          modEditor.getHeight());
-    
-    masterEditor.setBounds (editorWidth, 0,
-                            masterEditor.getWidth(),
-                            masterEditor.getHeight());
 }
 
