@@ -261,12 +261,12 @@ public:
         
         //================================================
         //MASTER EDITOR
-        dryWetSlider.setBounds (435, 50, 100, 100);
+        dryWetSlider.setBounds (438, 50, 100, 100);
 
-        voice1MixSlider.setBounds (425, 365, 50, 215);
+        voice1MixSlider.setBounds (428, 365, 50, 215);
         voice2MixSlider.setBounds (500, 365, 50, 215);
 
-        inputGainSlider.setBounds (435, 205, 100, 100);
+        inputGainSlider.setBounds (438, 205, 100, 100);
     }
     friend class ModEditor;
 private:
