@@ -129,7 +129,7 @@ private:
     String voice2MixId = "voice2Mix", voice2MixName = "Voice 2 Mix", voice2MixLabelText = voice2MixName.toUpperCase();
     float voice2MixDefault = 100;
     
-    String masterId = "inputGain", masterName = "Input gain", masterLabelText = masterName.toUpperCase();
+    String masterId = "master", masterName = "Master", masterLabelText = masterName.toUpperCase();
     float masterDefault = 0;
     
     // MODULATION PARAMETERS

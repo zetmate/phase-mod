@@ -61,7 +61,7 @@ public:
         
         //======================================================================================
         //                                  MASTER EDITOR
-        Utility::addSlider (&inputGainSlider, &inputGainLabel, "Input Gain", -24, 16, 0.1, 0,
+        Utility::addSlider (&inputGainSlider, &inputGainLabel, "Master", -24, 16, 0.1, 0,
                             "dB", Slider::SliderStyle::RotaryVerticalDrag,
                             Slider::TextEntryBoxPosition::TextBoxBelow, 0, this, this, true,
                             &lfMaster);
