@@ -79,7 +79,8 @@ private:
     NormalisableRange<float>    mixRange,
                                 voice1MixRange,
                                 voice2MixRange,
-                                masterRange;
+                                inputRange,
+                                outputRange;
     
     NormalisableRange<float>    lfo1onRange,
                                 lfo2onRange,
@@ -128,9 +129,12 @@ private:
     
     String voice2MixId = "voice2Mix", voice2MixName = "Voice 2 Mix", voice2MixLabelText = voice2MixName.toUpperCase();
     float voice2MixDefault = 100;
+
+    String inputId = "inputGain", inputName = "Input gain", inputLabelText = inputName.toUpperCase();
+    float inputDefault = 0;
     
-    String masterId = "inputGain", masterName = "Input gain", masterLabelText = masterName.toUpperCase();
-    float masterDefault = 0;
+    String outputId = "outputGain", outputName = "Output gain", outputLabelText = outputName.toUpperCase();
+    float outputDefault = 0;
     
     // MODULATION PARAMETERS
     //on / off buttons

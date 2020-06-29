@@ -30,7 +30,7 @@ public:
 
 private:
     int editorWidth = 400;
-    int masterEditorWidth = 150;
+    int masterEditorWidth = 180;
     int effectEditorHeight = 250;
     int modEditorHeight = 310 + 50;
 

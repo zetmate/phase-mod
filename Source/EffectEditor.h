@@ -61,20 +61,30 @@ public:
         
         //======================================================================================
         //                                  MASTER EDITOR
-        Utility::addSlider (&inputGainSlider, &inputGainLabel, "Input Gain", -24, 16, 0.1, 0,
-                            "dB", Slider::SliderStyle::RotaryVerticalDrag,
+        Utility::addSlider (&inputGainSlider, &inputGainLabel, "Input", -24, 32, 0.1, 12,
+                            "dB", Slider::SliderStyle::LinearVertical,
                             Slider::TextEntryBoxPosition::TextBoxBelow, 0, this, this, true,
                             &lfMaster);
         
         inputGainSlider.setDoubleClickReturnValue (true, 0.0);
+
+        Utility::addSlider (&outputGainSlider, &outputGainLabel, "Output", -32, 16, 0.1, 0,
+                            "dB", Slider::SliderStyle::LinearVertical,
+                            Slider::TextEntryBoxPosition::TextBoxBelow, 0, this, this, true,
+                            &lfMaster);
         
-        Utility::addSlider (&voice1MixSlider, &voice1MixLabel, "Voice 1 Mix", 0, 200, 1, 100,
-                            "%", Slider::SliderStyle::RotaryVerticalDrag,
+        outputGainSlider.setDoubleClickReturnValue (true, 0.0);
+        
+        Utility::addTextButton (&gainLinkButton, "link",
+                                true, true, true, this, this, &lfMaster);
+        
+        Utility::addSlider (&voice1MixSlider, &voice1MixLabel, "Voice 1", 0, 200, 1, 100,
+                            "%", Slider::SliderStyle::LinearVertical,
                             Slider::TextEntryBoxPosition::TextBoxBelow, 100, this, this, true,
                             &lfMaster);
         
-        Utility::addSlider (&voice2MixSlider, &voice2MixLabel, "Voice 2 Mix", 0, 200, 1, 100,
-                            "%", Slider::SliderStyle::RotaryVerticalDrag,
+        Utility::addSlider (&voice2MixSlider, &voice2MixLabel, "Voice 2", 0, 200, 1, 100,
+                            "%", Slider::SliderStyle::LinearVertical,
                             Slider::TextEntryBoxPosition::TextBoxBelow, 100, this, this, true,
                             &lfMaster);
         
@@ -116,9 +126,13 @@ public:
                                                                                     p.voice2MixId,
                                                                                     voice2MixSlider);
         
-        masterSliderAttach = new AudioProcessorValueTreeState::SliderAttachment (p.parameters,
-                                                                                 p.masterId,
+        inputSliderAttach = new AudioProcessorValueTreeState::SliderAttachment (p.parameters,
+                                                                                 p.inputId,
                                                                                  inputGainSlider);
+                                                                                 
+        outputSliderAttach = new AudioProcessorValueTreeState::SliderAttachment (p.parameters,
+                                                                              p.outputId,
+                                                                              outputGainSlider);
         
         procTypeButtonAttach = new AudioProcessorValueTreeState::ButtonAttachment (p.parameters,
                                                                                    p.procTypeId,
@@ -139,31 +153,55 @@ public:
         const double value = slider->getValue();
         
         if (slider == &depthSlider)
+        {
             ParameterControl::setDepth (p, value);
-        
+        }
         else if (slider == &delaySlider)
+        {
             ParameterControl::setDelay (p, value);
-        
+        }
         else if (slider == &feedbackSlider)
+        {
             ParameterControl::setFeedback (p, value);
-        
+        }
         else if (slider == &lfo3AmpSlider)
+        {
             ParameterControl::setLfo3Amp (p, value);
-        
+        }
         //=====================================
         //MASTER
         else if (slider == &dryWetSlider)
+        {
             ParameterControl::setMix (p, value);
-        
+        }
         else if (slider == &inputGainSlider)
-            ParameterControl::setMaster (p, value);
-        
+        {
+            ParameterControl::setInput (p, value);
+
+            if (gainLinkButton.getToggleState())
+            {
+                outputGainSlider.setValue (-value, NotificationType::dontSendNotification);
+                ParameterControl::setOutput (p, -value);
+            }
+        }
+        else if (slider == &outputGainSlider)
+        {
+            ParameterControl::setOutput (p, value);
+
+            if (gainLinkButton.getToggleState())
+            {
+                inputGainSlider.setValue (-value, NotificationType::dontSendNotification);
+                ParameterControl::setInput (p, -value);
+            }
+        }
         else if (slider == &voice1MixSlider)
+        {
             ParameterControl::setVoice1Mix (p, value);
-        
+        }
         else if (slider == &voice2MixSlider)
+        {
             ParameterControl::setVoice2Mix (p, value);
-        
+        }
     }
     
     void buttonClicked (Button* button) override
@@ -212,7 +250,13 @@ public:
                 doubleFeedback = false;
             }
         }
-       
+        else if (button == &gainLinkButton)
+        {
+           if (isOn)
+           {
+               outputGainSlider.setValue(inputGainSlider.getValue() * -1.0);
+           }
+        }
     }
     
     void setLfo3AmpMode (bool lfo3AmpMode)
@@ -241,7 +285,7 @@ public:
     {
         g.fillAll (lfEffect.theme.bg);
 
-        Rectangle<int> masterSectionRect (getLocalBounds().removeFromRight (150));
+        Rectangle<int> masterSectionRect (getLocalBounds().removeFromRight (180));
         g.setColour (lfMaster.theme.bg);
         g.fillRect (masterSectionRect);
     }
@@ -261,10 +305,15 @@ public:
         
         //================================================
         //MASTER EDITOR
-        dryWetSlider.setBounds (425, 50, 100, 100);
-        inputGainSlider.setBounds (425, 195, 100, 100);
-        voice1MixSlider.setBounds (425, 340, 100, 100);
-        voice2MixSlider.setBounds (425, 485, 100, 100);
+        dryWetSlider.setBounds (435, 50, 100, 100);
+
+        voice1MixSlider.setBounds (425, 200, 50, 150);
+        voice2MixSlider.setBounds (500, 200, 50, 150);
+
+        inputGainSlider.setBounds (425, 400, 50, 150);
+        outputGainSlider.setBounds (500, 400, 50, 150);
+        
+        gainLinkButton.setBounds (462.5, 560, 50, 20);
     }
     friend class ModEditor;
 private:
@@ -288,14 +337,16 @@ private:
     
     //================================================
     //MASTER EDITOR
-    Slider inputGainSlider;
-    Label inputGainLabel;
+    Slider inputGainSlider, outputGainSlider;
+    Label inputGainLabel, outputGainLabel;
     
     Slider voice1MixSlider, voice2MixSlider;
     Label voice1MixLabel, voice2MixLabel;
     
     Slider dryWetSlider;
     Label dryWetLabel;
+    
+    TextButton gainLinkButton;
     
     LFEffect lfEffect;
     LFMaster lfMaster;
@@ -307,7 +358,8 @@ private:
                                                                     mixSliderAttach,
                                                                     voice1MixSliderAttach,
                                                                     voice2MixSliderAttach,
-                                                                    masterSliderAttach;
+                                                                    inputSliderAttach,
+                                                                    outputSliderAttach;
     
     ScopedPointer<AudioProcessorValueTreeState::ButtonAttachment>   procTypeButtonAttach,
                                                                     fbTypeButtonAttach;

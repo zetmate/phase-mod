@@ -52,6 +52,7 @@ void Proc::processBlockMonoSeparate (AudioSampleBuffer& buffer)
     {
         //get current values from Ramps
         inputGainRamp.applyRamp (inputGain);
+        outputGainRamp.applyRamp (outputGain);
         effectGainRamp.applyRamp (effectGain);
         gain1Ramp.applyRamp (gain1);
         gain2Ramp.applyRamp (gain2);
@@ -162,6 +163,7 @@ void Proc::processBlockMonoCascade (AudioSampleBuffer& buffer)
     {
         //get current values from Ramps
         inputGainRamp.applyRamp (inputGain);
+        outputGainRamp.applyRamp (outputGain);
         effectGainRamp.applyRamp (effectGain);
         gain1Ramp.applyRamp (gain1);
         gain2Ramp.applyRamp (gain2);
@@ -280,6 +282,7 @@ void Proc::processBlockStereoSeparate (AudioSampleBuffer& buffer)
     {
         //get current values from Ramps
         inputGainRamp.applyRamp (inputGain);
+        outputGainRamp.applyRamp (outputGain);
         effectGainRamp.applyRamp (effectGain);
         gain1Ramp.applyRamp (gain1);
         gain2Ramp.applyRamp (gain2);
@@ -440,6 +443,7 @@ void Proc::processBlockStereoCascade (AudioSampleBuffer& buffer)
     {
         //get current values from Ramps
         inputGainRamp.applyRamp (inputGain);
+        outputGainRamp.applyRamp (outputGain);
         effectGainRamp.applyRamp (effectGain);
         gain1Ramp.applyRamp (gain1);
         gain2Ramp.applyRamp (gain2);

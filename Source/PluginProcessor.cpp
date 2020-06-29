@@ -23,7 +23,8 @@ Vibrato2AudioProcessor::Vibrato2AudioProcessor()  : parameters (*this, &undoMana
                                                     mixRange (0, 100, 1, 1),
                                                     voice1MixRange (0, 200, 1, 1),
                                                     voice2MixRange (0, 200, 1, 1),
-                                                    masterRange (-24, 16, 0.1, 1),
+                                                    inputRange (-24, 32, 0.1, 1),
+                                                    outputRange (-24, 32, 0.1, 1),
                                                     lfo1onRange (0, 1, 1, 1),
                                                     lfo2onRange (0, 1, 1, 1),
                                                     lfo3onRange (0, 1, 1, 1),
@@ -63,7 +64,8 @@ Vibrato2AudioProcessor::Vibrato2AudioProcessor()  : parameters (*this, &undoMana
     mixRange.setSkewForCentre (50);
     voice1MixRange.setSkewForCentre (100);
     voice2MixRange.setSkewForCentre (100);
-    masterRange.setSkewForCentre (0);
+    inputRange.setSkewForCentre (12);
+    outputRange.setSkewForCentre (0);
     
     lfo1FreqRange.setSkewForCentre (3);
     lfo2FreqRange.setSkewForCentre (3);
@@ -109,9 +111,13 @@ Vibrato2AudioProcessor::Vibrato2AudioProcessor()  : parameters (*this, &undoMana
                                      voice2MixDefault, nullptr, nullptr);
     parameters.addParameterListener (voice2MixId, this);
     
-    parameters.createAndAddParameter (masterId, masterName, masterLabelText, masterRange,
-                                     masterDefault, nullptr, nullptr);
-    parameters.addParameterListener (masterId, this);
+    parameters.createAndAddParameter (inputId, inputName, inputLabelText, inputRange,
+                                     inputDefault, nullptr, nullptr);
+    parameters.addParameterListener (inputId, this);
+    
+    parameters.createAndAddParameter (outputId, outputName, outputLabelText, outputRange,
+                                     outputDefault, nullptr, nullptr);
+    parameters.addParameterListener (outputId, this);
     
     parameters.createAndAddParameter (lfo1onId, lfo1onName, lfo1onLabelText, lfo1onRange,
                                      lfo1onDefault, nullptr, nullptr);
@@ -379,8 +385,12 @@ void Vibrato2AudioProcessor::updateParameters()
         ParameterControl::setVoice2Mix (*this, voice2Mix);
     }
     {
-        float master = *parameters.getRawParameterValue (masterId);
-        ParameterControl::setMaster (*this, master);
+        float input = *parameters.getRawParameterValue (outputId);
+        ParameterControl::setInput (*this, input);
+    }
+    {
+        float output = *parameters.getRawParameterValue (outputId);
+        ParameterControl::setOutput (*this, output);
     }
     {
         float lfo1on = *parameters.getRawParameterValue (lfo1onId);

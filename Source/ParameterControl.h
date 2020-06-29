@@ -32,8 +32,11 @@ public:
         else if (parameterId == p.mixId)
             setMix (p, parameterValue);
         
-        else if (parameterId == p.masterId)
-            setMaster (p, parameterValue);
+        else if (parameterId == p.inputId)
+            setInput (p, parameterValue);
+            
+        else if (parameterId == p.outputId)
+            setOutput (p, parameterValue);
         
         else if (parameterId == p.voice1MixId)
             setVoice1Mix (p, parameterValue);
@@ -145,9 +148,14 @@ public:
         p.proc.setDryWet (parameterValue / 100.0);
     }
     
-    static void setMaster (Vibrato2AudioProcessor& p, const float parameterValue)
+    static void setInput (Vibrato2AudioProcessor& p, const float parameterValue)
     {
         p.proc.setInputGain (Utility::fromDb (parameterValue));
+    }
+    
+    static void setOutput (Vibrato2AudioProcessor& p, const float parameterValue)
+    {
+        p.proc.setOutputGain (Utility::fromDb (parameterValue));
     }
     
     static void setVoice1Mix (Vibrato2AudioProcessor& p, const float parameterValue)

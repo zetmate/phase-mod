@@ -409,7 +409,7 @@ protected:
     double effectGain = 1.0;
     double gain1 = 1.0;
     double gain2 = 1.0f;
-    //gains' ramps
+    //gain ramps
     Ramp inputGainRamp, outputGainRamp, effectGainRamp, gain1Ramp, gain2Ramp;
 
     //processor info
