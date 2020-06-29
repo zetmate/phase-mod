@@ -68,13 +68,13 @@ public:
         
         inputGainSlider.setDoubleClickReturnValue (true, 0.0);
         
-        Utility::addSlider (&voice1MixSlider, &voice1MixLabel, "Voice 1 Mix", 0, 200, 1, 100,
-                            "%", Slider::SliderStyle::RotaryVerticalDrag,
+        Utility::addSlider (&voice1MixSlider, &voice1MixLabel, "Voice 1", 0, 200, 1, 100,
+                            "%", Slider::SliderStyle::LinearVertical,
                             Slider::TextEntryBoxPosition::TextBoxBelow, 100, this, this, true,
                             &lfMaster);
         
-        Utility::addSlider (&voice2MixSlider, &voice2MixLabel, "Voice 2 Mix", 0, 200, 1, 100,
-                            "%", Slider::SliderStyle::RotaryVerticalDrag,
+        Utility::addSlider (&voice2MixSlider, &voice2MixLabel, "Voice 2", 0, 200, 1, 100,
+                            "%", Slider::SliderStyle::LinearVertical,
                             Slider::TextEntryBoxPosition::TextBoxBelow, 100, this, this, true,
                             &lfMaster);
         
@@ -241,7 +241,7 @@ public:
     {
         g.fillAll (lfEffect.theme.bg);
 
-        Rectangle<int> masterSectionRect (getLocalBounds().removeFromRight (150));
+        Rectangle<int> masterSectionRect (getLocalBounds().removeFromRight (180));
         g.setColour (lfMaster.theme.bg);
         g.fillRect (masterSectionRect);
     }
@@ -261,10 +261,12 @@ public:
         
         //================================================
         //MASTER EDITOR
-        dryWetSlider.setBounds (425, 50, 100, 100);
-        inputGainSlider.setBounds (425, 195, 100, 100);
-        voice1MixSlider.setBounds (425, 340, 100, 100);
-        voice2MixSlider.setBounds (425, 485, 100, 100);
+        dryWetSlider.setBounds (438, 50, 100, 100);
+
+        voice1MixSlider.setBounds (428, 365, 50, 215);
+        voice2MixSlider.setBounds (500, 365, 50, 215);
+
+        inputGainSlider.setBounds (438, 205, 100, 100);
     }
     friend class ModEditor;
 private:
